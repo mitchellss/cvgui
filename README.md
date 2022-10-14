@@ -1,8 +1,7 @@
 # cvgui
 
-`cvgui` is a library for prototyping novel methods of
-user feedback by creating body-interactive GUIs using computer
-vison. 
+`cvgui` is a library for creating body-interactive GUIs using computer
+vison.
 
 Documentation can be [found here](https://mitchellss.github.io/cvgui).
 
