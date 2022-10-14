@@ -16,7 +16,11 @@ be made about the stability of the API or the library itself.**
 
 Requires Python 3.9 or later
 
-## Working Example
+## Contributing
+
+Pull requests are welcome. Please see the [contributing guide](CONTRIBUTING.md) for more information.
+
+## Example Program
 
 This example creates a simple activity with a skeleton and a button.
 When clicked, the button moves. Example programs can be found in the
