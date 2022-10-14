@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>cvgui.activity.activity API documentation</title>
-<meta name="description" content="Orchestrates core packages to run concurrently" />
+<meta name="description" content="Operates on a collection of related scenes to create a specific experience …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,12 +22,19 @@
 <h1 class="title">Module <code>cvgui.activity.activity</code></h1>
 </header>
 <section id="section-intro">
-<p>Orchestrates core packages to run concurrently</p>
+<p>Operates on a collection of related scenes to create a specific experience.</p>
+<p>The activity module orchestrates the interfaces of <code>core</code> packages
+to run concurrently and create a coherent flow of information.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Orchestrates core packages to run concurrently&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;
+Operates on a collection of related scenes to create a specific experience.
+
+The activity module orchestrates the interfaces of `core` packages 
+to run concurrently and create a coherent flow of information.
+&#34;&#34;&#34;
 from typing import List
 
 import multiprocessing as mp
@@ -45,13 +52,17 @@ class Activity:
     &#34;&#34;&#34;A collection of scenes and the abstract logic
     for their interaction.&#34;&#34;&#34;
 
+    # Private variables
     _scenes: List[Scene] = []
+
     active_scene: int = 0
-    pose = mp.Array(&#34;d&#34;, 33*4)
+    &#34;&#34;&#34;The index of the scene to render.&#34;&#34;&#34;
+
+    pose: mp.Array = mp.Array(&#34;d&#34;, 33*4)
+    &#34;&#34;&#34;The collection of points that represent a human figure.&#34;&#34;&#34;
 
     def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -&gt; None:
-        &#34;&#34;&#34;Creates a new activity.
-
+        &#34;&#34;&#34;
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
             frontend (UserInterface): An object that can create a user interface.
@@ -104,7 +115,7 @@ class Activity:
         &#34;&#34;&#34;Infinitely attempts to render the most current
         version of the active scene of the user interface.
         Intended to run in a sub-process to update the ui
-        concurrently with retrieving new data.
+        concurrently while retrieving new data.
 
         Args:
             frontend (UserInterface): The user interface to update.
@@ -146,7 +157,6 @@ class Activity:
 <dd>
 <div class="desc"><p>A collection of scenes and the abstract logic
 for their interaction.</p>
-<p>Creates a new activity.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>pose_input</code></strong> :&ensp;<code>PoseGenerator</code></dt>
@@ -162,13 +172,17 @@ for their interaction.</p>
     &#34;&#34;&#34;A collection of scenes and the abstract logic
     for their interaction.&#34;&#34;&#34;
 
+    # Private variables
     _scenes: List[Scene] = []
+
     active_scene: int = 0
-    pose = mp.Array(&#34;d&#34;, 33*4)
+    &#34;&#34;&#34;The index of the scene to render.&#34;&#34;&#34;
+
+    pose: mp.Array = mp.Array(&#34;d&#34;, 33*4)
+    &#34;&#34;&#34;The collection of points that represent a human figure.&#34;&#34;&#34;
 
     def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -&gt; None:
-        &#34;&#34;&#34;Creates a new activity.
-
+        &#34;&#34;&#34;
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
             frontend (UserInterface): An object that can create a user interface.
@@ -221,7 +235,7 @@ for their interaction.</p>
         &#34;&#34;&#34;Infinitely attempts to render the most current
         version of the active scene of the user interface.
         Intended to run in a sub-process to update the ui
-        concurrently with retrieving new data.
+        concurrently while retrieving new data.
 
         Args:
             frontend (UserInterface): The user interface to update.
@@ -250,11 +264,11 @@ for their interaction.</p>
 <dl>
 <dt id="cvgui.activity.activity.Activity.active_scene"><code class="name">var <span class="ident">active_scene</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The index of the scene to render.</p></div>
 </dd>
-<dt id="cvgui.activity.activity.Activity.pose"><code class="name">var <span class="ident">pose</span></code></dt>
+<dt id="cvgui.activity.activity.Activity.pose"><code class="name">var <span class="ident">pose</span> : <bound method BaseContext.Array of <multiprocessing.context.DefaultContext object at 0x7fa1ab281cd0>></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The collection of points that represent a human figure.</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -345,7 +359,7 @@ global pose input. Does not run well in a sub-process.</p></div>
 <div class="desc"><p>Infinitely attempts to render the most current
 version of the active scene of the user interface.
 Intended to run in a sub-process to update the ui
-concurrently with retrieving new data.</p>
+concurrently while retrieving new data.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>frontend</code></strong> :&ensp;<code>UserInterface</code></dt>
@@ -361,7 +375,7 @@ concurrently with retrieving new data.</p>
     &#34;&#34;&#34;Infinitely attempts to render the most current
     version of the active scene of the user interface.
     Intended to run in a sub-process to update the ui
-    concurrently with retrieving new data.
+    concurrently while retrieving new data.
 
     Args:
         frontend (UserInterface): The user interface to update.

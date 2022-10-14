@@ -27,7 +27,9 @@
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Class and logic that create an abstract scene.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;
+Class and logic that create an abstract scene.
+&#34;&#34;&#34;
 from typing import List
 from cvgui.core.displaying.components import Component
 
@@ -37,8 +39,6 @@ class Scene:
     be rendered at the same time.&#34;&#34;&#34;
 
     def __init__(self) -&gt; None:
-        &#34;&#34;&#34;Creates a new scene.
-        &#34;&#34;&#34;
         self.components: List[Component] = []
 
     def add_component(self, component: Component) -&gt; None:
@@ -65,8 +65,7 @@ class Scene:
 </code></dt>
 <dd>
 <div class="desc"><p>A related group of components that should
-be rendered at the same time.</p>
-<p>Creates a new scene.</p></div>
+be rendered at the same time.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -76,8 +75,6 @@ be rendered at the same time.</p>
     be rendered at the same time.&#34;&#34;&#34;
 
     def __init__(self) -&gt; None:
-        &#34;&#34;&#34;Creates a new scene.
-        &#34;&#34;&#34;
         self.components: List[Component] = []
 
     def add_component(self, component: Component) -&gt; None:

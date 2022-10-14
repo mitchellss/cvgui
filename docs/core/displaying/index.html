@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>cvgui.core.displaying API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="Package for graphically displaying data to the user …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,11 +22,23 @@
 <h1 class="title">Module <code>cvgui.core.displaying</code></h1>
 </header>
 <section id="section-intro">
+<p>Package for graphically displaying data to the user.</p>
+<p>The <code>displaying</code> core package provides interfaces
+that describe what methods a user interface must implement
+to be able to display data to a user correctly.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">from .service import UserInterface
+<pre><code class="python">&#34;&#34;&#34;
+Package for graphically displaying data to the user.
+
+The `displaying` core package provides interfaces
+that describe what methods a user interface must implement
+to be able to display data to a user correctly.
+&#34;&#34;&#34;
+
+from .service import UserInterface
 from .components import skeleton, button, Skeleton, Button</code></pre>
 </details>
 </section>
@@ -35,9 +47,7 @@ from .components import skeleton, button, Skeleton, Button</code></pre>
 <dl>
 <dt><code class="name"><a title="cvgui.core.displaying.components" href="components.html">cvgui.core.displaying.components</a></code></dt>
 <dd>
-<div class="desc"><p>Abstract components to be implemented by concrete
-gui classes and interafaces that require the implementation
-of said classes.</p></div>
+<div class="desc"><p>Interfaces for common UI objects …</p></div>
 </dd>
 <dt><code class="name"><a title="cvgui.core.displaying.service" href="service.html">cvgui.core.displaying.service</a></code></dt>
 <dd>

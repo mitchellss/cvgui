@@ -5,9 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>cvgui.core.displaying.components API documentation</title>
-<meta name="description" content="Abstract components to be implemented by concrete
-gui classes and interafaces that require the implementation
-of said classes." />
+<meta name="description" content="Interfaces for common UI objects …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -24,16 +22,21 @@ of said classes." />
 <h1 class="title">Module <code>cvgui.core.displaying.components</code></h1>
 </header>
 <section id="section-intro">
+<p>Interfaces for common UI objects.</p>
 <p>Abstract components to be implemented by concrete
-gui classes and interafaces that require the implementation
+GUI classes and interafaces that require the implementation
 of said classes.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Abstract components to be implemented by concrete
-gui classes and interafaces that require the implementation
-of said classes.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;
+Interfaces for common UI objects.
+
+Abstract components to be implemented by concrete
+GUI classes and interafaces that require the implementation
+of said classes.
+&#34;&#34;&#34;
 from typing import Any, Callable, List
 from typing_extensions import Protocol, runtime_checkable
 import numpy as np

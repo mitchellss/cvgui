@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>cvgui.core API documentation</title>
-<meta name="description" content="Interfaces that describe abstract component functionality." />
+<meta name="description" content="Interfaces that describe abstract component functionality …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -23,11 +23,32 @@
 </header>
 <section id="section-intro">
 <p>Interfaces that describe abstract component functionality.</p>
+<p>The <code>core</code> package breaks down the program into its fundamental
+functionality and defines an interface for each function. If
+a concrete class is able to fulfill said interface, it can
+therefore be considered fit to fulfill the requirements of
+that function. For instance, both a MOCAP system and a
+computer vision + camera combo can provide a set of points
+when called upon that represent a human figure. These systems
+therefore fulfill the requirements of the <code><a title="cvgui.core.recieving" href="recieving/index.html">cvgui.core.recieving</a></code> core
+package and could theoretically be implemented as core classes.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;Interfaces that describe abstract component functionality.&#34;&#34;&#34;
+<pre><code class="python">&#34;&#34;&#34;
+Interfaces that describe abstract component functionality.
+
+The `core` package breaks down the program into its fundamental
+functionality and defines an interface for each function. If
+a concrete class is able to fulfill said interface, it can
+therefore be considered fit to fulfill the requirements of
+that function. For instance, both a MOCAP system and a 
+computer vision + camera combo can provide a set of points
+when called upon that represent a human figure. These systems
+therefore fulfill the requirements of the `recieving` core
+package and could theoretically be implemented as core classes.
+&#34;&#34;&#34;
 from .displaying import *
 from .recieving import *</code></pre>
 </details>
@@ -37,19 +58,15 @@ from .recieving import *</code></pre>
 <dl>
 <dt><code class="name"><a title="cvgui.core.displaying" href="displaying/index.html">cvgui.core.displaying</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Package for graphically displaying data to the user …</p></div>
 </dd>
 <dt><code class="name"><a title="cvgui.core.providing_feedback" href="providing_feedback/index.html">cvgui.core.providing_feedback</a></code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Package for providing feedback to the user …</p></div>
 </dd>
 <dt><code class="name"><a title="cvgui.core.recieving" href="recieving/index.html">cvgui.core.recieving</a></code></dt>
 <dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="cvgui.core.test" href="test.html">cvgui.core.test</a></code></dt>
-<dd>
-<div class="desc"></div>
+<div class="desc"><p>Package for recieving human pose data …</p></div>
 </dd>
 </dl>
 </section>
@@ -76,7 +93,6 @@ from .recieving import *</code></pre>
 <li><code><a title="cvgui.core.displaying" href="displaying/index.html">cvgui.core.displaying</a></code></li>
 <li><code><a title="cvgui.core.providing_feedback" href="providing_feedback/index.html">cvgui.core.providing_feedback</a></code></li>
 <li><code><a title="cvgui.core.recieving" href="recieving/index.html">cvgui.core.recieving</a></code></li>
-<li><code><a title="cvgui.core.test" href="test.html">cvgui.core.test</a></code></li>
 </ul>
 </li>
 </ul>

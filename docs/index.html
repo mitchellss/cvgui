@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>cvgui API documentation</title>
-<meta name="description" content="cvgui …" />
+<meta name="description" content="`cvgui` is a library for creating body-interactive GUIs using computer
+vison …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,20 +23,30 @@
 <h1 class="title">Package <code>cvgui</code></h1>
 </header>
 <section id="section-intro">
-<h1 id="cvgui">cvgui</h1>
-<p><code><a title="cvgui" href="#cvgui">cvgui</a></code> is a library for prototyping novel methods of
-user feedback by creating body-interactive GUIs using computer
+<p><code><a title="cvgui" href="#cvgui">cvgui</a></code> is a library for creating body-interactive GUIs using computer
 vison.</p>
-<p><strong>cvgui is a prototype. No guarantees can
-be made about the stability of the API or the library itself.</strong></p>
-<h2 id="installation">Installation</h2>
+<p>Please see the sidebar for documentation on the packages
+that make up <code><a title="cvgui" href="#cvgui">cvgui</a></code>.</p>
+<h1 id="installation">Installation</h1>
 <blockquote>
-<p>pip install .</p>
+<p>pip install cvgui</p>
 </blockquote>
-<p>Requires Python 3.9 or later</p>
-<h2 id="working-example">Working Example</h2>
+<h1 id="about">About</h1>
+<p>The inspiration for this project came from work completed under
+the James Madison University department of engineering Wearable
+Computing Research Group to quickly prototype novel methods of user
+feedback. Since then, the project has been re-written to be more useful
+in any general case requiring user interfaces that can be "clicked" with
+one's body.</p>
+<p>The general goal of the library is to accept a group of points from an
+abstract input that can then be interpreted as a human form and displayed
+graphically. Common components are provided such as buttons and labels
+to decorate the interface and make it interactive. Operability outside of
+the library is provided by callback functions that can be used to trigger
+any Python code the developer desires.</p>
+<h1 id="example-program">Example Program</h1>
 <p>This example creates a simple activity with a skeleton and a button.
-When clicked, the buttton moves. Example programs can be found in the
+When clicked, the button moves. Example programs can be found in the
 <code>bin/examples</code> directory.</p>
 <pre><code class="language-python">import cvgui
 
@@ -57,19 +68,21 @@ activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
 scene_1 = cvgui.Scene()
 activity.add_scene(scene_1)
 
+# Create a new button
+button_1: cvgui.Button = cvgui.button(gui=ui,
+                                      x_coord=1920//2, y_coord=1080//2,
+                                      activation_distance=100)
 
+# Define what the button should do when clicked
 def callback(button: cvgui.Button):
     button.x_coord = 0
     button.y_coord = 0
 
-
-# Create a button that prints &quot;Hello world!&quot; when clicked
-button_1: cvgui.Button = cvgui.button(gui=ui,
-                                      x_coord=1920//2, y_coord=1080//2,
-                                      activation_distance=100)
+# Set the button to be clicked using the user's left or right hand
 button_1.set_targets([cv_model.LEFT_HAND, cv_model.RIGHT_HAND])
-button_1.set_callback(callback=lambda: callback(button_1))
 
+# Link the callback function to the button
+button_1.set_callback(callback=lambda: callback(button_1))
 
 # Create a skeleton to map pose points to
 skeleton: cvgui.Skeleton = cvgui.skeleton(gui=ui, x_coord=200, y_coord=200)
@@ -86,8 +99,87 @@ activity.run()
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-.. include:: ../README.md
+`cvgui` is a library for creating body-interactive GUIs using computer
+vison.
+
+Please see the sidebar for documentation on the packages 
+that make up `cvgui`.
+
+# Installation
+
+&gt; pip install cvgui
+
+# About
+
+The inspiration for this project came from work completed under
+the James Madison University department of engineering Wearable
+Computing Research Group to quickly prototype novel methods of user 
+feedback. Since then, the project has been re-written to be more useful
+in any general case requiring user interfaces that can be &#34;clicked&#34; with
+one&#39;s body.
+
+The general goal of the library is to accept a group of points from an
+abstract input that can then be interpreted as a human form and displayed
+graphically. Common components are provided such as buttons and labels
+to decorate the interface and make it interactive. Operability outside of
+the library is provided by callback functions that can be used to trigger
+any Python code the developer desires.
+
+# Example Program
+
+This example creates a simple activity with a skeleton and a button.
+When clicked, the button moves. Example programs can be found in the
+`bin/examples` directory.
+
+```python
+import cvgui
+
+# Specify input as a webcam and computer vision model as blazepose
+frame_input: cvgui.FrameInput = cvgui.Webcam(device_num=0, fps=30)
+cv_model: cvgui.CVModel = cvgui.BlazePose()
+
+# Create a pose generator based on a webcam + blazepose
+pose_input: cvgui.PoseGenerator = cvgui.ComputerVisionPose(
+    frame_input=frame_input, model=cv_model)
+
+# Specify GUI to be pygame
+ui: cvgui.UserInterface = cvgui.PyGameUI(width=1920//2, height=1080//2, fps=60)
+
+# Create activity
+activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
+
+# Create a new scene
+scene_1 = cvgui.Scene()
+activity.add_scene(scene_1)
+
+# Create a new button
+button_1: cvgui.Button = cvgui.button(gui=ui,
+                                      x_coord=1920//2, y_coord=1080//2,
+                                      activation_distance=100)
+
+# Define what the button should do when clicked
+def callback(button: cvgui.Button):
+    button.x_coord = 0
+    button.y_coord = 0
+
+# Set the button to be clicked using the user&#39;s left or right hand
+button_1.set_targets([cv_model.LEFT_HAND, cv_model.RIGHT_HAND])
+
+# Link the callback function to the button
+button_1.set_callback(callback=lambda: callback(button_1))
+
+# Create a skeleton to map pose points to
+skeleton: cvgui.Skeleton = cvgui.skeleton(gui=ui, x_coord=200, y_coord=200)
+
+# Add the skeleton and button to the scene
+scene_1.add_component(button_1)
+scene_1.add_component(skeleton)
+
+# Start activity
+activity.run()
+```
 &#34;&#34;&#34;
+
 from .core import *
 from .inputs.computer_vision import *
 from .user_interface import *
@@ -99,11 +191,11 @@ from .activity import *</code></pre>
 <dl>
 <dt><code class="name"><a title="cvgui.activity" href="activity/index.html">cvgui.activity</a></code></dt>
 <dd>
-<div class="desc"><p>Abstract handler for core components …</p></div>
+<div class="desc"><p>Logic for running through an abstract activity …</p></div>
 </dd>
 <dt><code class="name"><a title="cvgui.core" href="core/index.html">cvgui.core</a></code></dt>
 <dd>
-<div class="desc"><p>Interfaces that describe abstract component functionality.</p></div>
+<div class="desc"><p>Interfaces that describe abstract component functionality …</p></div>
 </dd>
 <dt><code class="name"><a title="cvgui.feedback" href="feedback/index.html">cvgui.feedback</a></code></dt>
 <dd>
@@ -111,7 +203,7 @@ from .activity import *</code></pre>
 </dd>
 <dt><code class="name"><a title="cvgui.inputs" href="inputs/index.html">cvgui.inputs</a></code></dt>
 <dd>
-<div class="desc"><p>Implementations of pose data inputs.</p></div>
+<div class="desc"><p>Implementations of pose data inputs …</p></div>
 </dd>
 <dt><code class="name"><a title="cvgui.user_interface" href="user_interface/index.html">cvgui.user_interface</a></code></dt>
 <dd>
@@ -130,11 +222,9 @@ from .activity import *</code></pre>
 <h1>Index</h1>
 <div class="toc">
 <ul>
-<li><a href="#cvgui">cvgui</a><ul>
 <li><a href="#installation">Installation</a></li>
-<li><a href="#working-example">Working Example</a></li>
-</ul>
-</li>
+<li><a href="#about">About</a></li>
+<li><a href="#example-program">Example Program</a></li>
 </ul>
 </div>
 <ul id="index">
