@@ -40,19 +40,24 @@ activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
 scene_1 = cvgui.Scene()
 activity.add_scene(scene_1)
 
+# Create a new button
+button_1: cvgui.Button = cvgui.button(gui=ui,
+                                      x_coord=1920//2, y_coord=1080//2,
+                                      activation_distance=100)
+
+# Define what the button should do when clicked
+
 
 def callback(button: cvgui.Button):
     button.x_coord = 0
     button.y_coord = 0
 
 
-# Create a button that prints "Hello world!" when clicked
-button_1: cvgui.Button = cvgui.button(gui=ui,
-                                      x_coord=1920//2, y_coord=1080//2,
-                                      activation_distance=100)
+# Set the button to be clicked using the user's left or right hand
 button_1.set_targets([cv_model.LEFT_HAND, cv_model.RIGHT_HAND])
-button_1.set_callback(callback=lambda: callback(button_1))
 
+# Link the callback function to the button
+button_1.set_callback(callback=lambda: callback(button_1))
 
 # Create a skeleton to map pose points to
 skeleton: cvgui.Skeleton = cvgui.skeleton(gui=ui, x_coord=200, y_coord=200)
