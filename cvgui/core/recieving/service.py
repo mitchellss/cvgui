@@ -1,22 +1,35 @@
-"""The requirements to be considered a computer vision model."""
+"""Interfaces describing methods of recieving data."""
 from typing_extensions import Protocol
 import numpy as np
 
 
 class CVModel(Protocol):
-    """Interface describing a computer vision model's methods."""
+    """The requirements to be considered a computer vision model."""
+
     LEFT_HAND: int
+    """Index of the model's pose array that represents the user's left hand"""
     LEFT_ELBOW: int
+    """Index of the model's pose array that represents the user's left elbow"""
     LEFT_SHOULDER: int
+    """Index of the model's pose array that represents the user's left shoulder"""
     LEFT_HIP: int
+    """Index of the model's pose array that represents the user's left hip"""
     LEFT_KNEE: int
+    """Index of the model's pose array that represents the user's left knee"""
     LEFT_FOOT: int
+    """Index of the model's pose array that represents the user's left foot"""
     RIGHT_HAND: int
+    """Index of the model's pose array that represents the user's right hand"""
     RIGHT_ELBOW: int
+    """Index of the model's pose array that represents the user's right elbow"""
     RIGHT_SHOULDER: int
+    """Index of the model's pose array that represents the user's right shoulder"""
     RIGHT_HIP: int
+    """Index of the model's pose array that represents the user's right hip"""
     RIGHT_KNEE: int
+    """Index of the model's pose array that represents the user's right knee"""
     RIGHT_FOOT: int
+    """Index of the model's pose array that represents the user's right foot"""
 
     def get_pose(self, frame: np.ndarray) -> np.ndarray:  # type: ignore
         """Retrieves the points making up a pose (skeleton) for a given
@@ -33,16 +46,30 @@ class CVModel(Protocol):
 
 
 class FrameInput(Protocol):
-    """Abstract repository that can provide image frames such as a
-    webcam input or video file."""
+    """
+    Abstract object that can provide image frames on-demand
+    such as a webcam input or video file.
+    """
 
     def get_frame(self) -> np.ndarray:  # type: ignore
-        """Retrieve a frame from the repository."""
+        """Retrieve a frame from the repository.
+
+        Returns:
+            np.ndarray: An array of points that describe the
+            locations of points of a pose (skeleton).
+        """
 
 
 class PoseGenerator(Protocol):
-    """Abstract generator of poses (skeletons) such as a computer
-    vision model or a motion capture system."""
+    """
+    Abstract generator of poses (skeletons) such as a computer
+    vision model or a motion capture system.
+    """
 
     def get_pose(self) -> np.ndarray:  # type: ignore
-        """Retrieve a pose from the generator."""
+        """Retrieve a pose from the generator.
+
+        Returns:
+            np.ndarray: An array of points that describe the
+            locations of points of a pose (skeleton).
+        """

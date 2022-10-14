@@ -1,4 +1,9 @@
-"""Orchestrates core packages to run concurrently"""
+"""
+Operates on a collection of related scenes to create a specific experience.
+
+The activity module orchestrates the interfaces of `core` packages 
+to run concurrently and create a coherent flow of information.
+"""
 from typing import List
 
 import multiprocessing as mp
@@ -16,13 +21,17 @@ class Activity:
     """A collection of scenes and the abstract logic
     for their interaction."""
 
+    # Private variables
     _scenes: List[Scene] = []
+
     active_scene: int = 0
-    pose = mp.Array("d", 33*4)
+    """The index of the scene to render."""
+
+    pose: mp.Array = mp.Array("d", 33*4)
+    """The collection of points that represent a human figure."""
 
     def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -> None:
-        """Creates a new activity.
-
+        """
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
             frontend (UserInterface): An object that can create a user interface.
@@ -75,7 +84,7 @@ class Activity:
         """Infinitely attempts to render the most current
         version of the active scene of the user interface.
         Intended to run in a sub-process to update the ui
-        concurrently with retrieving new data.
+        concurrently while retrieving new data.
 
         Args:
             frontend (UserInterface): The user interface to update.

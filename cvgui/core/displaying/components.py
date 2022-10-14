@@ -1,7 +1,10 @@
+"""
+Interfaces for common UI objects.
 
-"""Abstract components to be implemented by concrete
-gui classes and interafaces that require the implementation
-of said classes."""
+Abstract components to be implemented by concrete
+GUI classes and interafaces that require the implementation
+of said classes.
+"""
 from typing import Any, Callable, List
 from typing_extensions import Protocol, runtime_checkable
 import numpy as np

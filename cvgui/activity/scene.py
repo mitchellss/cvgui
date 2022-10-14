@@ -1,4 +1,6 @@
-"""Class and logic that create an abstract scene."""
+"""
+Class and logic that create an abstract scene.
+"""
 from typing import List
 from cvgui.core.displaying.components import Component
 
@@ -8,8 +10,6 @@ class Scene:
     be rendered at the same time."""
 
     def __init__(self) -> None:
-        """Creates a new scene.
-        """
         self.components: List[Component] = []
 
     def add_component(self, component: Component) -> None:

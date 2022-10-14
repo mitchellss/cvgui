@@ -1,11 +1,14 @@
 # cvgui
 
-`cvgui` is a library for prototyping novel methods of
-user feedback by creating body-interactive GUIs using computer
+`cvgui` is a library for creating body-interactive GUIs using computer
 vison.
+
+Documentation can be [found here](https://mitchellss.github.io/cvgui).
+
 
 **cvgui is a prototype. No guarantees can
 be made about the stability of the API or the library itself.**
+
 
 ## Installation
 
@@ -13,7 +16,11 @@ be made about the stability of the API or the library itself.**
 
 Requires Python 3.9 or later
 
-## Working Example
+## Contributing
+
+Pull requests are welcome. Please see the [contributing guide](CONTRIBUTING.md) for more information.
+
+## Example Program
 
 This example creates a simple activity with a skeleton and a button.
 When clicked, the button moves. Example programs can be found in the
