@@ -16,7 +16,7 @@ Requires Python 3.9 or later
 ## Working Example
 
 This example creates a simple activity with a skeleton and a button.
-When clicked, the buttton moves. Example programs can be found in the
+When clicked, the button moves. Example programs can be found in the
 `bin/examples` directory.
 
 ```python
