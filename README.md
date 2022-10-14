@@ -9,7 +9,7 @@ be made about the stability of the API or the library itself.**
 
 ## Installation
 
-> pip install .
+> pip install cvgui
 
 Requires Python 3.9 or later
 
