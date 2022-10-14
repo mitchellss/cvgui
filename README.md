@@ -46,12 +46,9 @@ button_1: cvgui.Button = cvgui.button(gui=ui,
                                       activation_distance=100)
 
 # Define what the button should do when clicked
-
-
 def callback(button: cvgui.Button):
     button.x_coord = 0
     button.y_coord = 0
-
 
 # Set the button to be clicked using the user's left or right hand
 button_1.set_targets([cv_model.LEFT_HAND, cv_model.RIGHT_HAND])

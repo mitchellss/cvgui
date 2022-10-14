@@ -29,10 +29,9 @@ button_1: cvgui.Button = cvgui.button(gui=ui,
                                       x_coord=1920//2, y_coord=1080//2,
                                       activation_distance=100)
 
-# Define what the button should do when clicked
-
 
 def callback(button: cvgui.Button):
+    # Define what the button should do when clicked
     button.x_coord = 0
     button.y_coord = 0
 
