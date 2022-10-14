@@ -1,12 +1,9 @@
-"""
-Core classes that define the requirements
-to be considered a feedback device.
-"""
+"""Interfaces describing methods of providing feedback."""
 
 from typing_extensions import Protocol
 
 class FeedbackDevice(Protocol):
-    """Interface describing a device that provides feedback."""
+    """An abstract device that provides feedback."""
 
     def provide_feedback(self) -> None:
-        """Provides feedback to the user in an abstract way."""
+        """Activates the feedback mechanism on the device."""
