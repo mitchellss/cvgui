@@ -1,14 +1,19 @@
 # Contributing
 
 Contributions and pull requests are welcome. If you wish to contribute, please
-open a new issue first and make it known that you are working on it. I
-(Stephen Mitchell) indend on supporting this project for the forseeable future
-and will attempt to merge pull requests as often as my schedule permits.
+open a new issue first and make it known that you 
+are working on it. I indend on supporting this project 
+for the forseeable future and will attempt to merge 
+pull requests as often as my schedule permits.
 
-If you find a bug, please create a new issue and tag it as such. Additionally,
-please provide the version of the package you found the bug, the desired
-behavior, the actual behavior, and any steps needed to reproduce the said
-behavior.
+If you find a bug, please create a new issue and tag 
+it as such. Additionally, please provide the 
+version of the package you found the bug, the desired
+behavior, the actual behavior, and any steps 
+needed to reproduce the said behavior.
+
+Please run `make lint` and fix any outlying issues before
+opening a pull request.
 
 # Project Layout
 
