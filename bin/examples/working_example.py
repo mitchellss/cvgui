@@ -31,7 +31,7 @@ button_1: cvgui.Button = cvgui.button(gui=ui,
 
 
 def callback(button: cvgui.Button):
-    # Define what the button should do when clicked
+    """Define what the button should do when clicked"""
     button.x_coord = 0
     button.y_coord = 0
 

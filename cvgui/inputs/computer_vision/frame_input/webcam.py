@@ -28,7 +28,7 @@ class Webcam:
         color_image = cv2.flip(color_image, 1)
 
         cv2.imshow("Video Playback", color_image)
-        c = cv2.waitKey(1)
-        if c == 27:
+        wait_key = cv2.waitKey(1)
+        if wait_key == 27:
             pass
         return color_image

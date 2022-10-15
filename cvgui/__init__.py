@@ -2,7 +2,7 @@
 `cvgui` is a library for creating body-interactive GUIs using computer
 vison.
 
-Please see the sidebar for documentation on the packages 
+Please see the sidebar for documentation on the packages
 that make up `cvgui`.
 
 # Installation
@@ -13,7 +13,7 @@ that make up `cvgui`.
 
 The inspiration for this project came from work completed under
 the James Madison University department of engineering Wearable
-Computing Research Group to quickly prototype novel methods of user 
+Computing Research Group to quickly prototype novel methods of user
 feedback. Since then, the project has been re-written to be more useful
 in any general case requiring user interfaces that can be "clicked" with
 one's body.
