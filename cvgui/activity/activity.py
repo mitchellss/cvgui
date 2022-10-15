@@ -1,9 +1,10 @@
 """
 Operates on a collection of related scenes to create a specific experience.
 
-The activity module orchestrates the interfaces of `core` packages 
+The activity module orchestrates the interfaces of `core` packages
 to run concurrently and create a coherent flow of information.
 """
+from multiprocessing.sharedctypes import SynchronizedArray
 from typing import List
 
 import multiprocessing as mp
@@ -27,7 +28,7 @@ class Activity:
     active_scene: int = 0
     """The index of the scene to render."""
 
-    pose: mp.Array = mp.Array("d", 33*4)
+    pose: SynchronizedArray = mp.Array("d", 33*4)
     """The collection of points that represent a human figure."""
 
     def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -> None:
@@ -56,20 +57,20 @@ class Activity:
         logger = mp.log_to_stderr()
         logger.setLevel(mp.SUBDEBUG)  # type: ignore
 
-        p: mp.Process = mp.Process(target=self.update_ui,
-                                   args=[self.frontend, self._scenes])
-        p.start()
+        proc: mp.Process = mp.Process(target=self.update_ui,
+                                      args=[self.frontend, self._scenes])
+        proc.start()
 
         try:
             self.update_pose()
         except KeyboardInterrupt:
-            p.kill()
+            proc.kill()
         except Exception as excpt:
             logging.error(excpt)
-            p.kill()
+            proc.kill()
             raise excpt
 
-        p.join()
+        proc.join()
 
     def update_pose(self):
         """Infinitely attempts to get pose data from the

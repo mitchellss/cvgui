@@ -6,18 +6,31 @@ import mediapipe as mp
 
 class BlazePose:
     """CVModel implementation for Google's Blazepose."""
+
     LEFT_HAND: int = 16
+    """Blazepose left hand"""
     LEFT_ELBOW: int
+    """Blazepose left elbow"""
     LEFT_SHOULDER: int
+    """Blazepose left shoulder"""
     LEFT_HIP: int
+    """Blazepose left hip"""
     LEFT_KNEE: int
+    """Blazepose left knee"""
     LEFT_FOOT: int
-    RIGHT_HAND: int = 17
+    """Blazepose left foot"""
+    RIGHT_HAND: int = 16
+    """Blazepose right hand"""
     RIGHT_ELBOW: int
+    """Blazepose right elbow"""
     RIGHT_SHOULDER: int
+    """Blazepose right shoulder"""
     RIGHT_HIP: int
+    """Blazepose right hip"""
     RIGHT_KNEE: int
+    """Blazepose right knee"""
     RIGHT_FOOT: int
+    """Blazepose right foot"""
 
     def __init__(self) -> None:
         self.pose_array = np.zeros((33, 4))
