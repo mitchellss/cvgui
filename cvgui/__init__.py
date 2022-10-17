@@ -55,7 +55,8 @@ activity.add_scene(scene_1)
 # Create a new button
 button_1: cvgui.Button = cvgui.button(gui=ui,
                                       pos=(1920//2, 1080//2),
-                                      activation_distance=100)
+                                      activation_distance=100,
+                                      color=(255,0,0,255))
 
 
 def callback(button: cvgui.Button):

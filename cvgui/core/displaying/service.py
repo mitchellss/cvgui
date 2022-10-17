@@ -16,7 +16,9 @@ class UserInterface(Protocol):
         """Sets up the user interface."""
 
     def button(self, pos: Tuple[float, float],
-               activation_distance: float) -> Button:  # type: ignore
+               activation_distance: float,
+               color: Tuple[int, int, int, int]
+               ) -> Button:  # type: ignore
         """Creates a new button on the user interface at the location specfied."""
 
     def skeleton(self, pos: Tuple[float, float], scale: int) -> Skeleton:  # type: ignore
