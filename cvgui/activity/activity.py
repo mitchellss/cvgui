@@ -27,7 +27,7 @@ class Activity:
     # Private variables
     _scenes: List[Scene] = []
 
-    active_scene: int = 0
+    _active_scene: int = 0
     """The index of the scene to render."""
 
     pose: SynchronizedArray = mp.Array("d", 33*4)
@@ -56,18 +56,18 @@ class Activity:
         Sets the active scene to the next scene in the scene array. Circles
         back to the first scene if current active scene is the last in the array.
         """
-        self.active_scene += 1
-        if self.active_scene > len(self._scenes) - 1:
-            self.active_scene = 0
+        self._active_scene += 1
+        if self._active_scene > len(self._scenes) - 1:
+            self._active_scene = 0
     
     def previous_scene(self) -> None:
         """
         Sets the active scene to the previous scene in the scene array. Circles
         back to the last scene if current active scene is the first in the array.
         """
-        self.active_scene -= 1
-        if self.active_scene < 0:
-            self.active_scene = len(self._scenes) - 1
+        self._active_scene -= 1
+        if self._active_scene < 0:
+            self._active_scene = len(self._scenes) - 1
     
     def set_scene(self, scene_num: int) -> bool:
         """
@@ -79,7 +79,7 @@ class Activity:
         """
         if scene_num < 0 or scene_num > len(self._scenes) - 1:
             return False
-        self.active_scene = scene_num
+        self._active_scene = scene_num
         return True
 
     def run(self) -> None:
@@ -131,7 +131,7 @@ class Activity:
 
             # Make sure the skeleton is updated first if it exists.
             # That way button clicks aren't a frame late
-            for component in scenes[self.active_scene].components:
+            for component in scenes[self._active_scene].components:
                 if isinstance(component, Skeleton):
                     skeleton_points = np.array(
                         self.pose.get_obj()).reshape((33, 4))
@@ -143,7 +143,7 @@ class Activity:
                     component.skeleton_points = skeleton_points
                     break
 
-            for component in scenes[self.active_scene].components:
+            for component in scenes[self._active_scene].components:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
