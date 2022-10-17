@@ -40,9 +40,9 @@ class PyGameUI:
         return PyGameButton(x_coord=x_coord, y_coord=y_coord,
                             activation_distance=activation_distance)
 
-    def skeleton(self, x_coord: float, y_coord: float) -> Skeleton:
+    def skeleton(self, x_coord: float, y_coord: float, scale: int) -> Skeleton:
         """Creates a PyGame skeleton at the specified location."""
-        return PyGameSkeleton(x_coord=x_coord, y_coord=y_coord)
+        return PyGameSkeleton(x_coord=x_coord, y_coord=y_coord, scale=scale)
 
     def new_gui(self) -> None:
         """Initializes the PyGame user interface."""
@@ -122,11 +122,12 @@ class PyGameSkeleton:
     NUM_LANDMARKS: Literal[33] = 33
     POINTS_PER_LANDMARK: Literal[4] = 4  # x, y, z, depth?
 
-    def __init__(self, x_coord: float, y_coord: float) -> None:
+    def __init__(self, x_coord: float, y_coord: float, scale: int) -> None:
         """Creates a new PyGame skeleton."""
         self.x_coord: float = x_coord
         self.y_coord: float = y_coord
         self.skeleton_points: np.ndarray = np.zeros((33, 4))
+        self.scale = scale
 
     def render(self, window) -> None:
         """Draws the skeleton on the pygame window."""
@@ -140,8 +141,8 @@ class PyGameSkeleton:
             pygame.draw.line(window, self.LIMB_COLOR, [float(line_start_x), float(line_start_y)],
                              [float(line_end_x), float(line_end_y)], self.LIMB_WIDTH)
 
-        for landmark, _ in enumerate(self.skeleton_points):
-            point_x: float = self.skeleton_points[landmark][0]
-            point_y: float = self.skeleton_points[landmark][1]
+        for _, landmark in enumerate(self.skeleton_points):
+            point_x: float = landmark[0]
+            point_y: float = landmark[1]
             pygame.draw.circle(window, self.LANDMARK_COLOR, [
                                point_x, point_y], self.LANDMARK_RADIUS, self.LANDMARK_OUTLINE_WIDTH)

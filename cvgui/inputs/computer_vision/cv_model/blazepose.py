@@ -19,7 +19,7 @@ class BlazePose:
     """Blazepose left knee"""
     LEFT_FOOT: int
     """Blazepose left foot"""
-    RIGHT_HAND: int = 16
+    RIGHT_HAND: int = 17
     """Blazepose right hand"""
     RIGHT_ELBOW: int
     """Blazepose right elbow"""
@@ -31,6 +31,8 @@ class BlazePose:
     """Blazepose right knee"""
     RIGHT_FOOT: int
     """Blazepose right foot"""
+
+    DEFAULT_SCALE: int = 450
 
     def __init__(self) -> None:
         self.pose_array = np.zeros((33, 4))
