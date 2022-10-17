@@ -63,12 +63,14 @@ class PyGameButton:
     """Button implementation for PyGame."""
 
     def __init__(self, pos: Tuple[float, float],
-                 activation_distance: float) -> None:
+                 activation_distance: float,
+                 color: Tuple[int, int, int, int]) -> None:
         """Creates a new PyGameButton at the location specified."""
         self.pos = pos
         self.activation_distance: float = activation_distance
         self.targets: List[int]
         self.callback: Callable
+        self.color: Tuple[int, int, int, int] = color
 
     def is_clicked(self, pos: Tuple[float, float]) -> bool:
         """Checks if the button has been clicked."""
@@ -81,8 +83,11 @@ class PyGameButton:
 
     def render(self, window) -> None:
         """Draws the button on the pygame window."""
+        color = pygame.color.Color(
+            self.color[0], self.color[1], 
+            self.color[2], self.color[3])
         pygame.draw.circle(
-            window, pygame.color.Color(255, 0, 0, 255),
+            window, color,
             (self.pos[X], self.pos[Y]),
             100
         )
