@@ -17,6 +17,8 @@ from cvgui.core.displaying import UserInterface
 from cvgui.core.displaying.components import Button, Skeleton
 from cvgui.core.recieving import PoseGenerator
 
+X = 0
+Y = 1
 
 class Activity:
     """A collection of scenes and the abstract logic
@@ -25,7 +27,7 @@ class Activity:
     # Private variables
     _scenes: List[Scene] = []
 
-    active_scene: int = 0
+    _active_scene: int = 0
     """The index of the scene to render."""
 
     pose: SynchronizedArray = mp.Array("d", 33*4)
@@ -48,6 +50,37 @@ class Activity:
             to the activity.
         """
         self._scenes.append(scene)
+    
+    def next_scene(self) -> None:
+        """
+        Sets the active scene to the next scene in the scene array. Circles
+        back to the first scene if current active scene is the last in the array.
+        """
+        self._active_scene += 1
+        if self._active_scene > len(self._scenes) - 1:
+            self._active_scene = 0
+    
+    def previous_scene(self) -> None:
+        """
+        Sets the active scene to the previous scene in the scene array. Circles
+        back to the last scene if current active scene is the first in the array.
+        """
+        self._active_scene -= 1
+        if self._active_scene < 0:
+            self._active_scene = len(self._scenes) - 1
+    
+    def set_scene(self, scene_num: int) -> bool:
+        """
+        Sets the active scene to the one specified by the given index.
+        Returns true if the scene switch was successful, false otherwise.
+
+        Args:
+            scene_num (int): Index of the scene to switch to.
+        """
+        if scene_num < 0 or scene_num > len(self._scenes) - 1:
+            return False
+        self._active_scene = scene_num
+        return True
 
     def run(self) -> None:
         """
@@ -98,23 +131,23 @@ class Activity:
 
             # Make sure the skeleton is updated first if it exists.
             # That way button clicks aren't a frame late
-            for component in scenes[0].components:
+            for component in scenes[self._active_scene].components:
                 if isinstance(component, Skeleton):
                     skeleton_points = np.array(
                         self.pose.get_obj()).reshape((33, 4))
                     # Scale the skeleton points and offset them
-                    skeleton_points[:, 0] = skeleton_points[:, 0] * \
+                    skeleton_points[:, X] = skeleton_points[:, X] * \
                         component.scale + component.x_coord
-                    skeleton_points[:, 1] = skeleton_points[:, 1] * \
+                    skeleton_points[:, Y] = skeleton_points[:, Y] * \
                         component.scale + component.y_coord
                     component.skeleton_points = skeleton_points
                     break
 
-            for component in scenes[0].components:
+            for component in scenes[self._active_scene].components:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                skeleton_points[target][0], skeleton_points[target][1]):
+                                skeleton_points[target][X], skeleton_points[target][Y]):
                             component.callback()
 
                 component.render(frontend.window)
