@@ -33,6 +33,7 @@ class Button(Protocol):
     targets: List[int]
     callback: Callable
     color: Tuple[int, int, int, int]
+    radius: int
 
     def is_clicked(self, pos: Tuple[float, float]) -> bool:  # type: ignore
         """Method to check whether or not the button is clicked given
@@ -60,7 +61,8 @@ class HasButton(Protocol):
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
-               color: Tuple[int, int, int, int]
+               color: Tuple[int, int, int, int],
+               radius: int
                ) -> Button:  # type: ignore
         """Creates an abstract button.
 
@@ -108,6 +110,7 @@ class HasSkeleton(Protocol):
 
 def button(gui: HasButton, pos: Tuple[float, float],
            activation_distance: float, 
+           radius: int,
            color: Tuple[int, int, int, int] = (100, 100, 100, 255)
            ) -> Button:
     """Function that can be called to create a button for any gui
@@ -126,7 +129,7 @@ def button(gui: HasButton, pos: Tuple[float, float],
     """
     return gui.button(pos=pos,
                       activation_distance=activation_distance,
-                      color=color)
+                      color=color, radius=radius)
 
 
 def skeleton(gui: HasSkeleton, pos: Tuple[float, float], scale: int) -> Skeleton:

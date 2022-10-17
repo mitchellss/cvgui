@@ -37,9 +37,12 @@ class PyGameUI:
         self.fps_clock.tick(self.fps)
 
     def button(self, pos: Tuple[float, float],
-               activation_distance: float) -> Button:
+               activation_distance: float,
+               color: Tuple[int, int, int, int],
+               radius: int = 100) -> Button:
         """Creates a PyGame button at the specified location."""
-        return PyGameButton(pos=pos, activation_distance=activation_distance)
+        return PyGameButton(pos=pos, activation_distance=activation_distance,
+            color=color, radius=radius)
 
     def skeleton(self, pos: Tuple[float, float], scale: int) -> Skeleton:
         """Creates a PyGame skeleton at the specified location."""
@@ -64,13 +67,15 @@ class PyGameButton:
 
     def __init__(self, pos: Tuple[float, float],
                  activation_distance: float,
-                 color: Tuple[int, int, int, int]) -> None:
+                 color: Tuple[int, int, int, int],
+                 radius: int) -> None:
         """Creates a new PyGameButton at the location specified."""
         self.pos = pos
         self.activation_distance: float = activation_distance
         self.targets: List[int]
         self.callback: Callable
         self.color: Tuple[int, int, int, int] = color
+        self.radius: int = radius
 
     def is_clicked(self, pos: Tuple[float, float]) -> bool:
         """Checks if the button has been clicked."""
@@ -89,7 +94,7 @@ class PyGameButton:
         pygame.draw.circle(
             window, color,
             (self.pos[X], self.pos[Y]),
-            100
+            self.radius
         )
 
 
