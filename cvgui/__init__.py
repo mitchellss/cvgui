@@ -68,7 +68,7 @@ def callback(button: cvgui.Button) -> None:
     and randomly select a new color.
     \"\"\"
     button.pos = (randrange(600, 1000, 20), randrange(200, 600, 20))
-    button.color = (randrange(0, 255, 1), randrange(0, 255, 1), 
+    button.color = (randrange(0, 255, 1), randrange(0, 255, 1),
         randrange(0, 255, 1), 255)
 
 

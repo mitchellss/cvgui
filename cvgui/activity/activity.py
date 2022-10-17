@@ -20,6 +20,7 @@ from cvgui.core.recieving import PoseGenerator
 X = 0
 Y = 1
 
+
 class Activity:
     """A collection of scenes and the abstract logic
     for their interaction."""
@@ -50,7 +51,7 @@ class Activity:
             to the activity.
         """
         self._scenes.append(scene)
-    
+
     def next_scene(self) -> None:
         """
         Sets the active scene to the next scene in the scene array. Circles
@@ -59,7 +60,7 @@ class Activity:
         self._active_scene += 1
         if self._active_scene > len(self._scenes) - 1:
             self._active_scene = 0
-    
+
     def previous_scene(self) -> None:
         """
         Sets the active scene to the previous scene in the scene array. Circles
@@ -68,7 +69,7 @@ class Activity:
         self._active_scene -= 1
         if self._active_scene < 0:
             self._active_scene = len(self._scenes) - 1
-    
+
     def set_scene(self, scene_num: int) -> bool:
         """
         Sets the active scene to the one specified by the given index.
@@ -147,7 +148,7 @@ class Activity:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                skeleton_points[target][X], skeleton_points[target][Y]):
+                                pos=(skeleton_points[target][X], skeleton_points[target][Y])):
                             component.callback()
 
                 component.render(frontend.window)

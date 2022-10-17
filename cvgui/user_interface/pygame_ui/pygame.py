@@ -1,4 +1,5 @@
 """User interface implementation of PyGame."""
+import math
 import sys
 from typing import Callable, List, Literal, Tuple
 import pygame
@@ -8,6 +9,7 @@ from cvgui.core.displaying.components import Button, Skeleton
 
 X = 0
 Y = 1
+
 
 class PyGameUI:
     """User interface implementation of PyGame."""
@@ -42,7 +44,7 @@ class PyGameUI:
                radius: int = 100) -> Button:
         """Creates a PyGame button at the specified location."""
         return PyGameButton(pos=pos, activation_distance=activation_distance,
-            color=color, radius=radius)
+                            color=color, radius=radius)
 
     def skeleton(self, pos: Tuple[float, float], scale: int) -> Skeleton:
         """Creates a PyGame skeleton at the specified location."""
@@ -80,16 +82,17 @@ class PyGameButton:
     def is_clicked(self, pos: Tuple[float, float]) -> bool:
         """Checks if the button has been clicked."""
         if abs(self.pos[X] - pos[X]) > self.activation_distance \
-        or abs(self.pos[Y] - pos[Y]) > self.activation_distance:
+                or abs(self.pos[Y] - pos[Y]) > self.activation_distance:
             return False
-        if sqrt((self.pos[X] - pos[X])**2 + (self.pos[Y] - pos[Y])**2) > self.activation_distance:
+        if math.sqrt((self.pos[X] - pos[X])**2 + (self.pos[Y] - pos[Y])**2) \
+                > self.activation_distance:
             return False
         return True
 
     def render(self, window) -> None:
         """Draws the button on the pygame window."""
         color = pygame.color.Color(
-            self.color[0], self.color[1], 
+            self.color[0], self.color[1],
             self.color[2], self.color[3])
         pygame.draw.circle(
             window, color,

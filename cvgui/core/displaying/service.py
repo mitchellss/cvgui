@@ -1,5 +1,5 @@
 """The interface to implement to be considered a user interface."""
-from typing import Any
+from typing import Any, Tuple
 from typing_extensions import Protocol
 
 from cvgui.core.displaying.components import Button, Skeleton

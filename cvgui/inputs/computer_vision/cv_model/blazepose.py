@@ -34,10 +34,10 @@ class BlazePose:
 
     DEFAULT_SCALE: int = 450
 
-    def __init__(self, min_detection_confidence: float = 0.5, 
-                        min_tracking_confidence: float = 0.5,
-                        model_complexity: int = 1) -> None:
-        self.pose_array = np.zeros((33, 4)) #TODO: make these constants
+    def __init__(self, min_detection_confidence: float = 0.5,
+                 min_tracking_confidence: float = 0.5,
+                 model_complexity: int = 1) -> None:
+        self.pose_array = np.zeros((33, 4))  # TODO: make these constants
         self.mp_pose = mp.solutions.pose  # type: ignore
         self.model = self.mp_pose.Pose(
             min_detection_confidence=min_detection_confidence,
