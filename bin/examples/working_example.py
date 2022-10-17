@@ -4,6 +4,7 @@ A button and skeleton component are added to a scene that
 takes input from a webcam and gets pose data from Google's
 Blazepose.
 """
+from random import randrange
 import cvgui
 
 # Specify input as a webcam and computer vision model as blazepose
@@ -28,12 +29,19 @@ activity.add_scene(scene_1)
 button_1: cvgui.Button = cvgui.button(gui=ui,
                                       pos=(1920//2, 1080//2),
                                       activation_distance=100,
-                                      color=(255,0,0,255))
+                                      color=(255,0,0,255),
+                                      radius=100)
 
 
-def callback(button: cvgui.Button):
-    """Define what the button should do when clicked"""
-    button.pos = (0, 0)
+def callback(button: cvgui.Button) -> None:
+    """
+    Define what the button should do when clicked.
+    In this case, randomly set a new button position
+    and randomly select a new color.
+    """
+    button.pos = (randrange(600, 1000, 20), randrange(200, 600, 20))
+    button.color = (randrange(0, 255, 1), randrange(0, 255, 1), 
+        randrange(0, 255, 1), 255)
 
 
 # Set the button to be clicked using the user's left or right hand
