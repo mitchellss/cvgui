@@ -79,14 +79,6 @@ class PyGameButton:
             return False
         return True
 
-    def set_targets(self, targets: List[int]):
-        """Sets targets."""
-        self.targets = targets
-
-    def set_callback(self, callback: Callable):
-        """Sets callback function."""
-        self.callback = callback
-
     def render(self, window) -> None:
         """Draws the button on the pygame window."""
         pygame.draw.circle(

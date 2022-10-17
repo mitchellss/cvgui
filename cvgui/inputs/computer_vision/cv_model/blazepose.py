@@ -9,36 +9,40 @@ class BlazePose:
 
     LEFT_HAND: int = 16
     """Blazepose left hand"""
-    LEFT_ELBOW: int
+    LEFT_ELBOW: int = 14
     """Blazepose left elbow"""
-    LEFT_SHOULDER: int
+    LEFT_SHOULDER: int = 12
     """Blazepose left shoulder"""
-    LEFT_HIP: int
+    LEFT_HIP: int = 24
     """Blazepose left hip"""
-    LEFT_KNEE: int
+    LEFT_KNEE: int = 26
     """Blazepose left knee"""
-    LEFT_FOOT: int
+    LEFT_FOOT: int = 28
     """Blazepose left foot"""
     RIGHT_HAND: int = 17
     """Blazepose right hand"""
-    RIGHT_ELBOW: int
+    RIGHT_ELBOW: int = 13
     """Blazepose right elbow"""
-    RIGHT_SHOULDER: int
+    RIGHT_SHOULDER: int = 11
     """Blazepose right shoulder"""
-    RIGHT_HIP: int
+    RIGHT_HIP: int = 23
     """Blazepose right hip"""
-    RIGHT_KNEE: int
+    RIGHT_KNEE: int = 25
     """Blazepose right knee"""
-    RIGHT_FOOT: int
+    RIGHT_FOOT: int = 27
     """Blazepose right foot"""
 
     DEFAULT_SCALE: int = 450
 
-    def __init__(self) -> None:
-        self.pose_array = np.zeros((33, 4))
+    def __init__(self, min_detection_confidence: float = 0.5, 
+                        min_tracking_confidence: float = 0.5,
+                        model_complexity: int = 1) -> None:
+        self.pose_array = np.zeros((33, 4)) #TODO: make these constants
         self.mp_pose = mp.solutions.pose  # type: ignore
         self.model = self.mp_pose.Pose(
-            min_detection_confidence=0.5, min_tracking_confidence=0.5, model_complexity=1)
+            min_detection_confidence=min_detection_confidence,
+            min_tracking_confidence=min_tracking_confidence,
+            model_complexity=model_complexity)
 
     def get_pose(self, frame: np.ndarray) -> np.ndarray:
         """Processes an image using Google's BlazePose and
