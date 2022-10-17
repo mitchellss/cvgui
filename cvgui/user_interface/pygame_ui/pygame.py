@@ -70,9 +70,12 @@ class PyGameButton:
         self.targets: List[int]
         self.callback: Callable
 
-    def is_clicked(self, x_coord: float, y_coord: float, distance: float) -> bool:
+    def is_clicked(self, x_coord: float, y_coord: float) -> bool:
         """Checks if the button has been clicked."""
-        if abs(self.x_coord - x_coord) > distance or abs(self.y_coord - y_coord) > distance:
+        if abs(self.x_coord - x_coord) > self.activation_distance \
+        or abs(self.y_coord - y_coord) > self.activation_distance:
+            return False
+        if sqrt((self.x_coord - x_coord)**2 + (self.y_coord - y_coord)**2) > self.activation_distance:
             return False
         return True
 

@@ -35,14 +35,13 @@ class Button(Protocol):
     targets: List[int]
     callback: Callable
 
-    def is_clicked(self, x_coord: float, y_coord: float, distance: float) -> bool:  # type: ignore
+    def is_clicked(self, x_coord: float, y_coord: float) -> bool:  # type: ignore
         """Method to check whether or not the button is clicked given
-        the coordinates of an action and the actuation distance.
+        the coordinates of an action
 
         Args:
             x_coord (float): The x coordinate of an action.
             y_coord (float): The y coordinate of an action.
-            distance (float): The actuation distance of the button.
 
         Returns:
             bool: True if the button is considered "clicked" for the given
