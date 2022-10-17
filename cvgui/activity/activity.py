@@ -147,8 +147,7 @@ class Activity:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                skeleton_points[target][X], skeleton_points[target][Y],
-                                component.activation_distance):
+                                skeleton_points[target][X], skeleton_points[target][Y]):
                             component.callback()
 
                 component.render(frontend.window)

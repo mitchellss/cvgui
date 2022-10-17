@@ -9,7 +9,7 @@ class TestUserInterface(unittest.TestCase):
         self.button = PyGameButton(0, 0, 50)
 
     def test_is_clicked_valid(self):
-        self.assertTrue(self.button.is_clicked(50, 0, 50))
+        self.assertTrue(self.button.is_clicked(50, 0))
 
     def test_is_clicked_too_far(self):
-        self.assertFalse(self.button.is_clicked(100, 0, 50))
+        self.assertFalse(self.button.is_clicked(100, 0))
