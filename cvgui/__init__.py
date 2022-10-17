@@ -43,7 +43,7 @@ pose_input: cvgui.PoseGenerator = cvgui.ComputerVisionPose(
     frame_input=frame_input, model=cv_model)
 
 # Specify GUI to be pygame
-ui: cvgui.UserInterface = cvgui.PyGameUI(width=1920//2, height=1080//2, fps=60)
+ui: cvgui.UserInterface = cvgui.PyGameUI(width=1920, height=1080, fps=60)
 
 # Create activity
 activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
@@ -54,14 +54,13 @@ activity.add_scene(scene_1)
 
 # Create a new button
 button_1: cvgui.Button = cvgui.button(gui=ui,
-                                      x_coord=1920//2, y_coord=1080//2,
+                                      pos=(1920//2, 1080//2),
                                       activation_distance=100)
 
 
 def callback(button: cvgui.Button):
     \"\"\"Define what the button should do when clicked\"\"\"
-    button.x_coord = 0
-    button.y_coord = 0
+    button.pos = (0, 0)
 
 
 # Set the button to be clicked using the user's left or right hand
@@ -72,7 +71,7 @@ button_1.callback = lambda: callback(button_1)
 
 # Create a skeleton to map pose points to
 skeleton: cvgui.Skeleton = cvgui.skeleton(
-    gui=ui, x_coord=800, y_coord=600, scale=cv_model.DEFAULT_SCALE)
+    gui=ui, pos=(800, 600), scale=cv_model.DEFAULT_SCALE)
 
 # Add the skeleton and button to the scene
 scene_1.add_component(button_1)

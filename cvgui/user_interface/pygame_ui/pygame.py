@@ -1,11 +1,13 @@
 """User interface implementation of PyGame."""
 import sys
-from typing import Callable, List, Literal
+from typing import Callable, List, Literal, Tuple
 import pygame
 from pygame.constants import QUIT
 import numpy as np
 from cvgui.core.displaying.components import Button, Skeleton
 
+X = 0
+Y = 1
 
 class PyGameUI:
     """User interface implementation of PyGame."""
@@ -34,15 +36,14 @@ class PyGameUI:
         pygame.display.update()
         self.fps_clock.tick(self.fps)
 
-    def button(self, x_coord: float, y_coord: float,
+    def button(self, pos: Tuple[float, float],
                activation_distance: float) -> Button:
         """Creates a PyGame button at the specified location."""
-        return PyGameButton(x_coord=x_coord, y_coord=y_coord,
-                            activation_distance=activation_distance)
+        return PyGameButton(pos=pos, activation_distance=activation_distance)
 
-    def skeleton(self, x_coord: float, y_coord: float, scale: int) -> Skeleton:
+    def skeleton(self, pos: Tuple[float, float], scale: int) -> Skeleton:
         """Creates a PyGame skeleton at the specified location."""
-        return PyGameSkeleton(x_coord=x_coord, y_coord=y_coord, scale=scale)
+        return PyGameSkeleton(pos=pos, scale=scale)
 
     def new_gui(self) -> None:
         """Initializes the PyGame user interface."""
@@ -61,21 +62,20 @@ class PyGameUI:
 class PyGameButton:
     """Button implementation for PyGame."""
 
-    def __init__(self, x_coord: float, y_coord: float,
+    def __init__(self, pos: Tuple[float, float],
                  activation_distance: float) -> None:
         """Creates a new PyGameButton at the location specified."""
-        self.x_coord: float = x_coord
-        self.y_coord: float = y_coord
+        self.pos = pos
         self.activation_distance: float = activation_distance
         self.targets: List[int]
         self.callback: Callable
 
-    def is_clicked(self, x_coord: float, y_coord: float) -> bool:
+    def is_clicked(self, pos: Tuple[float, float]) -> bool:
         """Checks if the button has been clicked."""
-        if abs(self.x_coord - x_coord) > self.activation_distance \
-        or abs(self.y_coord - y_coord) > self.activation_distance:
+        if abs(self.pos[X] - pos[X]) > self.activation_distance \
+        or abs(self.pos[Y] - pos[Y]) > self.activation_distance:
             return False
-        if sqrt((self.x_coord - x_coord)**2 + (self.y_coord - y_coord)**2) > self.activation_distance:
+        if sqrt((self.pos[X] - pos[X])**2 + (self.pos[Y] - pos[Y])**2) > self.activation_distance:
             return False
         return True
 
@@ -83,7 +83,7 @@ class PyGameButton:
         """Draws the button on the pygame window."""
         pygame.draw.circle(
             window, pygame.color.Color(255, 0, 0, 255),
-            (self.x_coord, self.y_coord),
+            (self.pos[X], self.pos[Y]),
             100
         )
 
@@ -117,27 +117,26 @@ class PyGameSkeleton:
     NUM_LANDMARKS: Literal[33] = 33
     POINTS_PER_LANDMARK: Literal[4] = 4  # x, y, z, depth?
 
-    def __init__(self, x_coord: float, y_coord: float, scale: int) -> None:
+    def __init__(self, pos: Tuple[float, float], scale: int) -> None:
         """Creates a new PyGame skeleton."""
-        self.x_coord: float = x_coord
-        self.y_coord: float = y_coord
+        self.pos = pos
         self.skeleton_points: np.ndarray = np.zeros((33, 4))
         self.scale = scale
 
     def render(self, window) -> None:
         """Draws the skeleton on the pygame window."""
         for landmark_pair in self.CONNECTIONS:
-            start_landmark: int = landmark_pair[0]
-            end_landmark: int = landmark_pair[1]
-            line_start_x: float = self.skeleton_points[start_landmark][0]
-            line_start_y: float = self.skeleton_points[start_landmark][1]
-            line_end_x: float = self.skeleton_points[end_landmark][0]
-            line_end_y: float = self.skeleton_points[end_landmark][1]
+            start_landmark: int = landmark_pair[X]
+            end_landmark: int = landmark_pair[Y]
+            line_start_x: float = self.skeleton_points[start_landmark][X]
+            line_start_y: float = self.skeleton_points[start_landmark][Y]
+            line_end_x: float = self.skeleton_points[end_landmark][X]
+            line_end_y: float = self.skeleton_points[end_landmark][Y]
             pygame.draw.line(window, self.LIMB_COLOR, [float(line_start_x), float(line_start_y)],
                              [float(line_end_x), float(line_end_y)], self.LIMB_WIDTH)
 
         for _, landmark in enumerate(self.skeleton_points):
-            point_x: float = landmark[0]
-            point_y: float = landmark[1]
+            point_x: float = landmark[X]
+            point_y: float = landmark[Y]
             pygame.draw.circle(window, self.LANDMARK_COLOR, [
                                point_x, point_y], self.LANDMARK_RADIUS, self.LANDMARK_OUTLINE_WIDTH)

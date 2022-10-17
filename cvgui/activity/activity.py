@@ -137,9 +137,9 @@ class Activity:
                         self.pose.get_obj()).reshape((33, 4))
                     # Scale the skeleton points and offset them
                     skeleton_points[:, X] = skeleton_points[:, X] * \
-                        component.scale + component.x_coord
+                        component.scale + component.pos[X]
                     skeleton_points[:, Y] = skeleton_points[:, Y] * \
-                        component.scale + component.y_coord
+                        component.scale + component.pos[Y]
                     component.skeleton_points = skeleton_points
                     break
 
