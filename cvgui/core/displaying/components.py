@@ -49,12 +49,6 @@ class Button(Protocol):
             conditions, False otherwise.
         """
 
-    def set_targets(self, targets: List[int]):
-        """Sets the targets for the button."""
-
-    def set_callback(self, callback: Callable):
-        """Sets the callback function for the button."""
-
     def render(self, window: Any) -> None:
         """Required method to fulfill the requirements of the
         Component interface."""

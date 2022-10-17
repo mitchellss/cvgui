@@ -37,10 +37,10 @@ def callback(button: cvgui.Button):
 
 
 # Set the button to be clicked using the user's left or right hand
-button_1.set_targets([cv_model.LEFT_HAND, cv_model.RIGHT_HAND])
+button_1.targets = [cv_model.LEFT_HAND, cv_model.RIGHT_HAND]
 
 # Link the callback function to the button
-button_1.set_callback(callback=lambda: callback(button_1))
+button_1.callback = lambda: callback(button_1)
 
 # Create a skeleton to map pose points to
 skeleton: cvgui.Skeleton = cvgui.skeleton(
