@@ -87,6 +87,7 @@ class Skeleton(Protocol):
     """
     x_coord: float
     y_coord: float
+    scale: int
     skeleton_points: np.ndarray
 
     def render(self, window: Any):
@@ -100,7 +101,7 @@ class HasSkeleton(Protocol):
     creation of a skeleton.
     """
 
-    def skeleton(self, x_coord: float, y_coord: float) -> Skeleton:  # type: ignore
+    def skeleton(self, x_coord: float, y_coord: float, scale: int) -> Skeleton:  # type: ignore
         """Creates an abstract skeleton
 
         Args:
@@ -132,7 +133,7 @@ def button(gui: HasButton, x_coord: float, y_coord: float,
                       activation_distance=activation_distance)
 
 
-def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float) -> Skeleton:
+def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float, scale: int) -> Skeleton:
     """Function that can be called to create a skeleton for any gui
     that implements the HasSkeleton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -147,4 +148,4 @@ def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float) -> Skeleton:
     Returns:
         Skeleton: The skeleton implementation for the respective gui.
     """
-    return gui.skeleton(x_coord=x_coord, y_coord=y_coord)
+    return gui.skeleton(x_coord=x_coord, y_coord=y_coord, scale=scale)
