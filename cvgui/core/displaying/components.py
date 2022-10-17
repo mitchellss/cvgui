@@ -67,8 +67,14 @@ class HasButton(Protocol):
         """Creates an abstract button.
 
         Args:
-            pos (Tuple[float, float]): The position of the button as an
-            x,y tuple
+            pos (Tuple[float, float]): The position of the 
+                button as an x,y tuple
+            activation_distance (float): The minimum distance
+                between the target and the button to be considered
+                clicked
+            color (Tuple[int, int, int, int]): rgba color value of
+                the button
+            radius (int): Radius of the button
 
         Returns:
             Button: Object that implements the Button interface.
@@ -121,8 +127,14 @@ def button(gui: HasButton, pos: Tuple[float, float],
 
     Args:
         gui (HasButton): A gui that can create a button.
-        pos (Tuple[float, float]): The position of the skeleton as an
-        x,y tuple
+        pos (Tuple[float, float]): The position of the 
+            button as an x,y tuple
+        activation_distance (float): The minimum distance
+            between the target and the button to be considered
+            clicked
+        color (Tuple[int, int, int, int]): rgba color value of
+            the button
+        radius (int): Radius of the button
 
     Returns:
         Button: The button implementation for the respective gui.
