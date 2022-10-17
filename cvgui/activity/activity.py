@@ -78,8 +78,8 @@ class Activity:
         while True:
             pose: np.ndarray = self.pose_input.get_pose()
             pose_list: List[float] = pose.flatten().tolist()
-            for index, _ in enumerate(pose_list):
-                self.pose[index] = pose_list[index] * 450 + 600
+            for index, value in enumerate(pose_list):
+                self.pose[index] = value
 
     def update_ui(self, frontend: UserInterface, scenes: List[Scene]):
         """Infinitely attempts to render the most current
@@ -92,14 +92,26 @@ class Activity:
             scenes (List[Scene]): The scenes for the activity being rendered.
         """
         frontend.new_gui()
+        skeleton_points = np.zeros((33, 4))
         while True:
             frontend.clear()
-            skeleton_points = np.array(self.pose.get_obj()).reshape((33, 4))
 
+            # Make sure the skeleton is updated first if it exists.
+            # That way button clicks aren't a frame late
             for component in scenes[0].components:
                 if isinstance(component, Skeleton):
+                    skeleton_points = np.array(
+                        self.pose.get_obj()).reshape((33, 4))
+                    # Scale the skeleton points and offset them
+                    skeleton_points[:, 0] = skeleton_points[:, 0] * \
+                        component.scale + component.x_coord
+                    skeleton_points[:, 1] = skeleton_points[:, 1] * \
+                        component.scale + component.y_coord
                     component.skeleton_points = skeleton_points
-                elif isinstance(component, Button):
+                    break
+
+            for component in scenes[0].components:
+                if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
                                 skeleton_points[target][0], skeleton_points[target][1],

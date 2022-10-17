@@ -19,7 +19,7 @@ class UserInterface(Protocol):
                activation_distance: float) -> Button:  # type: ignore
         """Creates a new button on the user interface at the location specfied."""
 
-    def skeleton(self, x_coord: float, y_coord: float) -> Skeleton:  # type: ignore
+    def skeleton(self, x_coord: float, y_coord: float, scale: int) -> Skeleton:  # type: ignore
         """Creates a new skeleton on the user interface at the location specfied."""
 
     def update(self) -> None:
