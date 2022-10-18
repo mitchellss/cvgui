@@ -65,11 +65,13 @@ class Activity:
     pose: SynchronizedArray = mp.Array(&#34;d&#34;, 33*4)
     &#34;&#34;&#34;The collection of points that represent a human figure.&#34;&#34;&#34;
 
-    def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -&gt; None:
+    def __init__(self, pose_input: PoseGenerator,
+                 frontend: UserInterface) -&gt; None:
         &#34;&#34;&#34;
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
-            frontend (UserInterface): An object that can create a user interface.
+            frontend (UserInterface): An object that can create a
+                user interface.
         &#34;&#34;&#34;
         self.pose_input: PoseGenerator = pose_input
         self.frontend: UserInterface = frontend
@@ -85,8 +87,9 @@ class Activity:
 
     def next_scene(self) -&gt; None:
         &#34;&#34;&#34;
-        Sets the active scene to the next scene in the scene array. Circles
-        back to the first scene if current active scene is the last in the array.
+        Sets the active scene to the next scene in the scene array.
+        Circles back to the first scene if current active scene is the
+        last in the array.
         &#34;&#34;&#34;
         self._active_scene += 1
         if self._active_scene &gt; len(self._scenes) - 1:
@@ -94,8 +97,9 @@ class Activity:
 
     def previous_scene(self) -&gt; None:
         &#34;&#34;&#34;
-        Sets the active scene to the previous scene in the scene array. Circles
-        back to the last scene if current active scene is the first in the array.
+        Sets the active scene to the previous scene in the scene array.
+        Circles back to the last scene if current active scene is the
+        first in the array.
         &#34;&#34;&#34;
         self._active_scene -= 1
         if self._active_scene &lt; 0:
@@ -179,7 +183,8 @@ class Activity:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                pos=(skeleton_points[target][X], skeleton_points[target][Y])):
+                                pos=(skeleton_points[target][X],
+                                     skeleton_points[target][Y])):
                             component.callback()
 
                 component.render(frontend.window)
@@ -208,7 +213,8 @@ for their interaction.</p>
 <dt><strong><code>pose_input</code></strong> :&ensp;<code>PoseGenerator</code></dt>
 <dd>An object that can generate poses.</dd>
 <dt><strong><code>frontend</code></strong> :&ensp;<code>UserInterface</code></dt>
-<dd>An object that can create a user interface.</dd>
+<dd>An object that can create a
+user interface.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -227,11 +233,13 @@ for their interaction.</p>
     pose: SynchronizedArray = mp.Array(&#34;d&#34;, 33*4)
     &#34;&#34;&#34;The collection of points that represent a human figure.&#34;&#34;&#34;
 
-    def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -&gt; None:
+    def __init__(self, pose_input: PoseGenerator,
+                 frontend: UserInterface) -&gt; None:
         &#34;&#34;&#34;
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
-            frontend (UserInterface): An object that can create a user interface.
+            frontend (UserInterface): An object that can create a
+                user interface.
         &#34;&#34;&#34;
         self.pose_input: PoseGenerator = pose_input
         self.frontend: UserInterface = frontend
@@ -247,8 +255,9 @@ for their interaction.</p>
 
     def next_scene(self) -&gt; None:
         &#34;&#34;&#34;
-        Sets the active scene to the next scene in the scene array. Circles
-        back to the first scene if current active scene is the last in the array.
+        Sets the active scene to the next scene in the scene array.
+        Circles back to the first scene if current active scene is the
+        last in the array.
         &#34;&#34;&#34;
         self._active_scene += 1
         if self._active_scene &gt; len(self._scenes) - 1:
@@ -256,8 +265,9 @@ for their interaction.</p>
 
     def previous_scene(self) -&gt; None:
         &#34;&#34;&#34;
-        Sets the active scene to the previous scene in the scene array. Circles
-        back to the last scene if current active scene is the first in the array.
+        Sets the active scene to the previous scene in the scene array.
+        Circles back to the last scene if current active scene is the
+        first in the array.
         &#34;&#34;&#34;
         self._active_scene -= 1
         if self._active_scene &lt; 0:
@@ -341,7 +351,8 @@ for their interaction.</p>
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                pos=(skeleton_points[target][X], skeleton_points[target][Y])):
+                                pos=(skeleton_points[target][X],
+                                     skeleton_points[target][Y])):
                             component.callback()
 
                 component.render(frontend.window)
@@ -386,16 +397,18 @@ for their interaction.</p>
 <span>def <span class="ident">next_scene</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sets the active scene to the next scene in the scene array. Circles
-back to the first scene if current active scene is the last in the array.</p></div>
+<div class="desc"><p>Sets the active scene to the next scene in the scene array.
+Circles back to the first scene if current active scene is the
+last in the array.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def next_scene(self) -&gt; None:
     &#34;&#34;&#34;
-    Sets the active scene to the next scene in the scene array. Circles
-    back to the first scene if current active scene is the last in the array.
+    Sets the active scene to the next scene in the scene array.
+    Circles back to the first scene if current active scene is the
+    last in the array.
     &#34;&#34;&#34;
     self._active_scene += 1
     if self._active_scene &gt; len(self._scenes) - 1:
@@ -406,16 +419,18 @@ back to the first scene if current active scene is the last in the array.</p></d
 <span>def <span class="ident">previous_scene</span></span>(<span>self) ‑> None</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Sets the active scene to the previous scene in the scene array. Circles
-back to the last scene if current active scene is the first in the array.</p></div>
+<div class="desc"><p>Sets the active scene to the previous scene in the scene array.
+Circles back to the last scene if current active scene is the
+first in the array.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def previous_scene(self) -&gt; None:
     &#34;&#34;&#34;
-    Sets the active scene to the previous scene in the scene array. Circles
-    back to the last scene if current active scene is the first in the array.
+    Sets the active scene to the previous scene in the scene array.
+    Circles back to the last scene if current active scene is the
+    first in the array.
     &#34;&#34;&#34;
     self._active_scene -= 1
     if self._active_scene &lt; 0:
@@ -557,7 +572,8 @@ concurrently while retrieving new data.</p>
             if isinstance(component, Button):
                 for target in component.targets:
                     if component.is_clicked(
-                            pos=(skeleton_points[target][X], skeleton_points[target][Y])):
+                            pos=(skeleton_points[target][X],
+                                 skeleton_points[target][Y])):
                         component.callback()
 
             component.render(frontend.window)

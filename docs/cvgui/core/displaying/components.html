@@ -134,7 +134,8 @@ class HasSkeleton(Protocol):
     creation of a skeleton.
     &#34;&#34;&#34;
 
-    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -&gt; Skeleton:  # type: ignore
         &#34;&#34;&#34;Creates an abstract skeleton
 
         Args:
@@ -176,7 +177,8 @@ def button(gui: HasButton, pos: Tuple[float, float],
                       color=color, radius=radius)
 
 
-def skeleton(gui: HasSkeleton, pos: Tuple[float, float], scale: int) -&gt; Skeleton:
+def skeleton(gui: HasSkeleton, pos: Tuple[float, float],
+             scale: int) -&gt; Skeleton:
     &#34;&#34;&#34;Function that can be called to create a skeleton for any gui
     that implements the HasSkeleton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -292,7 +294,8 @@ used.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def skeleton(gui: HasSkeleton, pos: Tuple[float, float], scale: int) -&gt; Skeleton:
+<pre><code class="python">def skeleton(gui: HasSkeleton, pos: Tuple[float, float],
+             scale: int) -&gt; Skeleton:
     &#34;&#34;&#34;Function that can be called to create a skeleton for any gui
     that implements the HasSkeleton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -620,7 +623,8 @@ creation of a skeleton.</p></div>
     creation of a skeleton.
     &#34;&#34;&#34;
 
-    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -&gt; Skeleton:  # type: ignore
         &#34;&#34;&#34;Creates an abstract skeleton
 
         Args:
@@ -658,7 +662,8 @@ creation of a skeleton.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
+<pre><code class="python">def skeleton(self, pos: Tuple[float, float],
+             scale: int) -&gt; Skeleton:  # type: ignore
     &#34;&#34;&#34;Creates an abstract skeleton
 
     Args:

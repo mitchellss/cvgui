@@ -49,8 +49,11 @@ when called upon that represent a human figure. These systems
 therefore fulfill the requirements of the `recieving` core
 package and could theoretically be implemented as core classes.
 &#34;&#34;&#34;
-from .displaying import *
-from .recieving import *</code></pre>
+from .displaying import (  # noqa
+    UserInterface, skeleton,
+    button, Skeleton, Button
+  )
+from .recieving import CVModel, FrameInput, PoseGenerator  # noqa</code></pre>
 </details>
 </section>
 <section>
@@ -59,10 +62,6 @@ from .recieving import *</code></pre>
 <dt><code class="name"><a title="cvgui.core.displaying" href="displaying/index.html">cvgui.core.displaying</a></code></dt>
 <dd>
 <div class="desc"><p>Package for graphically displaying data to the user …</p></div>
-</dd>
-<dt><code class="name"><a title="cvgui.core.providing_feedback" href="providing_feedback/index.html">cvgui.core.providing_feedback</a></code></dt>
-<dd>
-<div class="desc"><p>Package for providing feedback to the user …</p></div>
 </dd>
 <dt><code class="name"><a title="cvgui.core.recieving" href="recieving/index.html">cvgui.core.recieving</a></code></dt>
 <dd>
@@ -91,7 +90,6 @@ from .recieving import *</code></pre>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
 <li><code><a title="cvgui.core.displaying" href="displaying/index.html">cvgui.core.displaying</a></code></li>
-<li><code><a title="cvgui.core.providing_feedback" href="providing_feedback/index.html">cvgui.core.providing_feedback</a></code></li>
 <li><code><a title="cvgui.core.recieving" href="recieving/index.html">cvgui.core.recieving</a></code></li>
 </ul>
 </li>

@@ -48,10 +48,17 @@ class UserInterface(Protocol):
                activation_distance: float,
                color: Tuple[int, int, int, int]
                ) -&gt; Button:  # type: ignore
-        &#34;&#34;&#34;Creates a new button on the user interface at the location specfied.&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Creates a new button on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
-    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
-        &#34;&#34;&#34;Creates a new skeleton on the user interface at the location specfied.&#34;&#34;&#34;
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -&gt; Skeleton:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new skeleton on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
     def update(self) -&gt; None:
         &#34;&#34;&#34;Refreshes the user interface display.&#34;&#34;&#34;</code></pre>
@@ -90,10 +97,17 @@ class UserInterface(Protocol):
                activation_distance: float,
                color: Tuple[int, int, int, int]
                ) -&gt; Button:  # type: ignore
-        &#34;&#34;&#34;Creates a new button on the user interface at the location specfied.&#34;&#34;&#34;
+        &#34;&#34;&#34;
+        Creates a new button on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
-    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
-        &#34;&#34;&#34;Creates a new skeleton on the user interface at the location specfied.&#34;&#34;&#34;
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -&gt; Skeleton:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new skeleton on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
     def update(self) -&gt; None:
         &#34;&#34;&#34;Refreshes the user interface display.&#34;&#34;&#34;</code></pre>
@@ -116,7 +130,8 @@ class UserInterface(Protocol):
 <span>def <span class="ident">button</span></span>(<span>self, pos: Tuple[float, float], activation_distance: float, color: Tuple[int, int, int, int]) ‑> <a title="cvgui.core.displaying.components.Button" href="components.html#cvgui.core.displaying.components.Button">Button</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Creates a new button on the user interface at the location specfied.</p></div>
+<div class="desc"><p>Creates a new button on the user
+interface at the location specfied.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -125,7 +140,10 @@ class UserInterface(Protocol):
            activation_distance: float,
            color: Tuple[int, int, int, int]
            ) -&gt; Button:  # type: ignore
-    &#34;&#34;&#34;Creates a new button on the user interface at the location specfied.&#34;&#34;&#34;</code></pre>
+    &#34;&#34;&#34;
+    Creates a new button on the user
+    interface at the location specfied.
+    &#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 <dt id="cvgui.core.displaying.service.UserInterface.clear"><code class="name flex">
@@ -158,13 +176,18 @@ class UserInterface(Protocol):
 <span>def <span class="ident">skeleton</span></span>(<span>self, pos: Tuple[float, float], scale: int) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="components.html#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Creates a new skeleton on the user interface at the location specfied.</p></div>
+<div class="desc"><p>Creates a new skeleton on the user
+interface at the location specfied.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
-    &#34;&#34;&#34;Creates a new skeleton on the user interface at the location specfied.&#34;&#34;&#34;</code></pre>
+<pre><code class="python">def skeleton(self, pos: Tuple[float, float],
+             scale: int) -&gt; Skeleton:  # type: ignore
+    &#34;&#34;&#34;
+    Creates a new skeleton on the user
+    interface at the location specfied.
+    &#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 <dt id="cvgui.core.displaying.service.UserInterface.update"><code class="name flex">
