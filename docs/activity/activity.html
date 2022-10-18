@@ -32,9 +32,10 @@ to run concurrently and create a coherent flow of information.</p>
 <pre><code class="python">&#34;&#34;&#34;
 Operates on a collection of related scenes to create a specific experience.
 
-The activity module orchestrates the interfaces of `core` packages 
+The activity module orchestrates the interfaces of `core` packages
 to run concurrently and create a coherent flow of information.
 &#34;&#34;&#34;
+from multiprocessing.sharedctypes import SynchronizedArray
 from typing import List
 
 import multiprocessing as mp
@@ -47,6 +48,9 @@ from cvgui.core.displaying import UserInterface
 from cvgui.core.displaying.components import Button, Skeleton
 from cvgui.core.recieving import PoseGenerator
 
+X = 0
+Y = 1
+
 
 class Activity:
     &#34;&#34;&#34;A collection of scenes and the abstract logic
@@ -55,17 +59,19 @@ class Activity:
     # Private variables
     _scenes: List[Scene] = []
 
-    active_scene: int = 0
+    _active_scene: int = 0
     &#34;&#34;&#34;The index of the scene to render.&#34;&#34;&#34;
 
-    pose: mp.Array = mp.Array(&#34;d&#34;, 33*4)
+    pose: SynchronizedArray = mp.Array(&#34;d&#34;, 33*4)
     &#34;&#34;&#34;The collection of points that represent a human figure.&#34;&#34;&#34;
 
-    def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -&gt; None:
+    def __init__(self, pose_input: PoseGenerator,
+                 frontend: UserInterface) -&gt; None:
         &#34;&#34;&#34;
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
-            frontend (UserInterface): An object that can create a user interface.
+            frontend (UserInterface): An object that can create a
+                user interface.
         &#34;&#34;&#34;
         self.pose_input: PoseGenerator = pose_input
         self.frontend: UserInterface = frontend
@@ -79,6 +85,39 @@ class Activity:
         &#34;&#34;&#34;
         self._scenes.append(scene)
 
+    def next_scene(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the active scene to the next scene in the scene array.
+        Circles back to the first scene if current active scene is the
+        last in the array.
+        &#34;&#34;&#34;
+        self._active_scene += 1
+        if self._active_scene &gt; len(self._scenes) - 1:
+            self._active_scene = 0
+
+    def previous_scene(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the active scene to the previous scene in the scene array.
+        Circles back to the last scene if current active scene is the
+        first in the array.
+        &#34;&#34;&#34;
+        self._active_scene -= 1
+        if self._active_scene &lt; 0:
+            self._active_scene = len(self._scenes) - 1
+
+    def set_scene(self, scene_num: int) -&gt; bool:
+        &#34;&#34;&#34;
+        Sets the active scene to the one specified by the given index.
+        Returns true if the scene switch was successful, false otherwise.
+
+        Args:
+            scene_num (int): Index of the scene to switch to.
+        &#34;&#34;&#34;
+        if scene_num &lt; 0 or scene_num &gt; len(self._scenes) - 1:
+            return False
+        self._active_scene = scene_num
+        return True
+
     def run(self) -&gt; None:
         &#34;&#34;&#34;
         Infinitely retrieves pose data and
@@ -87,20 +126,20 @@ class Activity:
         logger = mp.log_to_stderr()
         logger.setLevel(mp.SUBDEBUG)  # type: ignore
 
-        p: mp.Process = mp.Process(target=self.update_ui,
-                                   args=[self.frontend, self._scenes])
-        p.start()
+        proc: mp.Process = mp.Process(target=self.update_ui,
+                                      args=[self.frontend, self._scenes])
+        proc.start()
 
         try:
             self.update_pose()
         except KeyboardInterrupt:
-            p.kill()
+            proc.kill()
         except Exception as excpt:
             logging.error(excpt)
-            p.kill()
+            proc.kill()
             raise excpt
 
-        p.join()
+        proc.join()
 
     def update_pose(self):
         &#34;&#34;&#34;Infinitely attempts to get pose data from the
@@ -108,8 +147,8 @@ class Activity:
         while True:
             pose: np.ndarray = self.pose_input.get_pose()
             pose_list: List[float] = pose.flatten().tolist()
-            for index, _ in enumerate(pose_list):
-                self.pose[index] = pose_list[index] * 450 + 600
+            for index, value in enumerate(pose_list):
+                self.pose[index] = value
 
     def update_ui(self, frontend: UserInterface, scenes: List[Scene]):
         &#34;&#34;&#34;Infinitely attempts to render the most current
@@ -122,18 +161,30 @@ class Activity:
             scenes (List[Scene]): The scenes for the activity being rendered.
         &#34;&#34;&#34;
         frontend.new_gui()
+        skeleton_points = np.zeros((33, 4))
         while True:
             frontend.clear()
-            skeleton_points = np.array(self.pose.get_obj()).reshape((33, 4))
 
-            for component in scenes[0].components:
+            # Make sure the skeleton is updated first if it exists.
+            # That way button clicks aren&#39;t a frame late
+            for component in scenes[self._active_scene].components:
                 if isinstance(component, Skeleton):
+                    skeleton_points = np.array(
+                        self.pose.get_obj()).reshape((33, 4))
+                    # Scale the skeleton points and offset them
+                    skeleton_points[:, X] = skeleton_points[:, X] * \
+                        component.scale + component.pos[X]
+                    skeleton_points[:, Y] = skeleton_points[:, Y] * \
+                        component.scale + component.pos[Y]
                     component.skeleton_points = skeleton_points
-                elif isinstance(component, Button):
+                    break
+
+            for component in scenes[self._active_scene].components:
+                if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                skeleton_points[target][0], skeleton_points[target][1],
-                                component.activation_distance):
+                                pos=(skeleton_points[target][X],
+                                     skeleton_points[target][Y])):
                             component.callback()
 
                 component.render(frontend.window)
@@ -162,7 +213,8 @@ for their interaction.</p>
 <dt><strong><code>pose_input</code></strong> :&ensp;<code>PoseGenerator</code></dt>
 <dd>An object that can generate poses.</dd>
 <dt><strong><code>frontend</code></strong> :&ensp;<code>UserInterface</code></dt>
-<dd>An object that can create a user interface.</dd>
+<dd>An object that can create a
+user interface.</dd>
 </dl></div>
 <details class="source">
 <summary>
@@ -175,17 +227,19 @@ for their interaction.</p>
     # Private variables
     _scenes: List[Scene] = []
 
-    active_scene: int = 0
+    _active_scene: int = 0
     &#34;&#34;&#34;The index of the scene to render.&#34;&#34;&#34;
 
-    pose: mp.Array = mp.Array(&#34;d&#34;, 33*4)
+    pose: SynchronizedArray = mp.Array(&#34;d&#34;, 33*4)
     &#34;&#34;&#34;The collection of points that represent a human figure.&#34;&#34;&#34;
 
-    def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -&gt; None:
+    def __init__(self, pose_input: PoseGenerator,
+                 frontend: UserInterface) -&gt; None:
         &#34;&#34;&#34;
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
-            frontend (UserInterface): An object that can create a user interface.
+            frontend (UserInterface): An object that can create a
+                user interface.
         &#34;&#34;&#34;
         self.pose_input: PoseGenerator = pose_input
         self.frontend: UserInterface = frontend
@@ -199,6 +253,39 @@ for their interaction.</p>
         &#34;&#34;&#34;
         self._scenes.append(scene)
 
+    def next_scene(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the active scene to the next scene in the scene array.
+        Circles back to the first scene if current active scene is the
+        last in the array.
+        &#34;&#34;&#34;
+        self._active_scene += 1
+        if self._active_scene &gt; len(self._scenes) - 1:
+            self._active_scene = 0
+
+    def previous_scene(self) -&gt; None:
+        &#34;&#34;&#34;
+        Sets the active scene to the previous scene in the scene array.
+        Circles back to the last scene if current active scene is the
+        first in the array.
+        &#34;&#34;&#34;
+        self._active_scene -= 1
+        if self._active_scene &lt; 0:
+            self._active_scene = len(self._scenes) - 1
+
+    def set_scene(self, scene_num: int) -&gt; bool:
+        &#34;&#34;&#34;
+        Sets the active scene to the one specified by the given index.
+        Returns true if the scene switch was successful, false otherwise.
+
+        Args:
+            scene_num (int): Index of the scene to switch to.
+        &#34;&#34;&#34;
+        if scene_num &lt; 0 or scene_num &gt; len(self._scenes) - 1:
+            return False
+        self._active_scene = scene_num
+        return True
+
     def run(self) -&gt; None:
         &#34;&#34;&#34;
         Infinitely retrieves pose data and
@@ -207,20 +294,20 @@ for their interaction.</p>
         logger = mp.log_to_stderr()
         logger.setLevel(mp.SUBDEBUG)  # type: ignore
 
-        p: mp.Process = mp.Process(target=self.update_ui,
-                                   args=[self.frontend, self._scenes])
-        p.start()
+        proc: mp.Process = mp.Process(target=self.update_ui,
+                                      args=[self.frontend, self._scenes])
+        proc.start()
 
         try:
             self.update_pose()
         except KeyboardInterrupt:
-            p.kill()
+            proc.kill()
         except Exception as excpt:
             logging.error(excpt)
-            p.kill()
+            proc.kill()
             raise excpt
 
-        p.join()
+        proc.join()
 
     def update_pose(self):
         &#34;&#34;&#34;Infinitely attempts to get pose data from the
@@ -228,8 +315,8 @@ for their interaction.</p>
         while True:
             pose: np.ndarray = self.pose_input.get_pose()
             pose_list: List[float] = pose.flatten().tolist()
-            for index, _ in enumerate(pose_list):
-                self.pose[index] = pose_list[index] * 450 + 600
+            for index, value in enumerate(pose_list):
+                self.pose[index] = value
 
     def update_ui(self, frontend: UserInterface, scenes: List[Scene]):
         &#34;&#34;&#34;Infinitely attempts to render the most current
@@ -242,18 +329,30 @@ for their interaction.</p>
             scenes (List[Scene]): The scenes for the activity being rendered.
         &#34;&#34;&#34;
         frontend.new_gui()
+        skeleton_points = np.zeros((33, 4))
         while True:
             frontend.clear()
-            skeleton_points = np.array(self.pose.get_obj()).reshape((33, 4))
 
-            for component in scenes[0].components:
+            # Make sure the skeleton is updated first if it exists.
+            # That way button clicks aren&#39;t a frame late
+            for component in scenes[self._active_scene].components:
                 if isinstance(component, Skeleton):
+                    skeleton_points = np.array(
+                        self.pose.get_obj()).reshape((33, 4))
+                    # Scale the skeleton points and offset them
+                    skeleton_points[:, X] = skeleton_points[:, X] * \
+                        component.scale + component.pos[X]
+                    skeleton_points[:, Y] = skeleton_points[:, Y] * \
+                        component.scale + component.pos[Y]
                     component.skeleton_points = skeleton_points
-                elif isinstance(component, Button):
+                    break
+
+            for component in scenes[self._active_scene].components:
+                if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                skeleton_points[target][0], skeleton_points[target][1],
-                                component.activation_distance):
+                                pos=(skeleton_points[target][X],
+                                     skeleton_points[target][Y])):
                             component.callback()
 
                 component.render(frontend.window)
@@ -262,11 +361,7 @@ for their interaction.</p>
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="cvgui.activity.activity.Activity.active_scene"><code class="name">var <span class="ident">active_scene</span> : int</code></dt>
-<dd>
-<div class="desc"><p>The index of the scene to render.</p></div>
-</dd>
-<dt id="cvgui.activity.activity.Activity.pose"><code class="name">var <span class="ident">pose</span> : <bound method BaseContext.Array of <multiprocessing.context.DefaultContext object at 0x7fa1ab281cd0>></code></dt>
+<dt id="cvgui.activity.activity.Activity.pose"><code class="name">var <span class="ident">pose</span> : multiprocessing.sharedctypes.SynchronizedArray</code></dt>
 <dd>
 <div class="desc"><p>The collection of points that represent a human figure.</p></div>
 </dd>
@@ -298,6 +393,50 @@ for their interaction.</p>
     self._scenes.append(scene)</code></pre>
 </details>
 </dd>
+<dt id="cvgui.activity.activity.Activity.next_scene"><code class="name flex">
+<span>def <span class="ident">next_scene</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the active scene to the next scene in the scene array.
+Circles back to the first scene if current active scene is the
+last in the array.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def next_scene(self) -&gt; None:
+    &#34;&#34;&#34;
+    Sets the active scene to the next scene in the scene array.
+    Circles back to the first scene if current active scene is the
+    last in the array.
+    &#34;&#34;&#34;
+    self._active_scene += 1
+    if self._active_scene &gt; len(self._scenes) - 1:
+        self._active_scene = 0</code></pre>
+</details>
+</dd>
+<dt id="cvgui.activity.activity.Activity.previous_scene"><code class="name flex">
+<span>def <span class="ident">previous_scene</span></span>(<span>self) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the active scene to the previous scene in the scene array.
+Circles back to the last scene if current active scene is the
+first in the array.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def previous_scene(self) -&gt; None:
+    &#34;&#34;&#34;
+    Sets the active scene to the previous scene in the scene array.
+    Circles back to the last scene if current active scene is the
+    first in the array.
+    &#34;&#34;&#34;
+    self._active_scene -= 1
+    if self._active_scene &lt; 0:
+        self._active_scene = len(self._scenes) - 1</code></pre>
+</details>
+</dd>
 <dt id="cvgui.activity.activity.Activity.run"><code class="name flex">
 <span>def <span class="ident">run</span></span>(<span>self) ‑> None</span>
 </code></dt>
@@ -316,20 +455,49 @@ renders the components of added scenes.</p></div>
     logger = mp.log_to_stderr()
     logger.setLevel(mp.SUBDEBUG)  # type: ignore
 
-    p: mp.Process = mp.Process(target=self.update_ui,
-                               args=[self.frontend, self._scenes])
-    p.start()
+    proc: mp.Process = mp.Process(target=self.update_ui,
+                                  args=[self.frontend, self._scenes])
+    proc.start()
 
     try:
         self.update_pose()
     except KeyboardInterrupt:
-        p.kill()
+        proc.kill()
     except Exception as excpt:
         logging.error(excpt)
-        p.kill()
+        proc.kill()
         raise excpt
 
-    p.join()</code></pre>
+    proc.join()</code></pre>
+</details>
+</dd>
+<dt id="cvgui.activity.activity.Activity.set_scene"><code class="name flex">
+<span>def <span class="ident">set_scene</span></span>(<span>self, scene_num: int) ‑> bool</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Sets the active scene to the one specified by the given index.
+Returns true if the scene switch was successful, false otherwise.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>scene_num</code></strong> :&ensp;<code>int</code></dt>
+<dd>Index of the scene to switch to.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set_scene(self, scene_num: int) -&gt; bool:
+    &#34;&#34;&#34;
+    Sets the active scene to the one specified by the given index.
+    Returns true if the scene switch was successful, false otherwise.
+
+    Args:
+        scene_num (int): Index of the scene to switch to.
+    &#34;&#34;&#34;
+    if scene_num &lt; 0 or scene_num &gt; len(self._scenes) - 1:
+        return False
+    self._active_scene = scene_num
+    return True</code></pre>
 </details>
 </dd>
 <dt id="cvgui.activity.activity.Activity.update_pose"><code class="name flex">
@@ -348,8 +516,8 @@ global pose input. Does not run well in a sub-process.</p></div>
     while True:
         pose: np.ndarray = self.pose_input.get_pose()
         pose_list: List[float] = pose.flatten().tolist()
-        for index, _ in enumerate(pose_list):
-            self.pose[index] = pose_list[index] * 450 + 600</code></pre>
+        for index, value in enumerate(pose_list):
+            self.pose[index] = value</code></pre>
 </details>
 </dd>
 <dt id="cvgui.activity.activity.Activity.update_ui"><code class="name flex">
@@ -382,18 +550,30 @@ concurrently while retrieving new data.</p>
         scenes (List[Scene]): The scenes for the activity being rendered.
     &#34;&#34;&#34;
     frontend.new_gui()
+    skeleton_points = np.zeros((33, 4))
     while True:
         frontend.clear()
-        skeleton_points = np.array(self.pose.get_obj()).reshape((33, 4))
 
-        for component in scenes[0].components:
+        # Make sure the skeleton is updated first if it exists.
+        # That way button clicks aren&#39;t a frame late
+        for component in scenes[self._active_scene].components:
             if isinstance(component, Skeleton):
+                skeleton_points = np.array(
+                    self.pose.get_obj()).reshape((33, 4))
+                # Scale the skeleton points and offset them
+                skeleton_points[:, X] = skeleton_points[:, X] * \
+                    component.scale + component.pos[X]
+                skeleton_points[:, Y] = skeleton_points[:, Y] * \
+                    component.scale + component.pos[Y]
                 component.skeleton_points = skeleton_points
-            elif isinstance(component, Button):
+                break
+
+        for component in scenes[self._active_scene].components:
+            if isinstance(component, Button):
                 for target in component.targets:
                     if component.is_clicked(
-                            skeleton_points[target][0], skeleton_points[target][1],
-                            component.activation_distance):
+                            pos=(skeleton_points[target][X],
+                                 skeleton_points[target][Y])):
                         component.callback()
 
             component.render(frontend.window)
@@ -422,10 +602,12 @@ concurrently while retrieving new data.</p>
 <li>
 <h4><code><a title="cvgui.activity.activity.Activity" href="#cvgui.activity.activity.Activity">Activity</a></code></h4>
 <ul class="two-column">
-<li><code><a title="cvgui.activity.activity.Activity.active_scene" href="#cvgui.activity.activity.Activity.active_scene">active_scene</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.add_scene" href="#cvgui.activity.activity.Activity.add_scene">add_scene</a></code></li>
+<li><code><a title="cvgui.activity.activity.Activity.next_scene" href="#cvgui.activity.activity.Activity.next_scene">next_scene</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.pose" href="#cvgui.activity.activity.Activity.pose">pose</a></code></li>
+<li><code><a title="cvgui.activity.activity.Activity.previous_scene" href="#cvgui.activity.activity.Activity.previous_scene">previous_scene</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.run" href="#cvgui.activity.activity.Activity.run">run</a></code></li>
+<li><code><a title="cvgui.activity.activity.Activity.set_scene" href="#cvgui.activity.activity.Activity.set_scene">set_scene</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.update_pose" href="#cvgui.activity.activity.Activity.update_pose">update_pose</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.update_ui" href="#cvgui.activity.activity.Activity.update_ui">update_ui</a></code></li>
 </ul>

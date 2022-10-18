@@ -28,7 +28,7 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;The interface to implement to be considered a user interface.&#34;&#34;&#34;
-from typing import Any, Callable, List
+from typing import Any, Tuple
 from typing_extensions import Protocol
 
 from cvgui.core.displaying.components import Button, Skeleton
@@ -44,12 +44,21 @@ class UserInterface(Protocol):
     def new_gui(self) -&gt; None:
         &#34;&#34;&#34;Sets up the user interface.&#34;&#34;&#34;
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -&gt; Button:  # type: ignore
-        &#34;&#34;&#34;Creates a new button on the user interface at the location specfied.&#34;&#34;&#34;
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int]
+               ) -&gt; Button:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new button on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
-    def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:  # type: ignore
-        &#34;&#34;&#34;Creates a new skeleton on the user interface at the location specfied.&#34;&#34;&#34;
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -&gt; Skeleton:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new skeleton on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
     def update(self) -&gt; None:
         &#34;&#34;&#34;Refreshes the user interface display.&#34;&#34;&#34;</code></pre>
@@ -84,12 +93,21 @@ class UserInterface(Protocol):
     def new_gui(self) -&gt; None:
         &#34;&#34;&#34;Sets up the user interface.&#34;&#34;&#34;
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -&gt; Button:  # type: ignore
-        &#34;&#34;&#34;Creates a new button on the user interface at the location specfied.&#34;&#34;&#34;
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int]
+               ) -&gt; Button:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new button on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
-    def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:  # type: ignore
-        &#34;&#34;&#34;Creates a new skeleton on the user interface at the location specfied.&#34;&#34;&#34;
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -&gt; Skeleton:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new skeleton on the user
+        interface at the location specfied.
+        &#34;&#34;&#34;
 
     def update(self) -&gt; None:
         &#34;&#34;&#34;Refreshes the user interface display.&#34;&#34;&#34;</code></pre>
@@ -109,17 +127,23 @@ class UserInterface(Protocol):
 <h3>Methods</h3>
 <dl>
 <dt id="cvgui.core.displaying.service.UserInterface.button"><code class="name flex">
-<span>def <span class="ident">button</span></span>(<span>self, x_coord: float, y_coord: float, activation_distance: float) ‑> <a title="cvgui.core.displaying.components.Button" href="components.html#cvgui.core.displaying.components.Button">Button</a></span>
+<span>def <span class="ident">button</span></span>(<span>self, pos: Tuple[float, float], activation_distance: float, color: Tuple[int, int, int, int]) ‑> <a title="cvgui.core.displaying.components.Button" href="components.html#cvgui.core.displaying.components.Button">Button</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Creates a new button on the user interface at the location specfied.</p></div>
+<div class="desc"><p>Creates a new button on the user
+interface at the location specfied.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def button(self, x_coord: float, y_coord: float,
-           activation_distance: float) -&gt; Button:  # type: ignore
-    &#34;&#34;&#34;Creates a new button on the user interface at the location specfied.&#34;&#34;&#34;</code></pre>
+<pre><code class="python">def button(self, pos: Tuple[float, float],
+           activation_distance: float,
+           color: Tuple[int, int, int, int]
+           ) -&gt; Button:  # type: ignore
+    &#34;&#34;&#34;
+    Creates a new button on the user
+    interface at the location specfied.
+    &#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 <dt id="cvgui.core.displaying.service.UserInterface.clear"><code class="name flex">
@@ -149,16 +173,21 @@ class UserInterface(Protocol):
 </details>
 </dd>
 <dt id="cvgui.core.displaying.service.UserInterface.skeleton"><code class="name flex">
-<span>def <span class="ident">skeleton</span></span>(<span>self, x_coord: float, y_coord: float) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="components.html#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
+<span>def <span class="ident">skeleton</span></span>(<span>self, pos: Tuple[float, float], scale: int) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="components.html#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
 </code></dt>
 <dd>
-<div class="desc"><p>Creates a new skeleton on the user interface at the location specfied.</p></div>
+<div class="desc"><p>Creates a new skeleton on the user
+interface at the location specfied.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:  # type: ignore
-    &#34;&#34;&#34;Creates a new skeleton on the user interface at the location specfied.&#34;&#34;&#34;</code></pre>
+<pre><code class="python">def skeleton(self, pos: Tuple[float, float],
+             scale: int) -&gt; Skeleton:  # type: ignore
+    &#34;&#34;&#34;
+    Creates a new skeleton on the user
+    interface at the location specfied.
+    &#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 <dt id="cvgui.core.displaying.service.UserInterface.update"><code class="name flex">
