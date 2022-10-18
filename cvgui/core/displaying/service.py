@@ -1,5 +1,5 @@
 """The interface to implement to be considered a user interface."""
-from typing import Any
+from typing import Any, Tuple
 from typing_extensions import Protocol
 
 from cvgui.core.displaying.components import Button, Skeleton
@@ -15,12 +15,21 @@ class UserInterface(Protocol):
     def new_gui(self) -> None:
         """Sets up the user interface."""
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -> Button:  # type: ignore
-        """Creates a new button on the user interface at the location specfied."""
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int]
+               ) -> Button:  # type: ignore
+        """
+        Creates a new button on the user
+        interface at the location specfied.
+        """
 
-    def skeleton(self, x_coord: float, y_coord: float, scale: int) -> Skeleton:  # type: ignore
-        """Creates a new skeleton on the user interface at the location specfied."""
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -> Skeleton:  # type: ignore
+        """
+        Creates a new skeleton on the user
+        interface at the location specfied.
+        """
 
     def update(self) -> None:
         """Refreshes the user interface display."""

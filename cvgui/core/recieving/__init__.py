@@ -7,4 +7,4 @@ by the system. Pose data can either be retrieved by
 a combination of a computer vision model and frame input
 or through a generic pose generator.
 """
-from .service import CVModel, FrameInput, PoseGenerator
+from .service import CVModel, FrameInput, PoseGenerator  # noqa

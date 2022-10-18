@@ -9,5 +9,5 @@ concrete implementations, the logic can be re-used for
 any combination of concrete implementations that implement
 those interfaces.
 """
-from .activity import Activity
-from .scene import Scene
+from .activity import Activity  # noqa
+from .scene import Scene  # noqa

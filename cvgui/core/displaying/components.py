@@ -5,7 +5,7 @@ Abstract components to be implemented by concrete
 GUI classes and interafaces that require the implementation
 of said classes.
 """
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Tuple
 from typing_extensions import Protocol, runtime_checkable
 import numpy as np
 
@@ -14,8 +14,7 @@ class Component(Protocol):
     """The base interface that defines what a component is.
     In order to be a component, an object must have x and
     y coordinates and be able to be rendered."""
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
 
     def render(self, window: Any) -> None:
         """Renders the component onto the specified window.
@@ -29,20 +28,20 @@ class Component(Protocol):
 @runtime_checkable
 class Button(Protocol):
     """Interface describing what a button must do."""
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
     activation_distance: float
     targets: List[int]
     callback: Callable
+    color: Tuple[int, int, int, int]
+    radius: int
 
-    def is_clicked(self, x_coord: float, y_coord: float, distance: float) -> bool:  # type: ignore
+    def is_clicked(self, pos: Tuple[float, float]) -> bool:  # type: ignore
         """Method to check whether or not the button is clicked given
-        the coordinates of an action and the actuation distance.
+        the coordinates of an action
 
         Args:
-            x_coord (float): The x coordinate of an action.
-            y_coord (float): The y coordinate of an action.
-            distance (float): The actuation distance of the button.
+            pos (Tuple[float, float]): The position of the button as an
+            x,y tuple
 
         Returns:
             bool: True if the button is considered "clicked" for the given
@@ -60,13 +59,22 @@ class HasButton(Protocol):
     creation of a button.
     """
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -> Button:  # type: ignore
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int],
+               radius: int
+               ) -> Button:  # type: ignore
         """Creates an abstract button.
 
         Args:
-            x_coord (float): x coordinate of the button.
-            y_coord (float): y coordinate of the button.
+            pos (Tuple[float, float]): The position of the
+                button as an x,y tuple
+            activation_distance (float): The minimum distance
+                between the target and the button to be considered
+                clicked
+            color (Tuple[int, int, int, int]): rgba color value of
+                the button
+            radius (int): Radius of the button
 
         Returns:
             Button: Object that implements the Button interface.
@@ -79,8 +87,7 @@ class Skeleton(Protocol):
     Interface describing how a component must act to be considered
     a Skeleton.
     """
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
     scale: int
     skeleton_points: np.ndarray
 
@@ -95,20 +102,24 @@ class HasSkeleton(Protocol):
     creation of a skeleton.
     """
 
-    def skeleton(self, x_coord: float, y_coord: float, scale: int) -> Skeleton:  # type: ignore
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -> Skeleton:  # type: ignore
         """Creates an abstract skeleton
 
         Args:
-            x_coord (float): x coordinate of the skeleton center point
-            y_coord (float): y coordinate of the skeleton center point
+            pos (Tuple[float, float]): The position of the skeleton as an
+            x,y tuple
 
         Returns:
             Skeleton: Object that implements the Skeleton interface.
         """
 
 
-def button(gui: HasButton, x_coord: float, y_coord: float,
-           activation_distance: float) -> Button:
+def button(gui: HasButton, pos: Tuple[float, float],
+           activation_distance: float,
+           radius: int,
+           color: Tuple[int, int, int, int] = (100, 100, 100, 255)
+           ) -> Button:
     """Function that can be called to create a button for any gui
     that implements the HasButton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -117,17 +128,25 @@ def button(gui: HasButton, x_coord: float, y_coord: float,
 
     Args:
         gui (HasButton): A gui that can create a button.
-        x_coord (float): The x coordinate of the button to be created.
-        y_coord (float): The y coordinate of the button to be created.
+        pos (Tuple[float, float]): The position of the
+            button as an x,y tuple
+        activation_distance (float): The minimum distance
+            between the target and the button to be considered
+            clicked
+        color (Tuple[int, int, int, int]): rgba color value of
+            the button
+        radius (int): Radius of the button
 
     Returns:
         Button: The button implementation for the respective gui.
     """
-    return gui.button(x_coord=x_coord, y_coord=y_coord,
-                      activation_distance=activation_distance)
+    return gui.button(pos=pos,
+                      activation_distance=activation_distance,
+                      color=color, radius=radius)
 
 
-def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float, scale: int) -> Skeleton:
+def skeleton(gui: HasSkeleton, pos: Tuple[float, float],
+             scale: int) -> Skeleton:
     """Function that can be called to create a skeleton for any gui
     that implements the HasSkeleton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -136,10 +155,10 @@ def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float, scale: int) -> Sk
 
     Args:
         gui (HasButton): A gui that can create a skeleton.
-        x_coord (float): The x coordinate of the skeleton to be created.
-        y_coord (float): The y coordinate of the skeleton to be created.
+        pos (Tuple[float, float]): The position of the skeleton as an
+        x,y tuple
 
     Returns:
         Skeleton: The skeleton implementation for the respective gui.
     """
-    return gui.skeleton(x_coord=x_coord, y_coord=y_coord, scale=scale)
+    return gui.skeleton(pos=pos, scale=scale)

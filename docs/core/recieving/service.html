@@ -36,29 +36,52 @@ class CVModel(Protocol):
     &#34;&#34;&#34;The requirements to be considered a computer vision model.&#34;&#34;&#34;
 
     LEFT_HAND: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left hand&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left hand&#34;&#34;&#34;
+
     LEFT_ELBOW: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left elbow&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left elbow&#34;&#34;&#34;
+
     LEFT_SHOULDER: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left shoulder&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left shoulder&#34;&#34;&#34;
+
     LEFT_HIP: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left hip&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left hip&#34;&#34;&#34;
+
     LEFT_KNEE: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left knee&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left knee&#34;&#34;&#34;
+
     LEFT_FOOT: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left foot&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left foot&#34;&#34;&#34;
+
     RIGHT_HAND: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right hand&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right hand&#34;&#34;&#34;
+
     RIGHT_ELBOW: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right elbow&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right elbow&#34;&#34;&#34;
+
     RIGHT_SHOULDER: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right shoulder&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right shoulder&#34;&#34;&#34;
+
     RIGHT_HIP: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right hip&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right hip&#34;&#34;&#34;
+
     RIGHT_KNEE: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right knee&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right knee&#34;&#34;&#34;
+
     RIGHT_FOOT: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right foot&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right foot&#34;&#34;&#34;
 
     def get_pose(self, frame: np.ndarray) -&gt; np.ndarray:  # type: ignore
         &#34;&#34;&#34;Retrieves the points making up a pose (skeleton) for a given
@@ -127,29 +150,52 @@ class PoseGenerator(Protocol):
     &#34;&#34;&#34;The requirements to be considered a computer vision model.&#34;&#34;&#34;
 
     LEFT_HAND: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left hand&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left hand&#34;&#34;&#34;
+
     LEFT_ELBOW: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left elbow&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left elbow&#34;&#34;&#34;
+
     LEFT_SHOULDER: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left shoulder&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left shoulder&#34;&#34;&#34;
+
     LEFT_HIP: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left hip&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left hip&#34;&#34;&#34;
+
     LEFT_KNEE: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left knee&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left knee&#34;&#34;&#34;
+
     LEFT_FOOT: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s left foot&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s left foot&#34;&#34;&#34;
+
     RIGHT_HAND: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right hand&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right hand&#34;&#34;&#34;
+
     RIGHT_ELBOW: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right elbow&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right elbow&#34;&#34;&#34;
+
     RIGHT_SHOULDER: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right shoulder&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right shoulder&#34;&#34;&#34;
+
     RIGHT_HIP: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right hip&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right hip&#34;&#34;&#34;
+
     RIGHT_KNEE: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right knee&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right knee&#34;&#34;&#34;
+
     RIGHT_FOOT: int
-    &#34;&#34;&#34;Index of the model&#39;s pose array that represents the user&#39;s right foot&#34;&#34;&#34;
+    &#34;&#34;&#34;Index of the model&#39;s pose array that
+    represents the user&#39;s right foot&#34;&#34;&#34;
 
     def get_pose(self, frame: np.ndarray) -&gt; np.ndarray:  # type: ignore
         &#34;&#34;&#34;Retrieves the points making up a pose (skeleton) for a given
@@ -173,51 +219,63 @@ class PoseGenerator(Protocol):
 <dl>
 <dt id="cvgui.core.recieving.service.CVModel.LEFT_ELBOW"><code class="name">var <span class="ident">LEFT_ELBOW</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's left elbow</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's left elbow</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.LEFT_FOOT"><code class="name">var <span class="ident">LEFT_FOOT</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's left foot</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's left foot</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.LEFT_HAND"><code class="name">var <span class="ident">LEFT_HAND</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's left hand</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's left hand</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.LEFT_HIP"><code class="name">var <span class="ident">LEFT_HIP</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's left hip</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's left hip</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.LEFT_KNEE"><code class="name">var <span class="ident">LEFT_KNEE</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's left knee</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's left knee</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.LEFT_SHOULDER"><code class="name">var <span class="ident">LEFT_SHOULDER</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's left shoulder</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's left shoulder</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.RIGHT_ELBOW"><code class="name">var <span class="ident">RIGHT_ELBOW</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's right elbow</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's right elbow</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.RIGHT_FOOT"><code class="name">var <span class="ident">RIGHT_FOOT</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's right foot</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's right foot</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.RIGHT_HAND"><code class="name">var <span class="ident">RIGHT_HAND</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's right hand</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's right hand</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.RIGHT_HIP"><code class="name">var <span class="ident">RIGHT_HIP</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's right hip</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's right hip</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.RIGHT_KNEE"><code class="name">var <span class="ident">RIGHT_KNEE</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's right knee</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's right knee</p></div>
 </dd>
 <dt id="cvgui.core.recieving.service.CVModel.RIGHT_SHOULDER"><code class="name">var <span class="ident">RIGHT_SHOULDER</span> : int</code></dt>
 <dd>
-<div class="desc"><p>Index of the model's pose array that represents the user's right shoulder</p></div>
+<div class="desc"><p>Index of the model's pose array that
+represents the user's right shoulder</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>

@@ -38,8 +38,8 @@ such that it can more easily support a varied array of inputs, graphical
 outputs, and feedback devices. Core business logic is stored in
 sub-packages under the `core` package. These include:
 - `displaying`: Interfaces and logic for displaying data
-- `providing_feedback`: Interfaces and logic for providing feedback to user
 - `recieving`: Interfaces and logic for data input
+<!-- - `providing_feedback`: Interfaces and logic for providing feedback to user -->
 <!-- - `logging`: Interfaces and logic for logging  -->
 
 The interfaces ("Protocols" in Python) in these core packages define

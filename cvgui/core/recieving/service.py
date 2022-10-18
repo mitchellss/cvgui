@@ -7,29 +7,52 @@ class CVModel(Protocol):
     """The requirements to be considered a computer vision model."""
 
     LEFT_HAND: int
-    """Index of the model's pose array that represents the user's left hand"""
+    """Index of the model's pose array that
+    represents the user's left hand"""
+
     LEFT_ELBOW: int
-    """Index of the model's pose array that represents the user's left elbow"""
+    """Index of the model's pose array that
+    represents the user's left elbow"""
+
     LEFT_SHOULDER: int
-    """Index of the model's pose array that represents the user's left shoulder"""
+    """Index of the model's pose array that
+    represents the user's left shoulder"""
+
     LEFT_HIP: int
-    """Index of the model's pose array that represents the user's left hip"""
+    """Index of the model's pose array that
+    represents the user's left hip"""
+
     LEFT_KNEE: int
-    """Index of the model's pose array that represents the user's left knee"""
+    """Index of the model's pose array that
+    represents the user's left knee"""
+
     LEFT_FOOT: int
-    """Index of the model's pose array that represents the user's left foot"""
+    """Index of the model's pose array that
+    represents the user's left foot"""
+
     RIGHT_HAND: int
-    """Index of the model's pose array that represents the user's right hand"""
+    """Index of the model's pose array that
+    represents the user's right hand"""
+
     RIGHT_ELBOW: int
-    """Index of the model's pose array that represents the user's right elbow"""
+    """Index of the model's pose array that
+    represents the user's right elbow"""
+
     RIGHT_SHOULDER: int
-    """Index of the model's pose array that represents the user's right shoulder"""
+    """Index of the model's pose array that
+    represents the user's right shoulder"""
+
     RIGHT_HIP: int
-    """Index of the model's pose array that represents the user's right hip"""
+    """Index of the model's pose array that
+    represents the user's right hip"""
+
     RIGHT_KNEE: int
-    """Index of the model's pose array that represents the user's right knee"""
+    """Index of the model's pose array that
+    represents the user's right knee"""
+
     RIGHT_FOOT: int
-    """Index of the model's pose array that represents the user's right foot"""
+    """Index of the model's pose array that
+    represents the user's right foot"""
 
     def get_pose(self, frame: np.ndarray) -> np.ndarray:  # type: ignore
         """Retrieves the points making up a pose (skeleton) for a given

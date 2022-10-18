@@ -12,7 +12,7 @@ Overall, the system needs to do four major things:
 These four functions translate to the core packages of:
 - `recieving`
 - `displaying`
-- `providing_feedback`
+- `providing_feedback` (not yet implemented)
 - `logging` (not yet implemented)
 
 Core packages provide no implementation details, only method

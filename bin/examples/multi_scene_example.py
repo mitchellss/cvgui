@@ -1,32 +1,9 @@
-# cvgui
-
-`cvgui` is a library for creating body-interactive GUIs using computer
-vison.
-
-Documentation can be [found here](https://mitchellss.github.io/cvgui).
-
-
-**cvgui is a prototype. No guarantees can
-be made about the stability of the API or the library itself.**
-
-
-## Installation
-
-> pip install cvgui
-
-Requires Python 3.9 or later
-
-## Contributing
-
-Pull requests are welcome. Please see the [contributing guide](CONTRIBUTING.md) for more information.
-
-## Example Program
-
-This example creates a simple activity with a skeleton and a button.
-When clicked, the button moves. Example programs can be found in the
-`bin/examples` directory.
-
-```python
+"""
+Example program that shows a basic usage of the library.
+A button and skeleton component are added to a scene that
+takes input from a webcam and gets pose data from Google's
+Blazepose.
+"""
 from random import randrange
 import cvgui
 
@@ -44,9 +21,11 @@ ui: cvgui.UserInterface = cvgui.PyGameUI(width=1920, height=1080, fps=60)
 # Create activity
 activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
 
-# Create a new scene
+# Create two scenes
 scene_1 = cvgui.Scene()
+scene_2 = cvgui.Scene()
 activity.add_scene(scene_1)
+activity.add_scene(scene_2)
 
 # Create a new button
 button_1: cvgui.Button = cvgui.button(gui=ui,
@@ -55,23 +34,31 @@ button_1: cvgui.Button = cvgui.button(gui=ui,
                                       color=(255, 0, 0, 255),
                                       radius=50)
 
+button_2: cvgui.Button = cvgui.button(gui=ui,
+                                      pos=(1920//2, 1080//2),
+                                      activation_distance=50,
+                                      color=(0, 0, 255, 255),
+                                      radius=50)
+
 
 def callback(button: cvgui.Button) -> None:
-    """
-    Define what the button should do when clicked.
-    In this case, randomly set a new button position
-    and randomly select a new color.
+    """Move the button to a random spot and
+    switch to the next scene
+
+    Args:
+        button (cvgui.Button): The button to move
     """
     button.pos = (randrange(600, 1000, 20), randrange(200, 600, 20))
-    button.color = (randrange(0, 255, 1), randrange(0, 255, 1),
-                    randrange(0, 255, 1), 255)
+    activity.next_scene()
 
 
 # Set the button to be clicked using the user's left or right hand
-button_1.targets = [cv_model.LEFT_HAND, cv_model.RIGHT_HAND]
+button_1.targets = [cv_model.LEFT_HAND]
+button_2.targets = [cv_model.RIGHT_HAND]
 
 # Link the callback function to the button
-button_1.callback = lambda: callback(button_1)
+button_1.callback = lambda: callback(button_2)
+button_2.callback = lambda: callback(button_1)
 
 # Create a skeleton to map pose points to
 skeleton: cvgui.Skeleton = cvgui.skeleton(
@@ -80,7 +67,8 @@ skeleton: cvgui.Skeleton = cvgui.skeleton(
 # Add the skeleton and button to the scene
 scene_1.add_component(button_1)
 scene_1.add_component(skeleton)
+scene_2.add_component(button_2)
+scene_2.add_component(skeleton)
 
 # Start activity
 activity.run()
-```

@@ -32,6 +32,7 @@ When clicked, the button moves. Example programs can be found in the
 `bin/examples` directory.
 
 ```python
+from random import randrange
 import cvgui
 
 # Specify input as a webcam and computer vision model as blazepose
@@ -43,7 +44,7 @@ pose_input: cvgui.PoseGenerator = cvgui.ComputerVisionPose(
     frame_input=frame_input, model=cv_model)
 
 # Specify GUI to be pygame
-ui: cvgui.UserInterface = cvgui.PyGameUI(width=1920//2, height=1080//2, fps=60)
+ui: cvgui.UserInterface = cvgui.PyGameUI(width=1920, height=1080, fps=60)
 
 # Create activity
 activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
@@ -54,14 +55,21 @@ activity.add_scene(scene_1)
 
 # Create a new button
 button_1: cvgui.Button = cvgui.button(gui=ui,
-                                      x_coord=1920//2, y_coord=1080//2,
-                                      activation_distance=100)
+                                      pos=(1920//2, 1080//2),
+                                      activation_distance=50,
+                                      color=(255, 0, 0, 255),
+                                      radius=50)
 
 
-def callback(button: cvgui.Button):
-    \"\"\"Define what the button should do when clicked\"\"\"
-    button.x_coord = 0
-    button.y_coord = 0
+def callback(button: cvgui.Button) -> None:
+    \"\"\"
+    Define what the button should do when clicked.
+    In this case, randomly set a new button position
+    and randomly select a new color.
+    \"\"\"
+    button.pos = (randrange(600, 1000, 20), randrange(200, 600, 20))
+    button.color = (randrange(0, 255, 1), randrange(0, 255, 1),
+                    randrange(0, 255, 1), 255)
 
 
 # Set the button to be clicked using the user's left or right hand
@@ -72,7 +80,7 @@ button_1.callback = lambda: callback(button_1)
 
 # Create a skeleton to map pose points to
 skeleton: cvgui.Skeleton = cvgui.skeleton(
-    gui=ui, x_coord=800, y_coord=600, scale=cv_model.DEFAULT_SCALE)
+    gui=ui, pos=(800, 600), scale=cv_model.DEFAULT_SCALE)
 
 # Add the skeleton and button to the scene
 scene_1.add_component(button_1)
@@ -83,7 +91,7 @@ activity.run()
 ```
 """
 
-from .core import *
-from .inputs.computer_vision import *
-from .user_interface import *
-from .activity import *
+from .core import *  # noqa
+from .inputs.computer_vision import *  # noqa
+from .user_interface import *  # noqa
+from .activity import *  # noqa
