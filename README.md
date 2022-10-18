@@ -51,9 +51,9 @@ activity.add_scene(scene_1)
 # Create a new button
 button_1: cvgui.Button = cvgui.button(gui=ui,
                                       pos=(1920//2, 1080//2),
-                                      activation_distance=100,
-                                      color=(255,0,0,255),
-                                      radius=100)
+                                      activation_distance=50,
+                                      color=(255, 0, 0, 255),
+                                      radius=50)
 
 
 def callback(button: cvgui.Button) -> None:
@@ -63,8 +63,8 @@ def callback(button: cvgui.Button) -> None:
     and randomly select a new color.
     """
     button.pos = (randrange(600, 1000, 20), randrange(200, 600, 20))
-    button.color = (randrange(0, 255, 1), randrange(0, 255, 1), 
-        randrange(0, 255, 1), 255)
+    button.color = (randrange(0, 255, 1), randrange(0, 255, 1),
+                    randrange(0, 255, 1), 255)
 
 
 # Set the button to be clicked using the user's left or right hand
