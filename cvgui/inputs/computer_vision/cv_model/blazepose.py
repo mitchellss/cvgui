@@ -58,7 +58,8 @@ class BlazePose:
                 self.pose_array[landmark][3] = pose[landmark].visibility
             return self.pose_array
         except AttributeError:
-            # This error is thrown when a pose is not found in the image provided
+            # This error is thrown when a pose
+            # is not found in the image provided
             return self.pose_array
         except KeyboardInterrupt as excpt:
             logging.info("Ctrl-C pressed...")

@@ -6,5 +6,5 @@ that describe what methods a user interface must implement
 to be able to display data to a user correctly.
 """
 
-from .service import UserInterface
-from .components import skeleton, button, Skeleton, Button
+from .service import UserInterface  # noqa
+from .components import skeleton, button, Skeleton, Button  # noqa

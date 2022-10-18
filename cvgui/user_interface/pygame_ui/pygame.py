@@ -145,11 +145,15 @@ class PyGameSkeleton:
             line_start_y: float = self.skeleton_points[start_landmark][Y]
             line_end_x: float = self.skeleton_points[end_landmark][X]
             line_end_y: float = self.skeleton_points[end_landmark][Y]
-            pygame.draw.line(window, self.LIMB_COLOR, [float(line_start_x), float(line_start_y)],
-                             [float(line_end_x), float(line_end_y)], self.LIMB_WIDTH)
+            pygame.draw.line(window, self.LIMB_COLOR,
+                             [float(line_start_x), float(line_start_y)],
+                             [float(line_end_x), float(line_end_y)],
+                             self.LIMB_WIDTH)
 
         for _, landmark in enumerate(self.skeleton_points):
             point_x: float = landmark[X]
             point_y: float = landmark[Y]
-            pygame.draw.circle(window, self.LANDMARK_COLOR, [
-                               point_x, point_y], self.LANDMARK_RADIUS, self.LANDMARK_OUTLINE_WIDTH)
+            pygame.draw.circle(window, self.LANDMARK_COLOR,
+                               [point_x, point_y],
+                               self.LANDMARK_RADIUS,
+                               self.LANDMARK_OUTLINE_WIDTH)

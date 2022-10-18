@@ -102,7 +102,8 @@ class HasSkeleton(Protocol):
     creation of a skeleton.
     """
 
-    def skeleton(self, pos: Tuple[float, float], scale: int) -> Skeleton:  # type: ignore
+    def skeleton(self, pos: Tuple[float, float],
+                 scale: int) -> Skeleton:  # type: ignore
         """Creates an abstract skeleton
 
         Args:
@@ -144,7 +145,8 @@ def button(gui: HasButton, pos: Tuple[float, float],
                       color=color, radius=radius)
 
 
-def skeleton(gui: HasSkeleton, pos: Tuple[float, float], scale: int) -> Skeleton:
+def skeleton(gui: HasSkeleton, pos: Tuple[float, float],
+             scale: int) -> Skeleton:
     """Function that can be called to create a skeleton for any gui
     that implements the HasSkeleton interface. This method is used
     instead of instantiating concrete types of ui components to

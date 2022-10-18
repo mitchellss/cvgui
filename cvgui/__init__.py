@@ -91,7 +91,7 @@ activity.run()
 ```
 """
 
-from .core import *
-from .inputs.computer_vision import *
-from .user_interface import *
-from .activity import *
+from .core import *  # noqa
+from .inputs.computer_vision import *  # noqa
+from .user_interface import *  # noqa
+from .activity import *  # noqa

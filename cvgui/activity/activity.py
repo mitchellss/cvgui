@@ -34,11 +34,13 @@ class Activity:
     pose: SynchronizedArray = mp.Array("d", 33*4)
     """The collection of points that represent a human figure."""
 
-    def __init__(self, pose_input: PoseGenerator, frontend: UserInterface) -> None:
+    def __init__(self, pose_input: PoseGenerator,
+                 frontend: UserInterface) -> None:
         """
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
-            frontend (UserInterface): An object that can create a user interface.
+            frontend (UserInterface): An object that can create a
+                user interface.
         """
         self.pose_input: PoseGenerator = pose_input
         self.frontend: UserInterface = frontend
@@ -54,8 +56,9 @@ class Activity:
 
     def next_scene(self) -> None:
         """
-        Sets the active scene to the next scene in the scene array. Circles
-        back to the first scene if current active scene is the last in the array.
+        Sets the active scene to the next scene in the scene array.
+        Circles back to the first scene if current active scene is the
+        last in the array.
         """
         self._active_scene += 1
         if self._active_scene > len(self._scenes) - 1:
@@ -63,8 +66,9 @@ class Activity:
 
     def previous_scene(self) -> None:
         """
-        Sets the active scene to the previous scene in the scene array. Circles
-        back to the last scene if current active scene is the first in the array.
+        Sets the active scene to the previous scene in the scene array.
+        Circles back to the last scene if current active scene is the
+        first in the array.
         """
         self._active_scene -= 1
         if self._active_scene < 0:
@@ -148,7 +152,8 @@ class Activity:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                pos=(skeleton_points[target][X], skeleton_points[target][Y])):
+                                pos=(skeleton_points[target][X],
+                                     skeleton_points[target][Y])):
                             component.callback()
 
                 component.render(frontend.window)
