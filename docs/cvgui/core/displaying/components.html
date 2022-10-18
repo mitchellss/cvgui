@@ -37,7 +37,7 @@ Abstract components to be implemented by concrete
 GUI classes and interafaces that require the implementation
 of said classes.
 &#34;&#34;&#34;
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Tuple
 from typing_extensions import Protocol, runtime_checkable
 import numpy as np
 
@@ -46,8 +46,7 @@ class Component(Protocol):
     &#34;&#34;&#34;The base interface that defines what a component is.
     In order to be a component, an object must have x and
     y coordinates and be able to be rendered.&#34;&#34;&#34;
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
 
     def render(self, window: Any) -&gt; None:
         &#34;&#34;&#34;Renders the component onto the specified window.
@@ -61,31 +60,25 @@ class Component(Protocol):
 @runtime_checkable
 class Button(Protocol):
     &#34;&#34;&#34;Interface describing what a button must do.&#34;&#34;&#34;
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
     activation_distance: float
     targets: List[int]
     callback: Callable
+    color: Tuple[int, int, int, int]
+    radius: int
 
-    def is_clicked(self, x_coord: float, y_coord: float, distance: float) -&gt; bool:  # type: ignore
+    def is_clicked(self, pos: Tuple[float, float]) -&gt; bool:  # type: ignore
         &#34;&#34;&#34;Method to check whether or not the button is clicked given
-        the coordinates of an action and the actuation distance.
+        the coordinates of an action
 
         Args:
-            x_coord (float): The x coordinate of an action.
-            y_coord (float): The y coordinate of an action.
-            distance (float): The actuation distance of the button.
+            pos (Tuple[float, float]): The position of the button as an
+            x,y tuple
 
         Returns:
             bool: True if the button is considered &#34;clicked&#34; for the given
             conditions, False otherwise.
         &#34;&#34;&#34;
-
-    def set_targets(self, targets: List[int]):
-        &#34;&#34;&#34;Sets the targets for the button.&#34;&#34;&#34;
-
-    def set_callback(self, callback: Callable):
-        &#34;&#34;&#34;Sets the callback function for the button.&#34;&#34;&#34;
 
     def render(self, window: Any) -&gt; None:
         &#34;&#34;&#34;Required method to fulfill the requirements of the
@@ -98,13 +91,22 @@ class HasButton(Protocol):
     creation of a button.
     &#34;&#34;&#34;
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -&gt; Button:  # type: ignore
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int],
+               radius: int
+               ) -&gt; Button:  # type: ignore
         &#34;&#34;&#34;Creates an abstract button.
 
         Args:
-            x_coord (float): x coordinate of the button.
-            y_coord (float): y coordinate of the button.
+            pos (Tuple[float, float]): The position of the
+                button as an x,y tuple
+            activation_distance (float): The minimum distance
+                between the target and the button to be considered
+                clicked
+            color (Tuple[int, int, int, int]): rgba color value of
+                the button
+            radius (int): Radius of the button
 
         Returns:
             Button: Object that implements the Button interface.
@@ -117,8 +119,8 @@ class Skeleton(Protocol):
     Interface describing how a component must act to be considered
     a Skeleton.
     &#34;&#34;&#34;
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
+    scale: int
     skeleton_points: np.ndarray
 
     def render(self, window: Any):
@@ -132,20 +134,23 @@ class HasSkeleton(Protocol):
     creation of a skeleton.
     &#34;&#34;&#34;
 
-    def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:  # type: ignore
+    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
         &#34;&#34;&#34;Creates an abstract skeleton
 
         Args:
-            x_coord (float): x coordinate of the skeleton center point
-            y_coord (float): y coordinate of the skeleton center point
+            pos (Tuple[float, float]): The position of the skeleton as an
+            x,y tuple
 
         Returns:
             Skeleton: Object that implements the Skeleton interface.
         &#34;&#34;&#34;
 
 
-def button(gui: HasButton, x_coord: float, y_coord: float,
-           activation_distance: float) -&gt; Button:
+def button(gui: HasButton, pos: Tuple[float, float],
+           activation_distance: float,
+           radius: int,
+           color: Tuple[int, int, int, int] = (100, 100, 100, 255)
+           ) -&gt; Button:
     &#34;&#34;&#34;Function that can be called to create a button for any gui
     that implements the HasButton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -154,17 +159,24 @@ def button(gui: HasButton, x_coord: float, y_coord: float,
 
     Args:
         gui (HasButton): A gui that can create a button.
-        x_coord (float): The x coordinate of the button to be created.
-        y_coord (float): The y coordinate of the button to be created.
+        pos (Tuple[float, float]): The position of the
+            button as an x,y tuple
+        activation_distance (float): The minimum distance
+            between the target and the button to be considered
+            clicked
+        color (Tuple[int, int, int, int]): rgba color value of
+            the button
+        radius (int): Radius of the button
 
     Returns:
         Button: The button implementation for the respective gui.
     &#34;&#34;&#34;
-    return gui.button(x_coord=x_coord, y_coord=y_coord,
-                      activation_distance=activation_distance)
+    return gui.button(pos=pos,
+                      activation_distance=activation_distance,
+                      color=color, radius=radius)
 
 
-def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float) -&gt; Skeleton:
+def skeleton(gui: HasSkeleton, pos: Tuple[float, float], scale: int) -&gt; Skeleton:
     &#34;&#34;&#34;Function that can be called to create a skeleton for any gui
     that implements the HasSkeleton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -173,13 +185,13 @@ def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float) -&gt; Skeleton:
 
     Args:
         gui (HasButton): A gui that can create a skeleton.
-        x_coord (float): The x coordinate of the skeleton to be created.
-        y_coord (float): The y coordinate of the skeleton to be created.
+        pos (Tuple[float, float]): The position of the skeleton as an
+        x,y tuple
 
     Returns:
         Skeleton: The skeleton implementation for the respective gui.
     &#34;&#34;&#34;
-    return gui.skeleton(x_coord=x_coord, y_coord=y_coord)</code></pre>
+    return gui.skeleton(pos=pos, scale=scale)</code></pre>
 </details>
 </section>
 <section>
@@ -190,7 +202,7 @@ def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float) -&gt; Skeleton:
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="cvgui.core.displaying.components.button"><code class="name flex">
-<span>def <span class="ident">button</span></span>(<span>gui: <a title="cvgui.core.displaying.components.HasButton" href="#cvgui.core.displaying.components.HasButton">HasButton</a>, x_coord: float, y_coord: float, activation_distance: float) ‑> <a title="cvgui.core.displaying.components.Button" href="#cvgui.core.displaying.components.Button">Button</a></span>
+<span>def <span class="ident">button</span></span>(<span>gui: <a title="cvgui.core.displaying.components.HasButton" href="#cvgui.core.displaying.components.HasButton">HasButton</a>, pos: Tuple[float, float], activation_distance: float, radius: int, color: Tuple[int, int, int, int] = (100, 100, 100, 255)) ‑> <a title="cvgui.core.displaying.components.Button" href="#cvgui.core.displaying.components.Button">Button</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Function that can be called to create a button for any gui
@@ -202,10 +214,18 @@ used.</p>
 <dl>
 <dt><strong><code>gui</code></strong> :&ensp;<code><a title="cvgui.core.displaying.components.HasButton" href="#cvgui.core.displaying.components.HasButton">HasButton</a></code></dt>
 <dd>A gui that can create a button.</dd>
-<dt><strong><code>x_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>The x coordinate of the button to be created.</dd>
-<dt><strong><code>y_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>The y coordinate of the button to be created.</dd>
+<dt><strong><code>pos</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
+<dd>The position of the
+button as an x,y tuple</dd>
+<dt><strong><code>activation_distance</code></strong> :&ensp;<code>float</code></dt>
+<dd>The minimum distance
+between the target and the button to be considered
+clicked</dd>
+<dt><strong><code>color</code></strong> :&ensp;<code>Tuple[int, int, int, int]</code></dt>
+<dd>rgba color value of
+the button</dd>
+<dt><strong><code>radius</code></strong> :&ensp;<code>int</code></dt>
+<dd>Radius of the button</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -216,8 +236,11 @@ used.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def button(gui: HasButton, x_coord: float, y_coord: float,
-           activation_distance: float) -&gt; Button:
+<pre><code class="python">def button(gui: HasButton, pos: Tuple[float, float],
+           activation_distance: float,
+           radius: int,
+           color: Tuple[int, int, int, int] = (100, 100, 100, 255)
+           ) -&gt; Button:
     &#34;&#34;&#34;Function that can be called to create a button for any gui
     that implements the HasButton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -226,18 +249,25 @@ used.</p>
 
     Args:
         gui (HasButton): A gui that can create a button.
-        x_coord (float): The x coordinate of the button to be created.
-        y_coord (float): The y coordinate of the button to be created.
+        pos (Tuple[float, float]): The position of the
+            button as an x,y tuple
+        activation_distance (float): The minimum distance
+            between the target and the button to be considered
+            clicked
+        color (Tuple[int, int, int, int]): rgba color value of
+            the button
+        radius (int): Radius of the button
 
     Returns:
         Button: The button implementation for the respective gui.
     &#34;&#34;&#34;
-    return gui.button(x_coord=x_coord, y_coord=y_coord,
-                      activation_distance=activation_distance)</code></pre>
+    return gui.button(pos=pos,
+                      activation_distance=activation_distance,
+                      color=color, radius=radius)</code></pre>
 </details>
 </dd>
 <dt id="cvgui.core.displaying.components.skeleton"><code class="name flex">
-<span>def <span class="ident">skeleton</span></span>(<span>gui: <a title="cvgui.core.displaying.components.HasSkeleton" href="#cvgui.core.displaying.components.HasSkeleton">HasSkeleton</a>, x_coord: float, y_coord: float) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
+<span>def <span class="ident">skeleton</span></span>(<span>gui: <a title="cvgui.core.displaying.components.HasSkeleton" href="#cvgui.core.displaying.components.HasSkeleton">HasSkeleton</a>, pos: Tuple[float, float], scale: int) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Function that can be called to create a skeleton for any gui
@@ -249,11 +279,10 @@ used.</p>
 <dl>
 <dt><strong><code>gui</code></strong> :&ensp;<code><a title="cvgui.core.displaying.components.HasButton" href="#cvgui.core.displaying.components.HasButton">HasButton</a></code></dt>
 <dd>A gui that can create a skeleton.</dd>
-<dt><strong><code>x_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>The x coordinate of the skeleton to be created.</dd>
-<dt><strong><code>y_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>The y coordinate of the skeleton to be created.</dd>
+<dt><strong><code>pos</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
+<dd>The position of the skeleton as an</dd>
 </dl>
+<p>x,y tuple</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code><a title="cvgui.core.displaying.components.Skeleton" href="#cvgui.core.displaying.components.Skeleton">Skeleton</a></code></dt>
@@ -263,7 +292,7 @@ used.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def skeleton(gui: HasSkeleton, x_coord: float, y_coord: float) -&gt; Skeleton:
+<pre><code class="python">def skeleton(gui: HasSkeleton, pos: Tuple[float, float], scale: int) -&gt; Skeleton:
     &#34;&#34;&#34;Function that can be called to create a skeleton for any gui
     that implements the HasSkeleton interface. This method is used
     instead of instantiating concrete types of ui components to
@@ -272,13 +301,13 @@ used.</p>
 
     Args:
         gui (HasButton): A gui that can create a skeleton.
-        x_coord (float): The x coordinate of the skeleton to be created.
-        y_coord (float): The y coordinate of the skeleton to be created.
+        pos (Tuple[float, float]): The position of the skeleton as an
+        x,y tuple
 
     Returns:
         Skeleton: The skeleton implementation for the respective gui.
     &#34;&#34;&#34;
-    return gui.skeleton(x_coord=x_coord, y_coord=y_coord)</code></pre>
+    return gui.skeleton(pos=pos, scale=scale)</code></pre>
 </details>
 </dd>
 </dl>
@@ -299,31 +328,25 @@ used.</p>
 <pre><code class="python">@runtime_checkable
 class Button(Protocol):
     &#34;&#34;&#34;Interface describing what a button must do.&#34;&#34;&#34;
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
     activation_distance: float
     targets: List[int]
     callback: Callable
+    color: Tuple[int, int, int, int]
+    radius: int
 
-    def is_clicked(self, x_coord: float, y_coord: float, distance: float) -&gt; bool:  # type: ignore
+    def is_clicked(self, pos: Tuple[float, float]) -&gt; bool:  # type: ignore
         &#34;&#34;&#34;Method to check whether or not the button is clicked given
-        the coordinates of an action and the actuation distance.
+        the coordinates of an action
 
         Args:
-            x_coord (float): The x coordinate of an action.
-            y_coord (float): The y coordinate of an action.
-            distance (float): The actuation distance of the button.
+            pos (Tuple[float, float]): The position of the button as an
+            x,y tuple
 
         Returns:
             bool: True if the button is considered &#34;clicked&#34; for the given
             conditions, False otherwise.
         &#34;&#34;&#34;
-
-    def set_targets(self, targets: List[int]):
-        &#34;&#34;&#34;Sets the targets for the button.&#34;&#34;&#34;
-
-    def set_callback(self, callback: Callable):
-        &#34;&#34;&#34;Sets the callback function for the button.&#34;&#34;&#34;
 
     def render(self, window: Any) -&gt; None:
         &#34;&#34;&#34;Required method to fulfill the requirements of the
@@ -344,15 +367,19 @@ class Button(Protocol):
 <dd>
 <div class="desc"></div>
 </dd>
+<dt id="cvgui.core.displaying.components.Button.color"><code class="name">var <span class="ident">color</span> : Tuple[int, int, int, int]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="cvgui.core.displaying.components.Button.pos"><code class="name">var <span class="ident">pos</span> : Tuple[float, float]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="cvgui.core.displaying.components.Button.radius"><code class="name">var <span class="ident">radius</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="cvgui.core.displaying.components.Button.targets"><code class="name">var <span class="ident">targets</span> : List[int]</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="cvgui.core.displaying.components.Button.x_coord"><code class="name">var <span class="ident">x_coord</span> : float</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="cvgui.core.displaying.components.Button.y_coord"><code class="name">var <span class="ident">y_coord</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -360,20 +387,17 @@ class Button(Protocol):
 <h3>Methods</h3>
 <dl>
 <dt id="cvgui.core.displaying.components.Button.is_clicked"><code class="name flex">
-<span>def <span class="ident">is_clicked</span></span>(<span>self, x_coord: float, y_coord: float, distance: float) ‑> bool</span>
+<span>def <span class="ident">is_clicked</span></span>(<span>self, pos: Tuple[float, float]) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Method to check whether or not the button is clicked given
-the coordinates of an action and the actuation distance.</p>
+the coordinates of an action</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>x_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>The x coordinate of an action.</dd>
-<dt><strong><code>y_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>The y coordinate of an action.</dd>
-<dt><strong><code>distance</code></strong> :&ensp;<code>float</code></dt>
-<dd>The actuation distance of the button.</dd>
+<dt><strong><code>pos</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
+<dd>The position of the button as an</dd>
 </dl>
+<p>x,y tuple</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code>bool</code></dt>
@@ -384,14 +408,13 @@ the coordinates of an action and the actuation distance.</p>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def is_clicked(self, x_coord: float, y_coord: float, distance: float) -&gt; bool:  # type: ignore
+<pre><code class="python">def is_clicked(self, pos: Tuple[float, float]) -&gt; bool:  # type: ignore
     &#34;&#34;&#34;Method to check whether or not the button is clicked given
-    the coordinates of an action and the actuation distance.
+    the coordinates of an action
 
     Args:
-        x_coord (float): The x coordinate of an action.
-        y_coord (float): The y coordinate of an action.
-        distance (float): The actuation distance of the button.
+        pos (Tuple[float, float]): The position of the button as an
+        x,y tuple
 
     Returns:
         bool: True if the button is considered &#34;clicked&#34; for the given
@@ -414,32 +437,6 @@ Component interface.</p></div>
     Component interface.&#34;&#34;&#34;</code></pre>
 </details>
 </dd>
-<dt id="cvgui.core.displaying.components.Button.set_callback"><code class="name flex">
-<span>def <span class="ident">set_callback</span></span>(<span>self, callback: Callable)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Sets the callback function for the button.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def set_callback(self, callback: Callable):
-    &#34;&#34;&#34;Sets the callback function for the button.&#34;&#34;&#34;</code></pre>
-</details>
-</dd>
-<dt id="cvgui.core.displaying.components.Button.set_targets"><code class="name flex">
-<span>def <span class="ident">set_targets</span></span>(<span>self, targets: List[int])</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Sets the targets for the button.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def set_targets(self, targets: List[int]):
-    &#34;&#34;&#34;Sets the targets for the button.&#34;&#34;&#34;</code></pre>
-</details>
-</dd>
 </dl>
 </dd>
 <dt id="cvgui.core.displaying.components.Component"><code class="flex name class">
@@ -458,8 +455,7 @@ y coordinates and be able to be rendered.</p></div>
     &#34;&#34;&#34;The base interface that defines what a component is.
     In order to be a component, an object must have x and
     y coordinates and be able to be rendered.&#34;&#34;&#34;
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
 
     def render(self, window: Any) -&gt; None:
         &#34;&#34;&#34;Renders the component onto the specified window.
@@ -476,11 +472,7 @@ y coordinates and be able to be rendered.</p></div>
 </ul>
 <h3>Class variables</h3>
 <dl>
-<dt id="cvgui.core.displaying.components.Component.x_coord"><code class="name">var <span class="ident">x_coord</span> : float</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="cvgui.core.displaying.components.Component.y_coord"><code class="name">var <span class="ident">y_coord</span> : float</code></dt>
+<dt id="cvgui.core.displaying.components.Component.pos"><code class="name">var <span class="ident">pos</span> : Tuple[float, float]</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -530,13 +522,22 @@ creation of a button.</p></div>
     creation of a button.
     &#34;&#34;&#34;
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -&gt; Button:  # type: ignore
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int],
+               radius: int
+               ) -&gt; Button:  # type: ignore
         &#34;&#34;&#34;Creates an abstract button.
 
         Args:
-            x_coord (float): x coordinate of the button.
-            y_coord (float): y coordinate of the button.
+            pos (Tuple[float, float]): The position of the
+                button as an x,y tuple
+            activation_distance (float): The minimum distance
+                between the target and the button to be considered
+                clicked
+            color (Tuple[int, int, int, int]): rgba color value of
+                the button
+            radius (int): Radius of the button
 
         Returns:
             Button: Object that implements the Button interface.
@@ -550,16 +551,24 @@ creation of a button.</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="cvgui.core.displaying.components.HasButton.button"><code class="name flex">
-<span>def <span class="ident">button</span></span>(<span>self, x_coord: float, y_coord: float, activation_distance: float) ‑> <a title="cvgui.core.displaying.components.Button" href="#cvgui.core.displaying.components.Button">Button</a></span>
+<span>def <span class="ident">button</span></span>(<span>self, pos: Tuple[float, float], activation_distance: float, color: Tuple[int, int, int, int], radius: int) ‑> <a title="cvgui.core.displaying.components.Button" href="#cvgui.core.displaying.components.Button">Button</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Creates an abstract button.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>x_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>x coordinate of the button.</dd>
-<dt><strong><code>y_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>y coordinate of the button.</dd>
+<dt><strong><code>pos</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
+<dd>The position of the
+button as an x,y tuple</dd>
+<dt><strong><code>activation_distance</code></strong> :&ensp;<code>float</code></dt>
+<dd>The minimum distance
+between the target and the button to be considered
+clicked</dd>
+<dt><strong><code>color</code></strong> :&ensp;<code>Tuple[int, int, int, int]</code></dt>
+<dd>rgba color value of
+the button</dd>
+<dt><strong><code>radius</code></strong> :&ensp;<code>int</code></dt>
+<dd>Radius of the button</dd>
 </dl>
 <h2 id="returns">Returns</h2>
 <dl>
@@ -570,13 +579,22 @@ creation of a button.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def button(self, x_coord: float, y_coord: float,
-           activation_distance: float) -&gt; Button:  # type: ignore
+<pre><code class="python">def button(self, pos: Tuple[float, float],
+           activation_distance: float,
+           color: Tuple[int, int, int, int],
+           radius: int
+           ) -&gt; Button:  # type: ignore
     &#34;&#34;&#34;Creates an abstract button.
 
     Args:
-        x_coord (float): x coordinate of the button.
-        y_coord (float): y coordinate of the button.
+        pos (Tuple[float, float]): The position of the
+            button as an x,y tuple
+        activation_distance (float): The minimum distance
+            between the target and the button to be considered
+            clicked
+        color (Tuple[int, int, int, int]): rgba color value of
+            the button
+        radius (int): Radius of the button
 
     Returns:
         Button: Object that implements the Button interface.
@@ -602,12 +620,12 @@ creation of a skeleton.</p></div>
     creation of a skeleton.
     &#34;&#34;&#34;
 
-    def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:  # type: ignore
+    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
         &#34;&#34;&#34;Creates an abstract skeleton
 
         Args:
-            x_coord (float): x coordinate of the skeleton center point
-            y_coord (float): y coordinate of the skeleton center point
+            pos (Tuple[float, float]): The position of the skeleton as an
+            x,y tuple
 
         Returns:
             Skeleton: Object that implements the Skeleton interface.
@@ -621,17 +639,16 @@ creation of a skeleton.</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="cvgui.core.displaying.components.HasSkeleton.skeleton"><code class="name flex">
-<span>def <span class="ident">skeleton</span></span>(<span>self, x_coord: float, y_coord: float) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
+<span>def <span class="ident">skeleton</span></span>(<span>self, pos: Tuple[float, float], scale: int) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Creates an abstract skeleton</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>x_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>x coordinate of the skeleton center point</dd>
-<dt><strong><code>y_coord</code></strong> :&ensp;<code>float</code></dt>
-<dd>y coordinate of the skeleton center point</dd>
+<dt><strong><code>pos</code></strong> :&ensp;<code>Tuple[float, float]</code></dt>
+<dd>The position of the skeleton as an</dd>
 </dl>
+<p>x,y tuple</p>
 <h2 id="returns">Returns</h2>
 <dl>
 <dt><code><a title="cvgui.core.displaying.components.Skeleton" href="#cvgui.core.displaying.components.Skeleton">Skeleton</a></code></dt>
@@ -641,12 +658,12 @@ creation of a skeleton.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:  # type: ignore
+<pre><code class="python">def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:  # type: ignore
     &#34;&#34;&#34;Creates an abstract skeleton
 
     Args:
-        x_coord (float): x coordinate of the skeleton center point
-        y_coord (float): y coordinate of the skeleton center point
+        pos (Tuple[float, float]): The position of the skeleton as an
+        x,y tuple
 
     Returns:
         Skeleton: Object that implements the Skeleton interface.
@@ -672,8 +689,8 @@ class Skeleton(Protocol):
     Interface describing how a component must act to be considered
     a Skeleton.
     &#34;&#34;&#34;
-    x_coord: float
-    y_coord: float
+    pos: Tuple[float, float]
+    scale: int
     skeleton_points: np.ndarray
 
     def render(self, window: Any):
@@ -687,15 +704,15 @@ class Skeleton(Protocol):
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="cvgui.core.displaying.components.Skeleton.pos"><code class="name">var <span class="ident">pos</span> : Tuple[float, float]</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="cvgui.core.displaying.components.Skeleton.scale"><code class="name">var <span class="ident">scale</span> : int</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="cvgui.core.displaying.components.Skeleton.skeleton_points"><code class="name">var <span class="ident">skeleton_points</span> : numpy.ndarray</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="cvgui.core.displaying.components.Skeleton.x_coord"><code class="name">var <span class="ident">x_coord</span> : float</code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt id="cvgui.core.displaying.components.Skeleton.y_coord"><code class="name">var <span class="ident">y_coord</span> : float</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -746,21 +763,19 @@ Component interface.</p></div>
 <ul class="two-column">
 <li><code><a title="cvgui.core.displaying.components.Button.activation_distance" href="#cvgui.core.displaying.components.Button.activation_distance">activation_distance</a></code></li>
 <li><code><a title="cvgui.core.displaying.components.Button.callback" href="#cvgui.core.displaying.components.Button.callback">callback</a></code></li>
+<li><code><a title="cvgui.core.displaying.components.Button.color" href="#cvgui.core.displaying.components.Button.color">color</a></code></li>
 <li><code><a title="cvgui.core.displaying.components.Button.is_clicked" href="#cvgui.core.displaying.components.Button.is_clicked">is_clicked</a></code></li>
+<li><code><a title="cvgui.core.displaying.components.Button.pos" href="#cvgui.core.displaying.components.Button.pos">pos</a></code></li>
+<li><code><a title="cvgui.core.displaying.components.Button.radius" href="#cvgui.core.displaying.components.Button.radius">radius</a></code></li>
 <li><code><a title="cvgui.core.displaying.components.Button.render" href="#cvgui.core.displaying.components.Button.render">render</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Button.set_callback" href="#cvgui.core.displaying.components.Button.set_callback">set_callback</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Button.set_targets" href="#cvgui.core.displaying.components.Button.set_targets">set_targets</a></code></li>
 <li><code><a title="cvgui.core.displaying.components.Button.targets" href="#cvgui.core.displaying.components.Button.targets">targets</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Button.x_coord" href="#cvgui.core.displaying.components.Button.x_coord">x_coord</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Button.y_coord" href="#cvgui.core.displaying.components.Button.y_coord">y_coord</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="cvgui.core.displaying.components.Component" href="#cvgui.core.displaying.components.Component">Component</a></code></h4>
 <ul class="">
+<li><code><a title="cvgui.core.displaying.components.Component.pos" href="#cvgui.core.displaying.components.Component.pos">pos</a></code></li>
 <li><code><a title="cvgui.core.displaying.components.Component.render" href="#cvgui.core.displaying.components.Component.render">render</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Component.x_coord" href="#cvgui.core.displaying.components.Component.x_coord">x_coord</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Component.y_coord" href="#cvgui.core.displaying.components.Component.y_coord">y_coord</a></code></li>
 </ul>
 </li>
 <li>
@@ -778,10 +793,10 @@ Component interface.</p></div>
 <li>
 <h4><code><a title="cvgui.core.displaying.components.Skeleton" href="#cvgui.core.displaying.components.Skeleton">Skeleton</a></code></h4>
 <ul class="">
+<li><code><a title="cvgui.core.displaying.components.Skeleton.pos" href="#cvgui.core.displaying.components.Skeleton.pos">pos</a></code></li>
 <li><code><a title="cvgui.core.displaying.components.Skeleton.render" href="#cvgui.core.displaying.components.Skeleton.render">render</a></code></li>
+<li><code><a title="cvgui.core.displaying.components.Skeleton.scale" href="#cvgui.core.displaying.components.Skeleton.scale">scale</a></code></li>
 <li><code><a title="cvgui.core.displaying.components.Skeleton.skeleton_points" href="#cvgui.core.displaying.components.Skeleton.skeleton_points">skeleton_points</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Skeleton.x_coord" href="#cvgui.core.displaying.components.Skeleton.x_coord">x_coord</a></code></li>
-<li><code><a title="cvgui.core.displaying.components.Skeleton.y_coord" href="#cvgui.core.displaying.components.Skeleton.y_coord">y_coord</a></code></li>
 </ul>
 </li>
 </ul>

@@ -28,12 +28,16 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;User interface implementation of PyGame.&#34;&#34;&#34;
+import math
 import sys
-from typing import Callable, List, Literal
+from typing import Callable, List, Literal, Tuple
 import pygame
 from pygame.constants import QUIT
 import numpy as np
 from cvgui.core.displaying.components import Button, Skeleton
+
+X = 0
+Y = 1
 
 
 class PyGameUI:
@@ -63,15 +67,17 @@ class PyGameUI:
         pygame.display.update()
         self.fps_clock.tick(self.fps)
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -&gt; Button:
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int],
+               radius: int = 100) -&gt; Button:
         &#34;&#34;&#34;Creates a PyGame button at the specified location.&#34;&#34;&#34;
-        return PyGameButton(x_coord=x_coord, y_coord=y_coord,
-                            activation_distance=activation_distance)
+        return PyGameButton(pos=pos, activation_distance=activation_distance,
+                            color=color, radius=radius)
 
-    def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:
+    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:
         &#34;&#34;&#34;Creates a PyGame skeleton at the specified location.&#34;&#34;&#34;
-        return PyGameSkeleton(x_coord=x_coord, y_coord=y_coord)
+        return PyGameSkeleton(pos=pos, scale=scale)
 
     def new_gui(self) -&gt; None:
         &#34;&#34;&#34;Initializes the PyGame user interface.&#34;&#34;&#34;
@@ -90,35 +96,37 @@ class PyGameUI:
 class PyGameButton:
     &#34;&#34;&#34;Button implementation for PyGame.&#34;&#34;&#34;
 
-    def __init__(self, x_coord: float, y_coord: float,
-                 activation_distance: float) -&gt; None:
+    def __init__(self, pos: Tuple[float, float],
+                 activation_distance: float,
+                 color: Tuple[int, int, int, int],
+                 radius: int) -&gt; None:
         &#34;&#34;&#34;Creates a new PyGameButton at the location specified.&#34;&#34;&#34;
-        self.x_coord: float = x_coord
-        self.y_coord: float = y_coord
+        self.pos = pos
         self.activation_distance: float = activation_distance
         self.targets: List[int]
         self.callback: Callable
+        self.color: Tuple[int, int, int, int] = color
+        self.radius: int = radius
 
-    def is_clicked(self, x_coord: float, y_coord: float, distance: float) -&gt; bool:
+    def is_clicked(self, pos: Tuple[float, float]) -&gt; bool:
         &#34;&#34;&#34;Checks if the button has been clicked.&#34;&#34;&#34;
-        if abs(self.x_coord - x_coord) &gt; distance or abs(self.y_coord - y_coord) &gt; distance:
+        if abs(self.pos[X] - pos[X]) &gt; self.activation_distance \
+                or abs(self.pos[Y] - pos[Y]) &gt; self.activation_distance:
+            return False
+        if math.sqrt((self.pos[X] - pos[X])**2 + (self.pos[Y] - pos[Y])**2) \
+                &gt; self.activation_distance:
             return False
         return True
 
-    def set_targets(self, targets: List[int]):
-        &#34;&#34;&#34;Sets targets.&#34;&#34;&#34;
-        self.targets = targets
-
-    def set_callback(self, callback: Callable):
-        &#34;&#34;&#34;Sets callback function.&#34;&#34;&#34;
-        self.callback = callback
-
     def render(self, window) -&gt; None:
         &#34;&#34;&#34;Draws the button on the pygame window.&#34;&#34;&#34;
+        color = pygame.color.Color(
+            self.color[0], self.color[1],
+            self.color[2], self.color[3])
         pygame.draw.circle(
-            window, pygame.color.Color(255, 0, 0, 255),
-            (self.x_coord, self.y_coord),
-            100
+            window, color,
+            (self.pos[X], self.pos[Y]),
+            self.radius
         )
 
 
@@ -151,27 +159,27 @@ class PyGameSkeleton:
     NUM_LANDMARKS: Literal[33] = 33
     POINTS_PER_LANDMARK: Literal[4] = 4  # x, y, z, depth?
 
-    def __init__(self, x_coord: float, y_coord: float) -&gt; None:
+    def __init__(self, pos: Tuple[float, float], scale: int) -&gt; None:
         &#34;&#34;&#34;Creates a new PyGame skeleton.&#34;&#34;&#34;
-        self.x_coord: float = x_coord
-        self.y_coord: float = y_coord
+        self.pos = pos
         self.skeleton_points: np.ndarray = np.zeros((33, 4))
+        self.scale = scale
 
     def render(self, window) -&gt; None:
         &#34;&#34;&#34;Draws the skeleton on the pygame window.&#34;&#34;&#34;
         for landmark_pair in self.CONNECTIONS:
-            start_landmark: int = landmark_pair[0]
-            end_landmark: int = landmark_pair[1]
-            line_start_x: float = self.skeleton_points[start_landmark][0]
-            line_start_y: float = self.skeleton_points[start_landmark][1]
-            line_end_x: float = self.skeleton_points[end_landmark][0]
-            line_end_y: float = self.skeleton_points[end_landmark][1]
+            start_landmark: int = landmark_pair[X]
+            end_landmark: int = landmark_pair[Y]
+            line_start_x: float = self.skeleton_points[start_landmark][X]
+            line_start_y: float = self.skeleton_points[start_landmark][Y]
+            line_end_x: float = self.skeleton_points[end_landmark][X]
+            line_end_y: float = self.skeleton_points[end_landmark][Y]
             pygame.draw.line(window, self.LIMB_COLOR, [float(line_start_x), float(line_start_y)],
                              [float(line_end_x), float(line_end_y)], self.LIMB_WIDTH)
 
-        for landmark, _ in enumerate(self.skeleton_points):
-            point_x: float = self.skeleton_points[landmark][0]
-            point_y: float = self.skeleton_points[landmark][1]
+        for _, landmark in enumerate(self.skeleton_points):
+            point_x: float = landmark[X]
+            point_y: float = landmark[Y]
             pygame.draw.circle(window, self.LANDMARK_COLOR, [
                                point_x, point_y], self.LANDMARK_RADIUS, self.LANDMARK_OUTLINE_WIDTH)</code></pre>
 </details>
@@ -187,7 +195,7 @@ class PyGameSkeleton:
 <dl>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameButton"><code class="flex name class">
 <span>class <span class="ident">PyGameButton</span></span>
-<span>(</span><span>x_coord: float, y_coord: float, activation_distance: float)</span>
+<span>(</span><span>pos: Tuple[float, float], activation_distance: float, color: Tuple[int, int, int, int], radius: int)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Button implementation for PyGame.</p>
@@ -199,41 +207,43 @@ class PyGameSkeleton:
 <pre><code class="python">class PyGameButton:
     &#34;&#34;&#34;Button implementation for PyGame.&#34;&#34;&#34;
 
-    def __init__(self, x_coord: float, y_coord: float,
-                 activation_distance: float) -&gt; None:
+    def __init__(self, pos: Tuple[float, float],
+                 activation_distance: float,
+                 color: Tuple[int, int, int, int],
+                 radius: int) -&gt; None:
         &#34;&#34;&#34;Creates a new PyGameButton at the location specified.&#34;&#34;&#34;
-        self.x_coord: float = x_coord
-        self.y_coord: float = y_coord
+        self.pos = pos
         self.activation_distance: float = activation_distance
         self.targets: List[int]
         self.callback: Callable
+        self.color: Tuple[int, int, int, int] = color
+        self.radius: int = radius
 
-    def is_clicked(self, x_coord: float, y_coord: float, distance: float) -&gt; bool:
+    def is_clicked(self, pos: Tuple[float, float]) -&gt; bool:
         &#34;&#34;&#34;Checks if the button has been clicked.&#34;&#34;&#34;
-        if abs(self.x_coord - x_coord) &gt; distance or abs(self.y_coord - y_coord) &gt; distance:
+        if abs(self.pos[X] - pos[X]) &gt; self.activation_distance \
+                or abs(self.pos[Y] - pos[Y]) &gt; self.activation_distance:
+            return False
+        if math.sqrt((self.pos[X] - pos[X])**2 + (self.pos[Y] - pos[Y])**2) \
+                &gt; self.activation_distance:
             return False
         return True
 
-    def set_targets(self, targets: List[int]):
-        &#34;&#34;&#34;Sets targets.&#34;&#34;&#34;
-        self.targets = targets
-
-    def set_callback(self, callback: Callable):
-        &#34;&#34;&#34;Sets callback function.&#34;&#34;&#34;
-        self.callback = callback
-
     def render(self, window) -&gt; None:
         &#34;&#34;&#34;Draws the button on the pygame window.&#34;&#34;&#34;
+        color = pygame.color.Color(
+            self.color[0], self.color[1],
+            self.color[2], self.color[3])
         pygame.draw.circle(
-            window, pygame.color.Color(255, 0, 0, 255),
-            (self.x_coord, self.y_coord),
-            100
+            window, color,
+            (self.pos[X], self.pos[Y]),
+            self.radius
         )</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameButton.is_clicked"><code class="name flex">
-<span>def <span class="ident">is_clicked</span></span>(<span>self, x_coord: float, y_coord: float, distance: float) ‑> bool</span>
+<span>def <span class="ident">is_clicked</span></span>(<span>self, pos: Tuple[float, float]) ‑> bool</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Checks if the button has been clicked.</p></div>
@@ -241,9 +251,13 @@ class PyGameSkeleton:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def is_clicked(self, x_coord: float, y_coord: float, distance: float) -&gt; bool:
+<pre><code class="python">def is_clicked(self, pos: Tuple[float, float]) -&gt; bool:
     &#34;&#34;&#34;Checks if the button has been clicked.&#34;&#34;&#34;
-    if abs(self.x_coord - x_coord) &gt; distance or abs(self.y_coord - y_coord) &gt; distance:
+    if abs(self.pos[X] - pos[X]) &gt; self.activation_distance \
+            or abs(self.pos[Y] - pos[Y]) &gt; self.activation_distance:
+        return False
+    if math.sqrt((self.pos[X] - pos[X])**2 + (self.pos[Y] - pos[Y])**2) \
+            &gt; self.activation_distance:
         return False
     return True</code></pre>
 </details>
@@ -259,46 +273,21 @@ class PyGameSkeleton:
 </summary>
 <pre><code class="python">def render(self, window) -&gt; None:
     &#34;&#34;&#34;Draws the button on the pygame window.&#34;&#34;&#34;
+    color = pygame.color.Color(
+        self.color[0], self.color[1],
+        self.color[2], self.color[3])
     pygame.draw.circle(
-        window, pygame.color.Color(255, 0, 0, 255),
-        (self.x_coord, self.y_coord),
-        100
+        window, color,
+        (self.pos[X], self.pos[Y]),
+        self.radius
     )</code></pre>
-</details>
-</dd>
-<dt id="cvgui.user_interface.pygame_ui.pygame.PyGameButton.set_callback"><code class="name flex">
-<span>def <span class="ident">set_callback</span></span>(<span>self, callback: Callable)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Sets callback function.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def set_callback(self, callback: Callable):
-    &#34;&#34;&#34;Sets callback function.&#34;&#34;&#34;
-    self.callback = callback</code></pre>
-</details>
-</dd>
-<dt id="cvgui.user_interface.pygame_ui.pygame.PyGameButton.set_targets"><code class="name flex">
-<span>def <span class="ident">set_targets</span></span>(<span>self, targets: List[int])</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Sets targets.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def set_targets(self, targets: List[int]):
-    &#34;&#34;&#34;Sets targets.&#34;&#34;&#34;
-    self.targets = targets</code></pre>
 </details>
 </dd>
 </dl>
 </dd>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameSkeleton"><code class="flex name class">
 <span>class <span class="ident">PyGameSkeleton</span></span>
-<span>(</span><span>x_coord: float, y_coord: float)</span>
+<span>(</span><span>pos: Tuple[float, float], scale: int)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Skeleton implementation in PyGame.</p>
@@ -336,27 +325,27 @@ class PyGameSkeleton:
     NUM_LANDMARKS: Literal[33] = 33
     POINTS_PER_LANDMARK: Literal[4] = 4  # x, y, z, depth?
 
-    def __init__(self, x_coord: float, y_coord: float) -&gt; None:
+    def __init__(self, pos: Tuple[float, float], scale: int) -&gt; None:
         &#34;&#34;&#34;Creates a new PyGame skeleton.&#34;&#34;&#34;
-        self.x_coord: float = x_coord
-        self.y_coord: float = y_coord
+        self.pos = pos
         self.skeleton_points: np.ndarray = np.zeros((33, 4))
+        self.scale = scale
 
     def render(self, window) -&gt; None:
         &#34;&#34;&#34;Draws the skeleton on the pygame window.&#34;&#34;&#34;
         for landmark_pair in self.CONNECTIONS:
-            start_landmark: int = landmark_pair[0]
-            end_landmark: int = landmark_pair[1]
-            line_start_x: float = self.skeleton_points[start_landmark][0]
-            line_start_y: float = self.skeleton_points[start_landmark][1]
-            line_end_x: float = self.skeleton_points[end_landmark][0]
-            line_end_y: float = self.skeleton_points[end_landmark][1]
+            start_landmark: int = landmark_pair[X]
+            end_landmark: int = landmark_pair[Y]
+            line_start_x: float = self.skeleton_points[start_landmark][X]
+            line_start_y: float = self.skeleton_points[start_landmark][Y]
+            line_end_x: float = self.skeleton_points[end_landmark][X]
+            line_end_y: float = self.skeleton_points[end_landmark][Y]
             pygame.draw.line(window, self.LIMB_COLOR, [float(line_start_x), float(line_start_y)],
                              [float(line_end_x), float(line_end_y)], self.LIMB_WIDTH)
 
-        for landmark, _ in enumerate(self.skeleton_points):
-            point_x: float = self.skeleton_points[landmark][0]
-            point_y: float = self.skeleton_points[landmark][1]
+        for _, landmark in enumerate(self.skeleton_points):
+            point_x: float = landmark[X]
+            point_y: float = landmark[Y]
             pygame.draw.circle(window, self.LANDMARK_COLOR, [
                                point_x, point_y], self.LANDMARK_RADIUS, self.LANDMARK_OUTLINE_WIDTH)</code></pre>
 </details>
@@ -409,18 +398,18 @@ class PyGameSkeleton:
 <pre><code class="python">def render(self, window) -&gt; None:
     &#34;&#34;&#34;Draws the skeleton on the pygame window.&#34;&#34;&#34;
     for landmark_pair in self.CONNECTIONS:
-        start_landmark: int = landmark_pair[0]
-        end_landmark: int = landmark_pair[1]
-        line_start_x: float = self.skeleton_points[start_landmark][0]
-        line_start_y: float = self.skeleton_points[start_landmark][1]
-        line_end_x: float = self.skeleton_points[end_landmark][0]
-        line_end_y: float = self.skeleton_points[end_landmark][1]
+        start_landmark: int = landmark_pair[X]
+        end_landmark: int = landmark_pair[Y]
+        line_start_x: float = self.skeleton_points[start_landmark][X]
+        line_start_y: float = self.skeleton_points[start_landmark][Y]
+        line_end_x: float = self.skeleton_points[end_landmark][X]
+        line_end_y: float = self.skeleton_points[end_landmark][Y]
         pygame.draw.line(window, self.LIMB_COLOR, [float(line_start_x), float(line_start_y)],
                          [float(line_end_x), float(line_end_y)], self.LIMB_WIDTH)
 
-    for landmark, _ in enumerate(self.skeleton_points):
-        point_x: float = self.skeleton_points[landmark][0]
-        point_y: float = self.skeleton_points[landmark][1]
+    for _, landmark in enumerate(self.skeleton_points):
+        point_x: float = landmark[X]
+        point_y: float = landmark[Y]
         pygame.draw.circle(window, self.LANDMARK_COLOR, [
                            point_x, point_y], self.LANDMARK_RADIUS, self.LANDMARK_OUTLINE_WIDTH)</code></pre>
 </details>
@@ -464,15 +453,17 @@ class PyGameSkeleton:
         pygame.display.update()
         self.fps_clock.tick(self.fps)
 
-    def button(self, x_coord: float, y_coord: float,
-               activation_distance: float) -&gt; Button:
+    def button(self, pos: Tuple[float, float],
+               activation_distance: float,
+               color: Tuple[int, int, int, int],
+               radius: int = 100) -&gt; Button:
         &#34;&#34;&#34;Creates a PyGame button at the specified location.&#34;&#34;&#34;
-        return PyGameButton(x_coord=x_coord, y_coord=y_coord,
-                            activation_distance=activation_distance)
+        return PyGameButton(pos=pos, activation_distance=activation_distance,
+                            color=color, radius=radius)
 
-    def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:
+    def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:
         &#34;&#34;&#34;Creates a PyGame skeleton at the specified location.&#34;&#34;&#34;
-        return PyGameSkeleton(x_coord=x_coord, y_coord=y_coord)
+        return PyGameSkeleton(pos=pos, scale=scale)
 
     def new_gui(self) -&gt; None:
         &#34;&#34;&#34;Initializes the PyGame user interface.&#34;&#34;&#34;
@@ -505,7 +496,7 @@ class PyGameSkeleton:
 <h3>Methods</h3>
 <dl>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameUI.button"><code class="name flex">
-<span>def <span class="ident">button</span></span>(<span>self, x_coord: float, y_coord: float, activation_distance: float) ‑> <a title="cvgui.core.displaying.components.Button" href="../../core/displaying/components.html#cvgui.core.displaying.components.Button">Button</a></span>
+<span>def <span class="ident">button</span></span>(<span>self, pos: Tuple[float, float], activation_distance: float, color: Tuple[int, int, int, int], radius: int = 100) ‑> <a title="cvgui.core.displaying.components.Button" href="../../core/displaying/components.html#cvgui.core.displaying.components.Button">Button</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Creates a PyGame button at the specified location.</p></div>
@@ -513,11 +504,13 @@ class PyGameSkeleton:
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def button(self, x_coord: float, y_coord: float,
-           activation_distance: float) -&gt; Button:
+<pre><code class="python">def button(self, pos: Tuple[float, float],
+           activation_distance: float,
+           color: Tuple[int, int, int, int],
+           radius: int = 100) -&gt; Button:
     &#34;&#34;&#34;Creates a PyGame button at the specified location.&#34;&#34;&#34;
-    return PyGameButton(x_coord=x_coord, y_coord=y_coord,
-                        activation_distance=activation_distance)</code></pre>
+    return PyGameButton(pos=pos, activation_distance=activation_distance,
+                        color=color, radius=radius)</code></pre>
 </details>
 </dd>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameUI.clear"><code class="name flex">
@@ -560,7 +553,7 @@ a single color.</p></div>
 </details>
 </dd>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameUI.skeleton"><code class="name flex">
-<span>def <span class="ident">skeleton</span></span>(<span>self, x_coord: float, y_coord: float) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="../../core/displaying/components.html#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
+<span>def <span class="ident">skeleton</span></span>(<span>self, pos: Tuple[float, float], scale: int) ‑> <a title="cvgui.core.displaying.components.Skeleton" href="../../core/displaying/components.html#cvgui.core.displaying.components.Skeleton">Skeleton</a></span>
 </code></dt>
 <dd>
 <div class="desc"><p>Creates a PyGame skeleton at the specified location.</p></div>
@@ -568,9 +561,9 @@ a single color.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def skeleton(self, x_coord: float, y_coord: float) -&gt; Skeleton:
+<pre><code class="python">def skeleton(self, pos: Tuple[float, float], scale: int) -&gt; Skeleton:
     &#34;&#34;&#34;Creates a PyGame skeleton at the specified location.&#34;&#34;&#34;
-    return PyGameSkeleton(x_coord=x_coord, y_coord=y_coord)</code></pre>
+    return PyGameSkeleton(pos=pos, scale=scale)</code></pre>
 </details>
 </dd>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameUI.update"><code class="name flex">
@@ -616,8 +609,6 @@ a single color.</p></div>
 <ul class="">
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameButton.is_clicked" href="#cvgui.user_interface.pygame_ui.pygame.PyGameButton.is_clicked">is_clicked</a></code></li>
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameButton.render" href="#cvgui.user_interface.pygame_ui.pygame.PyGameButton.render">render</a></code></li>
-<li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameButton.set_callback" href="#cvgui.user_interface.pygame_ui.pygame.PyGameButton.set_callback">set_callback</a></code></li>
-<li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameButton.set_targets" href="#cvgui.user_interface.pygame_ui.pygame.PyGameButton.set_targets">set_targets</a></code></li>
 </ul>
 </li>
 <li>

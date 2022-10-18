@@ -35,24 +35,43 @@ import mediapipe as mp
 
 class BlazePose:
     &#34;&#34;&#34;CVModel implementation for Google&#39;s Blazepose.&#34;&#34;&#34;
-    LEFT_HAND: int = 16
-    LEFT_ELBOW: int
-    LEFT_SHOULDER: int
-    LEFT_HIP: int
-    LEFT_KNEE: int
-    LEFT_FOOT: int
-    RIGHT_HAND: int = 17
-    RIGHT_ELBOW: int
-    RIGHT_SHOULDER: int
-    RIGHT_HIP: int
-    RIGHT_KNEE: int
-    RIGHT_FOOT: int
 
-    def __init__(self) -&gt; None:
-        self.pose_array = np.zeros((33, 4))
+    LEFT_HAND: int = 16
+    &#34;&#34;&#34;Blazepose left hand&#34;&#34;&#34;
+    LEFT_ELBOW: int = 14
+    &#34;&#34;&#34;Blazepose left elbow&#34;&#34;&#34;
+    LEFT_SHOULDER: int = 12
+    &#34;&#34;&#34;Blazepose left shoulder&#34;&#34;&#34;
+    LEFT_HIP: int = 24
+    &#34;&#34;&#34;Blazepose left hip&#34;&#34;&#34;
+    LEFT_KNEE: int = 26
+    &#34;&#34;&#34;Blazepose left knee&#34;&#34;&#34;
+    LEFT_FOOT: int = 28
+    &#34;&#34;&#34;Blazepose left foot&#34;&#34;&#34;
+    RIGHT_HAND: int = 17
+    &#34;&#34;&#34;Blazepose right hand&#34;&#34;&#34;
+    RIGHT_ELBOW: int = 13
+    &#34;&#34;&#34;Blazepose right elbow&#34;&#34;&#34;
+    RIGHT_SHOULDER: int = 11
+    &#34;&#34;&#34;Blazepose right shoulder&#34;&#34;&#34;
+    RIGHT_HIP: int = 23
+    &#34;&#34;&#34;Blazepose right hip&#34;&#34;&#34;
+    RIGHT_KNEE: int = 25
+    &#34;&#34;&#34;Blazepose right knee&#34;&#34;&#34;
+    RIGHT_FOOT: int = 27
+    &#34;&#34;&#34;Blazepose right foot&#34;&#34;&#34;
+
+    DEFAULT_SCALE: int = 450
+
+    def __init__(self, min_detection_confidence: float = 0.5,
+                 min_tracking_confidence: float = 0.5,
+                 model_complexity: int = 1) -&gt; None:
+        self.pose_array = np.zeros((33, 4))  # TODO: make these constants
         self.mp_pose = mp.solutions.pose  # type: ignore
         self.model = self.mp_pose.Pose(
-            min_detection_confidence=0.5, min_tracking_confidence=0.5, model_complexity=1)
+            min_detection_confidence=min_detection_confidence,
+            min_tracking_confidence=min_tracking_confidence,
+            model_complexity=model_complexity)
 
     def get_pose(self, frame: np.ndarray) -&gt; np.ndarray:
         &#34;&#34;&#34;Processes an image using Google&#39;s BlazePose and
@@ -86,6 +105,7 @@ class BlazePose:
 <dl>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose"><code class="flex name class">
 <span>class <span class="ident">BlazePose</span></span>
+<span>(</span><span>min_detection_confidence: float = 0.5, min_tracking_confidence: float = 0.5, model_complexity: int = 1)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>CVModel implementation for Google's Blazepose.</p></div>
@@ -95,24 +115,43 @@ class BlazePose:
 </summary>
 <pre><code class="python">class BlazePose:
     &#34;&#34;&#34;CVModel implementation for Google&#39;s Blazepose.&#34;&#34;&#34;
-    LEFT_HAND: int = 16
-    LEFT_ELBOW: int
-    LEFT_SHOULDER: int
-    LEFT_HIP: int
-    LEFT_KNEE: int
-    LEFT_FOOT: int
-    RIGHT_HAND: int = 17
-    RIGHT_ELBOW: int
-    RIGHT_SHOULDER: int
-    RIGHT_HIP: int
-    RIGHT_KNEE: int
-    RIGHT_FOOT: int
 
-    def __init__(self) -&gt; None:
-        self.pose_array = np.zeros((33, 4))
+    LEFT_HAND: int = 16
+    &#34;&#34;&#34;Blazepose left hand&#34;&#34;&#34;
+    LEFT_ELBOW: int = 14
+    &#34;&#34;&#34;Blazepose left elbow&#34;&#34;&#34;
+    LEFT_SHOULDER: int = 12
+    &#34;&#34;&#34;Blazepose left shoulder&#34;&#34;&#34;
+    LEFT_HIP: int = 24
+    &#34;&#34;&#34;Blazepose left hip&#34;&#34;&#34;
+    LEFT_KNEE: int = 26
+    &#34;&#34;&#34;Blazepose left knee&#34;&#34;&#34;
+    LEFT_FOOT: int = 28
+    &#34;&#34;&#34;Blazepose left foot&#34;&#34;&#34;
+    RIGHT_HAND: int = 17
+    &#34;&#34;&#34;Blazepose right hand&#34;&#34;&#34;
+    RIGHT_ELBOW: int = 13
+    &#34;&#34;&#34;Blazepose right elbow&#34;&#34;&#34;
+    RIGHT_SHOULDER: int = 11
+    &#34;&#34;&#34;Blazepose right shoulder&#34;&#34;&#34;
+    RIGHT_HIP: int = 23
+    &#34;&#34;&#34;Blazepose right hip&#34;&#34;&#34;
+    RIGHT_KNEE: int = 25
+    &#34;&#34;&#34;Blazepose right knee&#34;&#34;&#34;
+    RIGHT_FOOT: int = 27
+    &#34;&#34;&#34;Blazepose right foot&#34;&#34;&#34;
+
+    DEFAULT_SCALE: int = 450
+
+    def __init__(self, min_detection_confidence: float = 0.5,
+                 min_tracking_confidence: float = 0.5,
+                 model_complexity: int = 1) -&gt; None:
+        self.pose_array = np.zeros((33, 4))  # TODO: make these constants
         self.mp_pose = mp.solutions.pose  # type: ignore
         self.model = self.mp_pose.Pose(
-            min_detection_confidence=0.5, min_tracking_confidence=0.5, model_complexity=1)
+            min_detection_confidence=min_detection_confidence,
+            min_tracking_confidence=min_tracking_confidence,
+            model_complexity=model_complexity)
 
     def get_pose(self, frame: np.ndarray) -&gt; np.ndarray:
         &#34;&#34;&#34;Processes an image using Google&#39;s BlazePose and
@@ -136,53 +175,57 @@ class BlazePose:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_ELBOW"><code class="name">var <span class="ident">LEFT_ELBOW</span> : int</code></dt>
+<dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.DEFAULT_SCALE"><code class="name">var <span class="ident">DEFAULT_SCALE</span> : int</code></dt>
 <dd>
 <div class="desc"></div>
+</dd>
+<dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_ELBOW"><code class="name">var <span class="ident">LEFT_ELBOW</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Blazepose left elbow</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_FOOT"><code class="name">var <span class="ident">LEFT_FOOT</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose left foot</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_HAND"><code class="name">var <span class="ident">LEFT_HAND</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose left hand</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_HIP"><code class="name">var <span class="ident">LEFT_HIP</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose left hip</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_KNEE"><code class="name">var <span class="ident">LEFT_KNEE</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose left knee</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_SHOULDER"><code class="name">var <span class="ident">LEFT_SHOULDER</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose left shoulder</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.RIGHT_ELBOW"><code class="name">var <span class="ident">RIGHT_ELBOW</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose right elbow</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.RIGHT_FOOT"><code class="name">var <span class="ident">RIGHT_FOOT</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose right foot</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.RIGHT_HAND"><code class="name">var <span class="ident">RIGHT_HAND</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose right hand</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.RIGHT_HIP"><code class="name">var <span class="ident">RIGHT_HIP</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose right hip</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.RIGHT_KNEE"><code class="name">var <span class="ident">RIGHT_KNEE</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose right knee</p></div>
 </dd>
 <dt id="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.RIGHT_SHOULDER"><code class="name">var <span class="ident">RIGHT_SHOULDER</span> : int</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Blazepose right shoulder</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -239,6 +282,7 @@ returns the pose data (skeleton).</p></div>
 <li>
 <h4><code><a title="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose" href="#cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose">BlazePose</a></code></h4>
 <ul class="two-column">
+<li><code><a title="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.DEFAULT_SCALE" href="#cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.DEFAULT_SCALE">DEFAULT_SCALE</a></code></li>
 <li><code><a title="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_ELBOW" href="#cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_ELBOW">LEFT_ELBOW</a></code></li>
 <li><code><a title="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_FOOT" href="#cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_FOOT">LEFT_FOOT</a></code></li>
 <li><code><a title="cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_HAND" href="#cvgui.inputs.computer_vision.cv_model.blazepose.BlazePose.LEFT_HAND">LEFT_HAND</a></code></li>
