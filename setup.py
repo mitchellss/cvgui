@@ -8,7 +8,7 @@ URL = "https://github.com/mitchellss/cvgui"
 EMAIL = "stephen.mitchell2299@gmail.com"
 AUTHOR = "Stephen Mitchell"
 REQUIRES_PYTHON = ">=3.9"
-VERSION = "0.0.1"
+VERSION = "0.1.0"
 
 REQUIRED = [
     "mediapipe>=0.8.7.2",
