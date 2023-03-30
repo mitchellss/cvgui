@@ -38,6 +38,8 @@ class ComputerVisionPose:
                 method so they can be closed correctly later down the line.
         """
         image_queue: mp.Queue = mp.Queue()
+        print("Starting image processing pipeline "
+              "(This might take a while on Windows)...")
         cap = mp.Process(target=self.capture_and_show, args=(image_queue,))
         proc = mp.Process(target=self.process_image,
                           args=(image_queue, skeleton_queue))

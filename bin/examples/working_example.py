@@ -4,7 +4,13 @@ A button and skeleton component are added to a scene that
 takes input from a webcam and gets pose data from Google's
 Blazepose.
 """
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+WINDOW_FPS = 60
+
 if __name__ == "__main__":
+    import os
+    os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
     from random import randrange
     import cvgui
 
@@ -18,7 +24,7 @@ if __name__ == "__main__":
 
     # Specify GUI to be pygame
     ui: cvgui.UserInterface = cvgui.PyGameUI(
-        width=1920//2, height=1080//2, fps=60)
+        width=WINDOW_WIDTH, height=WINDOW_HEIGHT, fps=WINDOW_FPS)
 
     # Create activity
     activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
@@ -29,7 +35,8 @@ if __name__ == "__main__":
 
     # Create a new button
     button_1: cvgui.Button = cvgui.button(gui=ui,
-                                          pos=(1920//2, 1080//2),
+                                          pos=(WINDOW_WIDTH//2,
+                                               WINDOW_HEIGHT//2),
                                           activation_distance=50,
                                           color=(255, 0, 0, 255),
                                           radius=50)

@@ -1,11 +1,11 @@
 """User interface implementation of PyGame."""
+from cvgui.core.displaying.components import Button, Skeleton
+import numpy as np
+from pygame.constants import QUIT
+import pygame
 import math
 import sys
 from typing import Callable, List, Literal, Tuple
-import pygame
-from pygame.constants import QUIT
-import numpy as np
-from cvgui.core.displaying.components import Button, Skeleton
 
 X = 0
 Y = 1
