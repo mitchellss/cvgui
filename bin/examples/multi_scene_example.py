@@ -11,7 +11,9 @@ WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_FPS = 60
 
+# This name == main line is required for windows multiprocessing
 if __name__ == "__main__":
+
     # Specify input as a webcam and computer vision model as blazepose
     frame_input: cvgui.FrameInput = cvgui.Webcam(device_num=0, fps=30)
     cv_model: cvgui.CVModel = cvgui.BlazePose()
@@ -22,7 +24,7 @@ if __name__ == "__main__":
 
     # Specify GUI to be pygame
     ui: cvgui.UserInterface = cvgui.PyGameUI(
-        width=WINDOW_WIDTH, height=WINDOW_WIDTH, fps=WINDOW_FPS)
+        width=WINDOW_WIDTH, height=WINDOW_HEIGHT, fps=WINDOW_FPS)
 
     # Create activity
     activity = cvgui.Activity(pose_input=pose_input, frontend=ui)

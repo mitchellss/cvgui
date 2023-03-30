@@ -4,15 +4,15 @@ A button and skeleton component are added to a scene that
 takes input from a webcam and gets pose data from Google's
 Blazepose.
 """
+from random import randrange
+import cvgui
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_FPS = 60
 
+# This name == main line is required for windows multiprocessing
 if __name__ == "__main__":
-    import os
-    os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
-    from random import randrange
-    import cvgui
 
     # Specify input as a webcam and computer vision model as blazepose
     frame_input: cvgui.FrameInput = cvgui.Webcam(device_num=0, fps=30)
