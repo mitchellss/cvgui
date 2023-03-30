@@ -35,9 +35,9 @@ Operates on a collection of related scenes to create a specific experience.
 The activity module orchestrates the interfaces of `core` packages
 to run concurrently and create a coherent flow of information.
 &#34;&#34;&#34;
+import sys
 from typing import Iterable, List
 
-import logging
 import numpy as np
 import multiprocessing as mp
 
@@ -124,23 +124,18 @@ class Activity:
         try:
             self.update_ui(skeleton_queue)
         except KeyboardInterrupt:
+            print(&#34;Ctrl-C pressed. Exiting...&#34;)
             for process in processes:
                 process.kill()
+            sys.exit(0)
         except Exception as excpt:
-            logging.error(excpt)
             for process in processes:
                 process.kill()
             raise excpt
 
+        print(&#34;Pygame closed. Exiting...&#34;)
         for process in processes:
-            process.join()
-
-    def update_pose(self, skeleton_queue: mp.Queue):
-        &#34;&#34;&#34;Infinitely attempts to get pose data from the
-        global pose input. Does not run well in a sub-process.&#34;&#34;&#34;
-        while True:
-            pose: np.ndarray = self.pose_input.get_pose()
-            skeleton_queue.put(pose)
+            process.kill()
 
     def update_ui(self, skeleton_queue: mp.Queue):
         &#34;&#34;&#34;Infinitely attempts to render the most current
@@ -154,7 +149,7 @@ class Activity:
         &#34;&#34;&#34;
         self.frontend.new_gui()
         skeleton_points: np.ndarray = np.zeros((33, 4))
-        while True:
+        while self.frontend.running:
             self.frontend.clear()
 
             # Make sure the skeleton is updated first if it exists.
@@ -287,23 +282,18 @@ user interface.</dd>
         try:
             self.update_ui(skeleton_queue)
         except KeyboardInterrupt:
+            print(&#34;Ctrl-C pressed. Exiting...&#34;)
             for process in processes:
                 process.kill()
+            sys.exit(0)
         except Exception as excpt:
-            logging.error(excpt)
             for process in processes:
                 process.kill()
             raise excpt
 
+        print(&#34;Pygame closed. Exiting...&#34;)
         for process in processes:
-            process.join()
-
-    def update_pose(self, skeleton_queue: mp.Queue):
-        &#34;&#34;&#34;Infinitely attempts to get pose data from the
-        global pose input. Does not run well in a sub-process.&#34;&#34;&#34;
-        while True:
-            pose: np.ndarray = self.pose_input.get_pose()
-            skeleton_queue.put(pose)
+            process.kill()
 
     def update_ui(self, skeleton_queue: mp.Queue):
         &#34;&#34;&#34;Infinitely attempts to render the most current
@@ -317,7 +307,7 @@ user interface.</dd>
         &#34;&#34;&#34;
         self.frontend.new_gui()
         skeleton_points: np.ndarray = np.zeros((33, 4))
-        while True:
+        while self.frontend.running:
             self.frontend.clear()
 
             # Make sure the skeleton is updated first if it exists.
@@ -439,16 +429,18 @@ renders the components of added scenes.</p></div>
     try:
         self.update_ui(skeleton_queue)
     except KeyboardInterrupt:
+        print(&#34;Ctrl-C pressed. Exiting...&#34;)
         for process in processes:
             process.kill()
+        sys.exit(0)
     except Exception as excpt:
-        logging.error(excpt)
         for process in processes:
             process.kill()
         raise excpt
 
+    print(&#34;Pygame closed. Exiting...&#34;)
     for process in processes:
-        process.join()</code></pre>
+        process.kill()</code></pre>
 </details>
 </dd>
 <dt id="cvgui.activity.activity.Activity.set_scene"><code class="name flex">
@@ -480,26 +472,8 @@ Returns true if the scene switch was successful, false otherwise.</p>
     return True</code></pre>
 </details>
 </dd>
-<dt id="cvgui.activity.activity.Activity.update_pose"><code class="name flex">
-<span>def <span class="ident">update_pose</span></span>(<span>self, skeleton_queue: <bound method BaseContext.Queue of <multiprocessing.context.DefaultContext object at 0x7f51138f4880>>)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Infinitely attempts to get pose data from the
-global pose input. Does not run well in a sub-process.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def update_pose(self, skeleton_queue: mp.Queue):
-    &#34;&#34;&#34;Infinitely attempts to get pose data from the
-    global pose input. Does not run well in a sub-process.&#34;&#34;&#34;
-    while True:
-        pose: np.ndarray = self.pose_input.get_pose()
-        skeleton_queue.put(pose)</code></pre>
-</details>
-</dd>
 <dt id="cvgui.activity.activity.Activity.update_ui"><code class="name flex">
-<span>def <span class="ident">update_ui</span></span>(<span>self, skeleton_queue: <bound method BaseContext.Queue of <multiprocessing.context.DefaultContext object at 0x7f51138f4880>>)</span>
+<span>def <span class="ident">update_ui</span></span>(<span>self, skeleton_queue: <bound method BaseContext.Queue of <multiprocessing.context.DefaultContext object at 0x7f2189ae5910>>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Infinitely attempts to render the most current
@@ -529,7 +503,7 @@ concurrently while retrieving new data.</p>
     &#34;&#34;&#34;
     self.frontend.new_gui()
     skeleton_points: np.ndarray = np.zeros((33, 4))
-    while True:
+    while self.frontend.running:
         self.frontend.clear()
 
         # Make sure the skeleton is updated first if it exists.
@@ -586,7 +560,6 @@ concurrently while retrieving new data.</p>
 <li><code><a title="cvgui.activity.activity.Activity.previous_scene" href="#cvgui.activity.activity.Activity.previous_scene">previous_scene</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.run" href="#cvgui.activity.activity.Activity.run">run</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.set_scene" href="#cvgui.activity.activity.Activity.set_scene">set_scene</a></code></li>
-<li><code><a title="cvgui.activity.activity.Activity.update_pose" href="#cvgui.activity.activity.Activity.update_pose">update_pose</a></code></li>
 <li><code><a title="cvgui.activity.activity.Activity.update_ui" href="#cvgui.activity.activity.Activity.update_ui">update_ui</a></code></li>
 </ul>
 </li>

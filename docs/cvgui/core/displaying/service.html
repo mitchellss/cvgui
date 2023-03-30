@@ -37,6 +37,7 @@ from cvgui.core.displaying.components import Button, Skeleton
 class UserInterface(Protocol):
     &#34;&#34;&#34;An abstract user interface capable of rendering components.&#34;&#34;&#34;
     window: Any
+    running: bool
 
     def clear(self) -&gt; None:
         &#34;&#34;&#34;Resets the user interface display.&#34;&#34;&#34;
@@ -86,6 +87,7 @@ class UserInterface(Protocol):
 <pre><code class="python">class UserInterface(Protocol):
     &#34;&#34;&#34;An abstract user interface capable of rendering components.&#34;&#34;&#34;
     window: Any
+    running: bool
 
     def clear(self) -&gt; None:
         &#34;&#34;&#34;Resets the user interface display.&#34;&#34;&#34;
@@ -119,6 +121,10 @@ class UserInterface(Protocol):
 </ul>
 <h3>Class variables</h3>
 <dl>
+<dt id="cvgui.core.displaying.service.UserInterface.running"><code class="name">var <span class="ident">running</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="cvgui.core.displaying.service.UserInterface.window"><code class="name">var <span class="ident">window</span> : Any</code></dt>
 <dd>
 <div class="desc"></div>
@@ -227,6 +233,7 @@ interface at the location specfied.</p></div>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.button" href="#cvgui.core.displaying.service.UserInterface.button">button</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.clear" href="#cvgui.core.displaying.service.UserInterface.clear">clear</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.new_gui" href="#cvgui.core.displaying.service.UserInterface.new_gui">new_gui</a></code></li>
+<li><code><a title="cvgui.core.displaying.service.UserInterface.running" href="#cvgui.core.displaying.service.UserInterface.running">running</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.skeleton" href="#cvgui.core.displaying.service.UserInterface.skeleton">skeleton</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.update" href="#cvgui.core.displaying.service.UserInterface.update">update</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.window" href="#cvgui.core.displaying.service.UserInterface.window">window</a></code></li>

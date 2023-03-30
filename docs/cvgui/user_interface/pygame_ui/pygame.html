@@ -33,7 +33,6 @@ import numpy as np
 from pygame.constants import QUIT
 import pygame
 import math
-import sys
 from typing import Callable, List, Literal, Tuple
 
 X = 0
@@ -46,6 +45,7 @@ class PyGameUI:
 
     window: pygame.surface.Surface
     fps_clock: pygame.time.Clock
+    running: bool
 
     def __init__(self, height: int, width: int, fps: int) -&gt; None:
         self.width: int = width
@@ -59,13 +59,13 @@ class PyGameUI:
 
     def update(self) -&gt; None:
         &#34;&#34;&#34;Updates the PyGame window.&#34;&#34;&#34;
+        pygame.display.update()
+        self.fps_clock.tick(self.fps)
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit()
-
-        pygame.display.update()
-        self.fps_clock.tick(self.fps)
+                self.running = False
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
@@ -91,6 +91,7 @@ class PyGameUI:
             (self.width, self.height))
         pygame.display.set_caption(&#34;cvgui&#34;)
         self.window.fill(self.BACKGROUND)
+        self.running = True
 
 
 class PyGameButton:
@@ -444,6 +445,7 @@ class PyGameSkeleton:
 
     window: pygame.surface.Surface
     fps_clock: pygame.time.Clock
+    running: bool
 
     def __init__(self, height: int, width: int, fps: int) -&gt; None:
         self.width: int = width
@@ -457,13 +459,13 @@ class PyGameSkeleton:
 
     def update(self) -&gt; None:
         &#34;&#34;&#34;Updates the PyGame window.&#34;&#34;&#34;
+        pygame.display.update()
+        self.fps_clock.tick(self.fps)
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit()
-
-        pygame.display.update()
-        self.fps_clock.tick(self.fps)
+                self.running = False
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
@@ -488,7 +490,8 @@ class PyGameSkeleton:
         self.window: pygame.surface.Surface = pygame.display.set_mode(
             (self.width, self.height))
         pygame.display.set_caption(&#34;cvgui&#34;)
-        self.window.fill(self.BACKGROUND)</code></pre>
+        self.window.fill(self.BACKGROUND)
+        self.running = True</code></pre>
 </details>
 <h3>Class variables</h3>
 <dl>
@@ -497,6 +500,10 @@ class PyGameSkeleton:
 <div class="desc"></div>
 </dd>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameUI.fps_clock"><code class="name">var <span class="ident">fps_clock</span> : pygame.time.Clock</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="cvgui.user_interface.pygame_ui.pygame.PyGameUI.running"><code class="name">var <span class="ident">running</span> : bool</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -561,7 +568,8 @@ a single color.</p></div>
     self.window: pygame.surface.Surface = pygame.display.set_mode(
         (self.width, self.height))
     pygame.display.set_caption(&#34;cvgui&#34;)
-    self.window.fill(self.BACKGROUND)</code></pre>
+    self.window.fill(self.BACKGROUND)
+    self.running = True</code></pre>
 </details>
 </dd>
 <dt id="cvgui.user_interface.pygame_ui.pygame.PyGameUI.skeleton"><code class="name flex">
@@ -589,13 +597,13 @@ a single color.</p></div>
 </summary>
 <pre><code class="python">def update(self) -&gt; None:
     &#34;&#34;&#34;Updates the PyGame window.&#34;&#34;&#34;
+    pygame.display.update()
+    self.fps_clock.tick(self.fps)
+
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
-            sys.exit()
-
-    pygame.display.update()
-    self.fps_clock.tick(self.fps)</code></pre>
+            self.running = False</code></pre>
 </details>
 </dd>
 </dl>
@@ -645,6 +653,7 @@ a single color.</p></div>
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameUI.clear" href="#cvgui.user_interface.pygame_ui.pygame.PyGameUI.clear">clear</a></code></li>
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameUI.fps_clock" href="#cvgui.user_interface.pygame_ui.pygame.PyGameUI.fps_clock">fps_clock</a></code></li>
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameUI.new_gui" href="#cvgui.user_interface.pygame_ui.pygame.PyGameUI.new_gui">new_gui</a></code></li>
+<li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameUI.running" href="#cvgui.user_interface.pygame_ui.pygame.PyGameUI.running">running</a></code></li>
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameUI.skeleton" href="#cvgui.user_interface.pygame_ui.pygame.PyGameUI.skeleton">skeleton</a></code></li>
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameUI.update" href="#cvgui.user_interface.pygame_ui.pygame.PyGameUI.update">update</a></code></li>
 <li><code><a title="cvgui.user_interface.pygame_ui.pygame.PyGameUI.window" href="#cvgui.user_interface.pygame_ui.pygame.PyGameUI.window">window</a></code></li>
