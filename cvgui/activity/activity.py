@@ -87,8 +87,6 @@ class Activity:
         Infinitely retrieves pose data and
         renders the components of added scenes.
         """
-        mp.set_start_method("spawn")
-
         skeleton_queue: mp.Queue = mp.Queue()
         processes: Iterable[mp.Process] = self.pose_input.start(skeleton_queue)
 
