@@ -17,8 +17,8 @@ class UserInterface(Protocol):
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
-               color: Tuple[int, int, int, int]
-               ) -> Button:  # type: ignore
+               color: Tuple[int, int, int, int],
+               radius: int) -> Button:  # type: ignore
         """
         Creates a new button on the user
         interface at the location specfied.
