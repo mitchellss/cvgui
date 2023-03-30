@@ -4,13 +4,11 @@ Operates on a collection of related scenes to create a specific experience.
 The activity module orchestrates the interfaces of `core` packages
 to run concurrently and create a coherent flow of information.
 """
-from multiprocessing.sharedctypes import SynchronizedArray
-from typing import List
+import sys
+from typing import Iterable, List
 
-import multiprocessing as mp
-import logging
 import numpy as np
-
+import multiprocessing as mp
 
 from cvgui.activity.scene import Scene
 from cvgui.core.displaying import UserInterface
@@ -30,9 +28,6 @@ class Activity:
 
     _active_scene: int = 0
     """The index of the scene to render."""
-
-    pose: SynchronizedArray = mp.Array("d", 33*4)
-    """The collection of points that represent a human figure."""
 
     def __init__(self, pose_input: PoseGenerator,
                  frontend: UserInterface) -> None:
@@ -92,34 +87,26 @@ class Activity:
         Infinitely retrieves pose data and
         renders the components of added scenes.
         """
-        logger = mp.log_to_stderr()
-        logger.setLevel(mp.SUBDEBUG)  # type: ignore
-
-        proc: mp.Process = mp.Process(target=self.update_ui,
-                                      args=[self.frontend, self._scenes])
-        proc.start()
+        skeleton_queue: mp.Queue = mp.Queue()
+        processes: Iterable[mp.Process] = self.pose_input.start(skeleton_queue)
 
         try:
-            self.update_pose()
+            self.update_ui(skeleton_queue)
         except KeyboardInterrupt:
-            proc.kill()
+            print("Ctrl-C pressed. Exiting...")
+            for process in processes:
+                process.kill()
+            sys.exit(0)
         except Exception as excpt:
-            logging.error(excpt)
-            proc.kill()
+            for process in processes:
+                process.kill()
             raise excpt
 
-        proc.join()
+        print("Pygame closed. Exiting...")
+        for process in processes:
+            process.kill()
 
-    def update_pose(self):
-        """Infinitely attempts to get pose data from the
-        global pose input. Does not run well in a sub-process."""
-        while True:
-            pose: np.ndarray = self.pose_input.get_pose()
-            pose_list: List[float] = pose.flatten().tolist()
-            for index, value in enumerate(pose_list):
-                self.pose[index] = value
-
-    def update_ui(self, frontend: UserInterface, scenes: List[Scene]):
+    def update_ui(self, skeleton_queue: mp.Queue):
         """Infinitely attempts to render the most current
         version of the active scene of the user interface.
         Intended to run in a sub-process to update the ui
@@ -129,17 +116,18 @@ class Activity:
             frontend (UserInterface): The user interface to update.
             scenes (List[Scene]): The scenes for the activity being rendered.
         """
-        frontend.new_gui()
-        skeleton_points = np.zeros((33, 4))
-        while True:
-            frontend.clear()
+        self.frontend.new_gui()
+        skeleton_points: np.ndarray = np.zeros((33, 4))
+        while self.frontend.running:
+            self.frontend.clear()
 
             # Make sure the skeleton is updated first if it exists.
             # That way button clicks aren't a frame late
-            for component in scenes[self._active_scene].components:
+            for component in self._scenes[self._active_scene].components:
                 if isinstance(component, Skeleton):
-                    skeleton_points = np.array(
-                        self.pose.get_obj()).reshape((33, 4))
+                    if skeleton_queue.empty():
+                        continue
+                    skeleton_points = skeleton_queue.get()
                     # Scale the skeleton points and offset them
                     skeleton_points[:, X] = skeleton_points[:, X] * \
                         component.scale + component.pos[X]
@@ -148,7 +136,7 @@ class Activity:
                     component.skeleton_points = skeleton_points
                     break
 
-            for component in scenes[self._active_scene].components:
+            for component in self._scenes[self._active_scene].components:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
@@ -156,6 +144,6 @@ class Activity:
                                      skeleton_points[target][Y])):
                             component.callback()
 
-                component.render(frontend.window)
+                component.render(self.frontend.window)
 
-            frontend.update()
+            self.frontend.update()

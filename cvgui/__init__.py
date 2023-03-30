@@ -91,6 +91,8 @@ activity.run()
 ```
 """
 
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from .core import *  # noqa
 from .inputs.computer_vision import *  # noqa
 from .user_interface import *  # noqa

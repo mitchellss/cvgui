@@ -37,16 +37,31 @@ class BlazePose:
     def __init__(self, min_detection_confidence: float = 0.5,
                  min_tracking_confidence: float = 0.5,
                  model_complexity: int = 1) -> None:
+        self.min_detection_confidence = min_detection_confidence
+        self.min_tracking_confidence = min_tracking_confidence
+        self.model_complexity = model_complexity
         self.pose_array = np.zeros((33, 4))  # TODO: make these constants
-        self.mp_pose = mp.solutions.pose  # type: ignore
-        self.model = self.mp_pose.Pose(
-            min_detection_confidence=min_detection_confidence,
-            min_tracking_confidence=min_tracking_confidence,
-            model_complexity=model_complexity)
+        self.model = None
+
+    def _configure(self):
+        """
+        Creates the blazepose model.
+
+        This cannot be done in the init function due to how Windows handles
+        multiprocessing.
+        """
+        mp_pose = mp.solutions.pose  # type: ignore
+        self.model = mp_pose.Pose(
+            min_detection_confidence=self.min_detection_confidence,
+            min_tracking_confidence=self.min_tracking_confidence,
+            model_complexity=self.model_complexity)
 
     def get_pose(self, frame: np.ndarray) -> np.ndarray:
         """Processes an image using Google's BlazePose and
         returns the pose data (skeleton)."""
+        if self.model is None:
+            self._configure()
+
         try:
             landmarks = self.model.process(frame)
             pose = landmarks.pose_world_landmarks.landmark

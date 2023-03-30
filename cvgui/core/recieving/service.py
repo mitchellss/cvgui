@@ -1,4 +1,5 @@
 """Interfaces describing methods of recieving data."""
+from typing import Iterable
 from typing_extensions import Protocol
 import numpy as np
 
@@ -54,6 +55,9 @@ class CVModel(Protocol):
     """Index of the model's pose array that
     represents the user's right foot"""
 
+    DEFAULT_SCALE: int
+    """How the model should be sized by default"""
+
     def get_pose(self, frame: np.ndarray) -> np.ndarray:  # type: ignore
         """Retrieves the points making up a pose (skeleton) for a given
         image.
@@ -95,4 +99,12 @@ class PoseGenerator(Protocol):
         Returns:
             np.ndarray: An array of points that describe the
             locations of points of a pose (skeleton).
+        """
+
+    def start(self, skeleton_queue) -> Iterable:  # type: ignore
+        """
+        Completes any configuration that needs to be done
+        after initialization. Useful if the frame input is
+        being run in a separate process so that configruation
+        can be done post-fork.
         """

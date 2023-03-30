@@ -8,6 +8,7 @@ from cvgui.core.displaying.components import Button, Skeleton
 class UserInterface(Protocol):
     """An abstract user interface capable of rendering components."""
     window: Any
+    running: bool
 
     def clear(self) -> None:
         """Resets the user interface display."""
@@ -17,8 +18,8 @@ class UserInterface(Protocol):
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
-               color: Tuple[int, int, int, int]
-               ) -> Button:  # type: ignore
+               color: Tuple[int, int, int, int],
+               radius: int) -> Button:  # type: ignore
         """
         Creates a new button on the user
         interface at the location specfied.
