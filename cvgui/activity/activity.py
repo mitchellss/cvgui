@@ -4,9 +4,9 @@ Operates on a collection of related scenes to create a specific experience.
 The activity module orchestrates the interfaces of `core` packages
 to run concurrently and create a coherent flow of information.
 """
+import sys
 from typing import Iterable, List
 
-import logging
 import numpy as np
 import multiprocessing as mp
 
@@ -93,23 +93,18 @@ class Activity:
         try:
             self.update_ui(skeleton_queue)
         except KeyboardInterrupt:
+            print("Ctrl-C pressed. Exiting...")
             for process in processes:
                 process.kill()
+            sys.exit(0)
         except Exception as excpt:
-            logging.error(excpt)
             for process in processes:
                 process.kill()
             raise excpt
 
+        print("Pygame closed. Exiting...")
         for process in processes:
-            process.join()
-
-    def update_pose(self, skeleton_queue: mp.Queue):
-        """Infinitely attempts to get pose data from the
-        global pose input. Does not run well in a sub-process."""
-        while True:
-            pose: np.ndarray = self.pose_input.get_pose()
-            skeleton_queue.put(pose)
+            process.kill()
 
     def update_ui(self, skeleton_queue: mp.Queue):
         """Infinitely attempts to render the most current
@@ -123,7 +118,7 @@ class Activity:
         """
         self.frontend.new_gui()
         skeleton_points: np.ndarray = np.zeros((33, 4))
-        while True:
+        while self.frontend.running:
             self.frontend.clear()
 
             # Make sure the skeleton is updated first if it exists.

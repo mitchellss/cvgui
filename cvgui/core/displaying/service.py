@@ -8,6 +8,7 @@ from cvgui.core.displaying.components import Button, Skeleton
 class UserInterface(Protocol):
     """An abstract user interface capable of rendering components."""
     window: Any
+    running: bool
 
     def clear(self) -> None:
         """Resets the user interface display."""

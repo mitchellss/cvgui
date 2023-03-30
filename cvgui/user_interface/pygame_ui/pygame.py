@@ -4,7 +4,6 @@ import numpy as np
 from pygame.constants import QUIT
 import pygame
 import math
-import sys
 from typing import Callable, List, Literal, Tuple
 
 X = 0
@@ -17,6 +16,7 @@ class PyGameUI:
 
     window: pygame.surface.Surface
     fps_clock: pygame.time.Clock
+    running: bool
 
     def __init__(self, height: int, width: int, fps: int) -> None:
         self.width: int = width
@@ -30,13 +30,13 @@ class PyGameUI:
 
     def update(self) -> None:
         """Updates the PyGame window."""
+        pygame.display.update()
+        self.fps_clock.tick(self.fps)
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
-                sys.exit()
-
-        pygame.display.update()
-        self.fps_clock.tick(self.fps)
+                self.running = False
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
@@ -62,6 +62,7 @@ class PyGameUI:
             (self.width, self.height))
         pygame.display.set_caption("cvgui")
         self.window.fill(self.BACKGROUND)
+        self.running = True
 
 
 class PyGameButton:
