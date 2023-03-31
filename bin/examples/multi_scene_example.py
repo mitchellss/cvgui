@@ -43,12 +43,26 @@ if __name__ == "__main__":
                                           color=(255, 0, 0, 255),
                                           radius=50)
 
+    hand_bubble_1: cvgui.TrackingBubble = cvgui.tracking_bubble(
+        gui=ui,
+        color=(255, 0, 0, 255),
+        target=cv_model.LEFT_HAND,
+        radius=40,
+    )
+
     button_2: cvgui.Button = cvgui.button(gui=ui,
                                           pos=(WINDOW_WIDTH//2,
                                                WINDOW_HEIGHT//2),
                                           activation_distance=50,
                                           color=(0, 0, 255, 255),
                                           radius=50)
+
+    hand_bubble_2: cvgui.TrackingBubble = cvgui.tracking_bubble(
+        gui=ui,
+        radius=40,
+        target=cv_model.RIGHT_HAND,
+        color=(0, 0, 255, 255),
+    )
 
     def callback(button: cvgui.Button) -> None:
         """Move the button to a random spot and
@@ -75,8 +89,10 @@ if __name__ == "__main__":
 
     # Add the skeleton and button to the scene
     scene_1.add_component(button_1)
+    scene_1.add_component(hand_bubble_1)
     scene_1.add_component(skeleton)
     scene_2.add_component(button_2)
+    scene_2.add_component(hand_bubble_2)
     scene_2.add_component(skeleton)
 
     # Start activity
