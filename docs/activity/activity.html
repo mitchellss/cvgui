@@ -43,7 +43,7 @@ import multiprocessing as mp
 
 from cvgui.activity.scene import Scene
 from cvgui.core.displaying import UserInterface
-from cvgui.core.displaying.components import Button, Skeleton
+from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
 from cvgui.core.recieving import PoseGenerator
 
 X = 0
@@ -174,6 +174,9 @@ class Activity:
                                 pos=(skeleton_points[target][X],
                                      skeleton_points[target][Y])):
                             component.callback()
+                if isinstance(component, TrackingBubble):
+                    component.pos = (skeleton_points[component.target][X],
+                                     skeleton_points[component.target][Y])
 
                 component.render(self.frontend.window)
 
@@ -332,6 +335,9 @@ user interface.</dd>
                                 pos=(skeleton_points[target][X],
                                      skeleton_points[target][Y])):
                             component.callback()
+                if isinstance(component, TrackingBubble):
+                    component.pos = (skeleton_points[component.target][X],
+                                     skeleton_points[component.target][Y])
 
                 component.render(self.frontend.window)
 
@@ -473,7 +479,7 @@ Returns true if the scene switch was successful, false otherwise.</p>
 </details>
 </dd>
 <dt id="cvgui.activity.activity.Activity.update_ui"><code class="name flex">
-<span>def <span class="ident">update_ui</span></span>(<span>self, skeleton_queue: <bound method BaseContext.Queue of <multiprocessing.context.DefaultContext object at 0x7faad07135e0>>)</span>
+<span>def <span class="ident">update_ui</span></span>(<span>self, skeleton_queue: <bound method BaseContext.Queue of <multiprocessing.context.DefaultContext object at 0x7f0f8f7e58e0>>)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Infinitely attempts to render the most current
@@ -528,6 +534,9 @@ concurrently while retrieving new data.</p>
                             pos=(skeleton_points[target][X],
                                  skeleton_points[target][Y])):
                         component.callback()
+            if isinstance(component, TrackingBubble):
+                component.pos = (skeleton_points[component.target][X],
+                                 skeleton_points[component.target][Y])
 
             component.render(self.frontend.window)
 

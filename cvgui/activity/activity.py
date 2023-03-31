@@ -12,7 +12,7 @@ import multiprocessing as mp
 
 from cvgui.activity.scene import Scene
 from cvgui.core.displaying import UserInterface
-from cvgui.core.displaying.components import Button, Skeleton
+from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
 from cvgui.core.recieving import PoseGenerator
 
 X = 0
@@ -143,7 +143,12 @@ class Activity:
                                 pos=(skeleton_points[target][X],
                                      skeleton_points[target][Y])):
                             component.callback()
+                if isinstance(component, TrackingBubble):
+                    component.pos = (skeleton_points[component.target][X],
+                                     skeleton_points[component.target][Y])
 
                 component.render(self.frontend.window)
+
+            self._scenes[self._active_scene].frame_callback()
 
             self.frontend.update()

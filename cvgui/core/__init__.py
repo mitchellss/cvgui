@@ -12,7 +12,12 @@ therefore fulfill the requirements of the `recieving` core
 package and could theoretically be implemented as core classes.
 """
 from .displaying import (  # noqa
-    UserInterface, skeleton,
-    button, Skeleton, Button
+    UserInterface,
+    skeleton,
+    button,
+    tracking_bubble,
+    Skeleton,
+    Button,
+    TrackingBubble
   )
 from .recieving import CVModel, FrameInput, PoseGenerator  # noqa

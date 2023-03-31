@@ -31,7 +31,7 @@
 from typing import Any, Tuple
 from typing_extensions import Protocol
 
-from cvgui.core.displaying.components import Button, Skeleton
+from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
 
 
 class UserInterface(Protocol):
@@ -59,6 +59,16 @@ class UserInterface(Protocol):
         &#34;&#34;&#34;
         Creates a new skeleton on the user
         interface at the location specfied.
+        &#34;&#34;&#34;
+
+    def tracking_bubble(self,
+                        target: int,
+                        color: Tuple[int, int, int, int],
+                        radius: int
+                        ) -&gt; TrackingBubble:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new tracking bubble on the user
+        interface that tracks the given point.
         &#34;&#34;&#34;
 
     def update(self) -&gt; None:
@@ -109,6 +119,16 @@ class UserInterface(Protocol):
         &#34;&#34;&#34;
         Creates a new skeleton on the user
         interface at the location specfied.
+        &#34;&#34;&#34;
+
+    def tracking_bubble(self,
+                        target: int,
+                        color: Tuple[int, int, int, int],
+                        radius: int
+                        ) -&gt; TrackingBubble:  # type: ignore
+        &#34;&#34;&#34;
+        Creates a new tracking bubble on the user
+        interface that tracks the given point.
         &#34;&#34;&#34;
 
     def update(self) -&gt; None:
@@ -196,6 +216,27 @@ interface at the location specfied.</p></div>
     &#34;&#34;&#34;</code></pre>
 </details>
 </dd>
+<dt id="cvgui.core.displaying.service.UserInterface.tracking_bubble"><code class="name flex">
+<span>def <span class="ident">tracking_bubble</span></span>(<span>self, target: int, color: Tuple[int, int, int, int], radius: int) ‑> <a title="cvgui.core.displaying.components.TrackingBubble" href="components.html#cvgui.core.displaying.components.TrackingBubble">TrackingBubble</a></span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a new tracking bubble on the user
+interface that tracks the given point.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tracking_bubble(self,
+                    target: int,
+                    color: Tuple[int, int, int, int],
+                    radius: int
+                    ) -&gt; TrackingBubble:  # type: ignore
+    &#34;&#34;&#34;
+    Creates a new tracking bubble on the user
+    interface that tracks the given point.
+    &#34;&#34;&#34;</code></pre>
+</details>
+</dd>
 <dt id="cvgui.core.displaying.service.UserInterface.update"><code class="name flex">
 <span>def <span class="ident">update</span></span>(<span>self) ‑> None</span>
 </code></dt>
@@ -235,6 +276,7 @@ interface at the location specfied.</p></div>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.new_gui" href="#cvgui.core.displaying.service.UserInterface.new_gui">new_gui</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.running" href="#cvgui.core.displaying.service.UserInterface.running">running</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.skeleton" href="#cvgui.core.displaying.service.UserInterface.skeleton">skeleton</a></code></li>
+<li><code><a title="cvgui.core.displaying.service.UserInterface.tracking_bubble" href="#cvgui.core.displaying.service.UserInterface.tracking_bubble">tracking_bubble</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.update" href="#cvgui.core.displaying.service.UserInterface.update">update</a></code></li>
 <li><code><a title="cvgui.core.displaying.service.UserInterface.window" href="#cvgui.core.displaying.service.UserInterface.window">window</a></code></li>
 </ul>

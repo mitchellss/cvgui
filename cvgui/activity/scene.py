@@ -1,7 +1,7 @@
 """
 Class and logic that create an abstract scene.
 """
-from typing import List
+from typing import Callable, List
 from cvgui.core.displaying.components import Component
 
 
@@ -11,6 +11,10 @@ class Scene:
 
     def __init__(self) -> None:
         self.components: List[Component] = []
+        """Components to be included in the scene."""
+
+        self.frame_callback: Callable = lambda: True
+        """Function to run every frame."""
 
     def add_component(self, component: Component) -> None:
         """Adds a component to the list of components for

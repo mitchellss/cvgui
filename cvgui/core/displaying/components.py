@@ -82,6 +82,35 @@ class HasButton(Protocol):
 
 
 @runtime_checkable
+class TrackingBubble(Protocol):
+    """
+    Interface describing what methods a tracking bubble needs.
+    """
+    color: Tuple[int, int, int, int]
+    radius: int
+    target: int
+    pos: Tuple[float, float]
+
+    def render(self, window: Any) -> None:
+        """Required method to fulfill the requirements of the
+        Component interface."""
+
+
+class HasTrackingBubble(Protocol):
+    """
+    Interface describing what methods a gui must implement to be used in the
+    creation of a tracking bubble.
+    """
+
+    def tracking_bubble(self,
+                        target: int,
+                        color: Tuple[int, int, int, int],
+                        radius: int
+                        ) -> TrackingBubble:  # type: ignore
+        """Creates an abstract tracking bubble"""
+
+
+@runtime_checkable
 class Skeleton(Protocol):
     """
     Interface describing how a component must act to be considered
@@ -162,3 +191,23 @@ def skeleton(gui: HasSkeleton, pos: Tuple[float, float],
         Skeleton: The skeleton implementation for the respective gui.
     """
     return gui.skeleton(pos=pos, scale=scale)
+
+
+def tracking_bubble(gui: HasTrackingBubble,
+                    radius: int,
+                    target: int,
+                    color: Tuple[int, int, int, int] = (100, 100, 100, 255)
+                    ) -> TrackingBubble:
+    """Function that can be called to create a tracking bubble.
+
+    Args:
+        gui (HasTrackingBubble): A gui that can create a tracking bubble.
+        radius (int): The radius of the bubble.
+        target (int): The target for the bubble to track.
+        color (Tuple[int, int, int, int], optional): The color of the bubble.
+                Defaults to (100, 100, 100, 255).
+
+    Returns:
+        _type_: _description_
+    """
+    return gui.tracking_bubble(color=color, radius=radius, target=target)

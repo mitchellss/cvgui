@@ -7,4 +7,11 @@ to be able to display data to a user correctly.
 """
 
 from .service import UserInterface  # noqa
-from .components import skeleton, button, Skeleton, Button  # noqa
+from .components import (  # noqa
+    skeleton,
+    button,
+    tracking_bubble,
+    Skeleton,
+    Button,
+    TrackingBubble
+)
