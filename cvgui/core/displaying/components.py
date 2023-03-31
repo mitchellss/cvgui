@@ -89,6 +89,7 @@ class TrackingBubble(Protocol):
     color: Tuple[int, int, int, int]
     radius: int
     target: int
+    pos: Tuple[float, float]
 
     def render(self, window: Any) -> None:
         """Required method to fulfill the requirements of the
@@ -101,8 +102,11 @@ class HasTrackingBubble(Protocol):
     creation of a tracking bubble.
     """
 
-    def tracking_bubble(self, color: Tuple[int, int, int, int],
-                        radius: int, target: int):
+    def tracking_bubble(self,
+                        target: int,
+                        color: Tuple[int, int, int, int],
+                        radius: int
+                        ) -> TrackingBubble:  # type: ignore
         """Creates an abstract tracking bubble"""
 
 
@@ -206,5 +210,4 @@ def tracking_bubble(gui: HasTrackingBubble,
     Returns:
         _type_: _description_
     """
-    return gui.tracking_bubble(color=color, radius=radius,
-                               target=target)
+    return gui.tracking_bubble(color=color, radius=radius, target=target)

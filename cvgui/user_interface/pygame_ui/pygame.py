@@ -1,10 +1,10 @@
 """User interface implementation of PyGame."""
-from cvgui.core.displaying.components import Button, Skeleton
+from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
 import numpy as np
 from pygame.constants import QUIT
 import pygame
 import math
-from typing import Callable, List, Literal, Tuple
+from typing import Any, Callable, List, Literal, Tuple
 
 X = 0
 Y = 1
@@ -50,6 +50,13 @@ class PyGameUI:
         """Creates a PyGame skeleton at the specified location."""
         return PyGameSkeleton(pos=pos, scale=scale)
 
+    def tracking_bubble(self,
+                        target: int,
+                        color: Tuple[int, int, int, int],
+                        radius: int = 100
+                        ) -> TrackingBubble:
+        return PyGameTrackingBubble(color=color, target=target, radius=radius)
+
     def new_gui(self) -> None:
         """Initializes the PyGame user interface."""
         pygame.init()
@@ -63,6 +70,28 @@ class PyGameUI:
         pygame.display.set_caption("cvgui")
         self.window.fill(self.BACKGROUND)
         self.running = True
+
+
+class PyGameTrackingBubble:
+
+    def __init__(self,
+                 color: Tuple[int, int, int, int],
+                 radius: int,
+                 target: int) -> None:
+        self.color = color
+        self.radius = radius
+        self.target = target
+        self.pos: Tuple[float, float] = (0, 0)
+
+    def render(self, window: Any) -> None:
+        color = pygame.color.Color(
+            self.color[0], self.color[1],
+            self.color[2], self.color[3])
+        pygame.draw.circle(
+            window, color,
+            (self.pos[X], self.pos[Y]),
+            self.radius
+        )
 
 
 class PyGameButton:

@@ -2,7 +2,7 @@
 from typing import Any, Tuple
 from typing_extensions import Protocol
 
-from cvgui.core.displaying.components import Button, Skeleton
+from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
 
 
 class UserInterface(Protocol):
@@ -31,9 +31,12 @@ class UserInterface(Protocol):
         Creates a new skeleton on the user
         interface at the location specfied.
         """
-    
-    def tracking_bubble(self, color: Tuple[int, int, int, int], 
-                radius: int, target: int) -> TrackingBubble:
+
+    def tracking_bubble(self,
+                        target: int,
+                        color: Tuple[int, int, int, int],
+                        radius: int
+                        ) -> TrackingBubble:  # type: ignore
         """
         Creates a new tracking bubble on the user
         interface that tracks the given point.
