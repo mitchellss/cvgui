@@ -149,4 +149,6 @@ class Activity:
 
                 component.render(self.frontend.window)
 
+            self._scenes[self._active_scene].frame_callback()
+
             self.frontend.update()
