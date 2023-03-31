@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 0.2.0 - 2023-03-31
 ### Added
 - Added the `TrackingBubble` component
+- Added the ability to make a per-frame callback function per scene
 
 ## 0.1.1 - 2023-03-30
 ### Added
