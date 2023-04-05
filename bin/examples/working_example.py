@@ -28,6 +28,9 @@ if __name__ == "__main__":
 
     # Create activity
     activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
+    
+    pose_logger: cvgui.PoseLogger = cvgui.CSVLogger("test.csv")
+    activity.add_logger(pose_logger)
 
     # Create a new scene
     scene_1 = cvgui.Scene()
