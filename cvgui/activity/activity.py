@@ -104,11 +104,11 @@ class Activity:
         for logger in self.pose_loggers:
             queue = mp.Queue()
             pose_queues.append(queue)
-            processes.append(logger.start(queue))
+            processes += logger.start(queue)
 
         # Start the pose input process. This will start sending pose data
         # to all the queues specified above.
-        processes = self.pose_input.start(pose_queues)
+        processes += self.pose_input.start(pose_queues)
 
         try:
             self.update_ui(ui_pose_queue)
