@@ -1,4 +1,5 @@
 """Generates poses based on a computer vision model and a frame input."""
+from typing import Iterable
 import cv2
 import numpy as np
 import multiprocessing as mp
@@ -21,7 +22,7 @@ class ComputerVisionPose:
         self.frame_input: FrameInput = frame_input
         self.model: CVModel = model
 
-    def start(self, skeleton_queue: mp.Queue):
+    def start(self, pose_queues: Iterable[mp.Queue]):
         """
         Starts two processes, one for capturing/displaying frame input data and
         one for processing that frame input data to get skeletons out of them.
@@ -42,7 +43,7 @@ class ComputerVisionPose:
               "(This might take a while on Windows)...")
         cap = mp.Process(target=self.capture_and_show, args=(image_queue,))
         proc = mp.Process(target=self.process_image,
-                          args=(image_queue, skeleton_queue))
+                          args=(image_queue, pose_queues))
         cap.start()
         proc.start()
         return [cap, proc]
@@ -61,7 +62,7 @@ class ComputerVisionPose:
             if wait_key == 27:
                 pass
 
-    def process_image(self, image_queue, skeleton_queue):
+    def process_image(self, image_queue, pose_queues):
         """
         Infinitely takes images from the given queue and turns them into 
         skeleton data using a computer vision model.
@@ -70,7 +71,8 @@ class ComputerVisionPose:
             if image_queue.empty():
                 continue
             skeleton = self.model.get_pose(image_queue.get())
-            skeleton_queue.put(skeleton)
+            for queue in pose_queues:
+                queue.put(skeleton)
 
     def get_pose(self) -> np.ndarray:
         """Uses the frame input and computer vision model in tandem
