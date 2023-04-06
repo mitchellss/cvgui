@@ -5,13 +5,14 @@ import cv2
 
 
 class Webcam:
-    """FrameInput implementation for a computer webcam."""
+    """Captures data from a camera connected to the computer."""
 
     def __init__(self, device_num: int, fps: int) -> None:
-        """Creates a new webcam frame input.
+        """Object for capturing data from a camera connected to the computer.
 
         Args:
-            device_num (int): The device number of the webcam. Try 0 if unsure.
+            device_num (int): The device number of the webcam. Generally this \
+                will be zero if there are no other webcams connected.
             fps (int): The frames per second the webcam can provide.
         """
         self.device_num = device_num
