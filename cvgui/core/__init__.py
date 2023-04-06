@@ -13,7 +13,7 @@ package and could theoretically be implemented as core classes.
 """
 from .displaying import (  # noqa
     UserInterface,
-    pose,
+    skeleton,
     button,
     tracking_bubble,
     Skeleton,
