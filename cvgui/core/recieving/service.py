@@ -102,18 +102,12 @@ class PoseGenerator(Protocol):
             locations of points of a pose (skeleton).
         """
 
-    def start(self, pose_queues: Iterable[mp.Queue]) -> Iterable[mp.Process]:  # type: ignore
+    def start(self,
+              pose_queues: Iterable[mp.Queue]
+              ) -> Iterable[mp.Process]:  # type: ignore
         """
         Completes any configuration that needs to be done
         after initialization. Useful if the frame input is
         being run in a separate process so that configruation
         can be done post-fork.
-        """
-
-
-class PoseLogger(Protocol):
-
-    def start(self, pose_queue: mp.Queue) -> Iterable[mp.Process]:
-        """
-        Initializes the pose logger.
         """

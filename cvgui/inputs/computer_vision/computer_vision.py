@@ -1,4 +1,5 @@
 """Generates poses based on a computer vision model and a frame input."""
+from typing import Iterable
 import cv2
 import numpy as np
 import multiprocessing as mp

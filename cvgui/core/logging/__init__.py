@@ -1,1 +1,1 @@
-from .service import PoseLogger
+from .service import PoseLogger  # noqa

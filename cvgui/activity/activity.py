@@ -5,7 +5,7 @@ The activity module orchestrates the interfaces of `core` packages
 to run concurrently and create a coherent flow of information.
 """
 import sys
-from typing import Iterable
+from typing import List
 
 import numpy as np
 import multiprocessing as mp
@@ -14,6 +14,7 @@ from cvgui.activity.scene import Scene
 from cvgui.core.displaying import UserInterface
 from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
 from cvgui.core.recieving import PoseGenerator
+from cvgui.core.logging import PoseLogger
 
 X = 0
 Y = 1
@@ -24,12 +25,12 @@ class Activity:
     for their interaction."""
 
     # Private variables
-    _scenes: Iterable[Scene] = []
+    _scenes: List[Scene] = []
 
     _active_scene: int = 0
     """The index of the scene to render."""
 
-    pose_loggers: Iterable[cvgui.PoseLogger] = []
+    pose_loggers: List[PoseLogger] = []
 
     def __init__(self, pose_input: PoseGenerator,
                  frontend: UserInterface) -> None:
@@ -50,8 +51,8 @@ class Activity:
             to the activity.
         """
         self._scenes.append(scene)
-    
-    def add_logger(self, logger: cvgui.PoseLogger) -> None:
+
+    def add_logger(self, logger: PoseLogger) -> None:
         self.pose_loggers.append(logger)
 
     def next_scene(self) -> None:
@@ -92,17 +93,17 @@ class Activity:
         Infinitely retrieves pose data and
         renders the components of added scenes.
         """
-        processes: Iterable[mp.Process] = []
+        processes: List[mp.Process] = []
 
-        # Create a queue to allow the UI to 
+        # Create a queue to allow the UI to
         # recieve pose data.
-        ui_pose_queue = mp.Queue()
-        pose_queues: Iterable[mp.Queue] = [ui_pose_queue]
+        ui_pose_queue: mp.Queue = mp.Queue()
+        pose_queues: List[mp.Queue] = [ui_pose_queue]
 
         # Create a queue for each of the pose loggers
         # to recieve pose data.
         for logger in self.pose_loggers:
-            queue = mp.Queue()
+            queue: mp.Queue = mp.Queue()
             pose_queues.append(queue)
             processes += logger.start(queue)
 

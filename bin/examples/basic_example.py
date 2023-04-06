@@ -11,20 +11,23 @@ WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 WINDOW_FPS = 60
 
+
 def main():
     # Specify input as a webcam and computer vision model as blazepose
     frame_input = cvgui.Webcam(device_num=0, fps=30)
     cv_model = cvgui.BlazePose()
 
     # Create a pose generator based on a webcam + blazepose
-    pose_input = cvgui.ComputerVisionPose(frame_input=frame_input, model=cv_model)
+    pose_input = cvgui.ComputerVisionPose(
+        frame_input=frame_input, model=cv_model)
 
     # Specify GUI to be pygame
-    ui = cvgui.PyGameUI(width=WINDOW_WIDTH, height=WINDOW_HEIGHT, fps=WINDOW_FPS)
+    ui = cvgui.PyGameUI(width=WINDOW_WIDTH,
+                        height=WINDOW_HEIGHT, fps=WINDOW_FPS)
 
     # Create activity
     activity = cvgui.Activity(pose_input=pose_input, frontend=ui)
-    
+
     # Create a new scene
     scene_1 = cvgui.Scene()
     activity.add_scene(scene_1)
@@ -47,7 +50,7 @@ def main():
         '''
         button_1.pos = (randrange(600, 1000, 20), randrange(200, 600, 20))
         button_1.color = (randrange(0, 255, 1), randrange(0, 255, 1),
-                        randrange(0, 255, 1), 255)
+                          randrange(0, 255, 1), 255)
 
     # Set the button to be clicked using the user's left or right hand
     button_1.targets = [cv_model.LEFT_HAND, cv_model.RIGHT_HAND]
@@ -56,7 +59,8 @@ def main():
     button_1.callback = callback
 
     # Create a skeleton to map pose points to
-    skeleton = cvgui.skeleton(gui=ui, pos=(800, 600), scale=cv_model.DEFAULT_SCALE)
+    skeleton = cvgui.skeleton(gui=ui, pos=(
+        800, 600), scale=cv_model.DEFAULT_SCALE)
 
     # Add the skeleton and button to the scene
     scene_1.add_component(button_1)
@@ -65,7 +69,8 @@ def main():
     # Start activity
     activity.run()
 
-# Everything must be run under "__name__ == __main__" 
+
+# Everything must be run under "__name__ == __main__"
 # for windows multiprocessing
 if __name__ == "__main__":
     main()
