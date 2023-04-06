@@ -3,58 +3,36 @@
 `cvgui` is a library for creating body-interactive GUIs using computer
 vison.
 
-Documentation can be [found here](https://mitchellss.github.io/cvgui).
-
-
 **cvgui is a prototype. No guarantees can
 be made about the stability of the API or the library itself.**
 
 
 ## Installation
 
-> pip install cvgui
+```shell
+pip install cvgui
+```
 
-Requires Python 3.9 or later
+Requires Python 3.10
+
+## Usage
+
+```shell
+python ./my_activity.py
+```
+See the documentation [here](https://mitchellss.github.io/cvgui) for more information
+on how to create your own activities.
 
 ## Contributing
 
 Pull requests are welcome. Please see the [contributing guide](CONTRIBUTING.md) for more information.
 
-To begin development, first ensure that your python version is 3.9 or greater by running:
-> python --version
-
-Then, create a virtual environment...
-
-Windows:
-
-> python -m venv env
->
-> ./env/Scripts/activate
-
-Linux:
-
-> python -m venv env
->
-> source ./env/bin/activate
-
-And install the package in editable mode by running:
-
-> pip install -e .
-
-(The -e option makes it so any changes you make to the package are reflected
-at runtime and you don't have to re-install the package every time)
-
-To test and see if everything worked correctly, make sure you have a webcam plugged in and run:
-
-> python ./bin/examples/working_example.py
-
-To run the test program.
 
 ## Example Program
 
 This example creates a simple activity with a skeleton and a button.
-When clicked, the button moves. Example programs can be found in the
-`bin/examples` directory.
+When clicked, the button moves and changes color. Other example programs 
+can be found in the `bin/examples` directory.
 
 ```python
 from random import randrange

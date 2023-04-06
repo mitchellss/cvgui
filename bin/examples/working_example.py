@@ -58,12 +58,12 @@ if __name__ == "__main__":
     button_1.callback = lambda: callback(button_1)
 
     # Create a skeleton to map pose points to
-    skeleton: cvgui.Skeleton = cvgui.skeleton(
+    pose: cvgui.Skeleton = cvgui.pose(
         gui=ui, pos=(800, 600), scale=cv_model.DEFAULT_SCALE)
 
     # Add the skeleton and button to the scene
     scene_1.add_component(button_1)
-    scene_1.add_component(skeleton)
+    scene_1.add_component(pose)
 
     # Start activity
     activity.run()

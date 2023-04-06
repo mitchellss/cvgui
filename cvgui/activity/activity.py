@@ -13,15 +13,17 @@ import multiprocessing as mp
 from cvgui.activity.scene import Scene
 from cvgui.core.displaying import UserInterface
 from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
-from cvgui.core.recieving import PoseGenerator
+from cvgui.core.receiving import PoseGenerator
 
 X = 0
 Y = 1
 
 
 class Activity:
-    """A collection of scenes and the abstract logic
-    for their interaction."""
+    """
+    A collection of scenes and the abstract logic
+    for their interaction.
+    """
 
     # Private variables
     _scenes: List[Scene] = []

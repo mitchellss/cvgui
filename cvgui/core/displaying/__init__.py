@@ -8,7 +8,7 @@ to be able to display data to a user correctly.
 
 from .service import UserInterface  # noqa
 from .components import (  # noqa
-    skeleton,
+    pose,
     button,
     tracking_bubble,
     Skeleton,

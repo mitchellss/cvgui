@@ -10,7 +10,7 @@ Overall, the system needs to do four major things:
 - Log required data
 
 These four functions translate to the core packages of:
-- `recieving`
+- `receiving`
 - `displaying`
 - `providing_feedback` (not yet implemented)
 - `logging` (not yet implemented)

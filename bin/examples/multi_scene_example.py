@@ -83,7 +83,7 @@ if __name__ == "__main__":
     button_2.callback = lambda: callback(button_1)
 
     # Create a skeleton to map pose points to
-    skeleton: cvgui.Skeleton = cvgui.skeleton(
+    skeleton: cvgui.Skeleton = cvgui.pose(
         gui=ui, pos=(WINDOW_WIDTH//2, WINDOW_HEIGHT//2),
         scale=cv_model.DEFAULT_SCALE)
 
