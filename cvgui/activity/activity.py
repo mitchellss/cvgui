@@ -5,7 +5,7 @@ The activity module orchestrates the interfaces of `core` packages
 to run concurrently and create a coherent flow of information.
 """
 import sys
-from typing import Iterable, List
+from typing import List
 
 import numpy as np
 import multiprocessing as mp
@@ -14,6 +14,7 @@ from cvgui.activity.scene import Scene
 from cvgui.core.displaying import UserInterface
 from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
 from cvgui.core.receiving import PoseGenerator
+from cvgui.core.logging import PoseLogger
 
 X = 0
 Y = 1
@@ -30,6 +31,8 @@ class Activity:
 
     _active_scene: int = 0
     """The index of the scene to render."""
+
+    pose_loggers: List[PoseLogger] = []
 
     def __init__(self, pose_input: PoseGenerator,
                  frontend: UserInterface) -> None:
@@ -50,6 +53,9 @@ class Activity:
             to the activity.
         """
         self._scenes.append(scene)
+
+    def add_logger(self, logger: PoseLogger) -> None:
+        self.pose_loggers.append(logger)
 
     def next_scene(self) -> None:
         """
@@ -89,11 +95,26 @@ class Activity:
         Infinitely retrieves pose data and
         renders the components of added scenes.
         """
-        skeleton_queue: mp.Queue = mp.Queue()
-        processes: Iterable[mp.Process] = self.pose_input.start(skeleton_queue)
+        processes: List[mp.Process] = []
+
+        # Create a queue to allow the UI to
+        # recieve pose data.
+        ui_pose_queue: mp.Queue = mp.Queue()
+        pose_queues: List[mp.Queue] = [ui_pose_queue]
+
+        # Create a queue for each of the pose loggers
+        # to recieve pose data.
+        for logger in self.pose_loggers:
+            queue: mp.Queue = mp.Queue()
+            pose_queues.append(queue)
+            processes += logger.start(queue)
+
+        # Start the pose input process. This will start sending pose data
+        # to all the queues specified above.
+        processes += self.pose_input.start(pose_queues)
 
         try:
-            self.update_ui(skeleton_queue)
+            self.update_ui(ui_pose_queue)
         except KeyboardInterrupt:
             print("Ctrl-C pressed. Exiting...")
             for process in processes:
@@ -108,7 +129,7 @@ class Activity:
         for process in processes:
             process.kill()
 
-    def update_ui(self, skeleton_queue: mp.Queue):
+    def update_ui(self, pose_queue: mp.Queue):
         """Infinitely attempts to render the most current
         version of the active scene of the user interface.
         Intended to run in a sub-process to update the ui
@@ -119,7 +140,7 @@ class Activity:
             scenes (List[Scene]): The scenes for the activity being rendered.
         """
         self.frontend.new_gui()
-        skeleton_points: np.ndarray = np.zeros((33, 4))
+        pose_points: np.ndarray = np.zeros((33, 4))
         while self.frontend.running:
             self.frontend.clear()
 
@@ -127,27 +148,27 @@ class Activity:
             # That way button clicks aren't a frame late
             for component in self._scenes[self._active_scene].components:
                 if isinstance(component, Skeleton):
-                    if skeleton_queue.empty():
+                    if pose_queue.empty():
                         continue
-                    skeleton_points = skeleton_queue.get()
+                    pose_points = pose_queue.get()
                     # Scale the skeleton points and offset them
-                    skeleton_points[:, X] = skeleton_points[:, X] * \
+                    pose_points[:, X] = pose_points[:, X] * \
                         component.scale + component.pos[X]
-                    skeleton_points[:, Y] = skeleton_points[:, Y] * \
+                    pose_points[:, Y] = pose_points[:, Y] * \
                         component.scale + component.pos[Y]
-                    component.skeleton_points = skeleton_points
+                    component.skeleton_points = pose_points
                     break
 
             for component in self._scenes[self._active_scene].components:
                 if isinstance(component, Button):
                     for target in component.targets:
                         if component.is_clicked(
-                                pos=(skeleton_points[target][X],
-                                     skeleton_points[target][Y])):
+                                pos=(pose_points[target][X],
+                                     pose_points[target][Y])):
                             component.callback()
                 if isinstance(component, TrackingBubble):
-                    component.pos = (skeleton_points[component.target][X],
-                                     skeleton_points[component.target][Y])
+                    component.pos = (pose_points[component.target][X],
+                                     pose_points[component.target][Y])
 
                 component.render(self.frontend.window)
 

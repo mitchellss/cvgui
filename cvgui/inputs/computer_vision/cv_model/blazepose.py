@@ -40,7 +40,7 @@ class BlazePose:
         self.min_detection_confidence = min_detection_confidence
         self.min_tracking_confidence = min_tracking_confidence
         self.model_complexity = model_complexity
-        self.pose_array = np.zeros((33, 4))  # TODO: make these constants
+        self.pose_array: np.ndarray = np.zeros((33, 4))  # TODO: make these constants
         self.model = None
 
     def _configure(self):

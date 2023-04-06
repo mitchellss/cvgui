@@ -21,3 +21,4 @@ from .displaying import (  # noqa
     TrackingBubble
   )
 from .receiving import CVModel, FrameInput, PoseGenerator  # noqa
+from .logging import PoseLogger  # noqa

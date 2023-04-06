@@ -26,7 +26,7 @@ class ComputerVisionPose:
         self.frame_input: FrameInput = frame_input
         self.model: CVModel = model
 
-    def start(self, pose_queue: mp.Queue) -> Iterable[mp.Process]:
+    def start(self, pose_queues: Iterable[mp.Queue]) -> Iterable[mp.Process]:
         """
         Starts two processes, one for \
         capturing/displaying frame input data and \
@@ -51,7 +51,7 @@ class ComputerVisionPose:
               "(This might take a while on Windows)...")
         cap = mp.Process(target=self._capture_and_show, args=(image_queue,))
         proc = mp.Process(target=self._process_image,
-                          args=(image_queue, pose_queue))
+                          args=(image_queue, pose_queues))
         cap.start()
         proc.start()
         return [cap, proc]
@@ -70,7 +70,7 @@ class ComputerVisionPose:
             if wait_key == 27:
                 pass
 
-    def _process_image(self, image_queue, pose_queue) -> None:
+    def _process_image(self, image_queue, pose_queues):
         """
         Infinitely takes images from the given queue and turns them into \
         pose data using a computer vision model.
@@ -78,8 +78,9 @@ class ComputerVisionPose:
         while True:
             if image_queue.empty():
                 continue
-            pose: np.ndarray = self.model.get_pose(image_queue.get())
-            pose_queue.put(pose)
+            skeleton = self.model.get_pose(image_queue.get())
+            for queue in pose_queues:
+                queue.put(skeleton)
 
     def get_pose(self) -> np.ndarray:
         """

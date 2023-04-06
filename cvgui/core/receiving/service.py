@@ -5,6 +5,7 @@ from typing import Iterable
 import multiprocessing as mp
 from typing_extensions import Protocol
 import numpy as np
+import multiprocessing as mp
 
 
 class CVModel(Protocol):
@@ -102,8 +103,9 @@ class PoseGenerator(Protocol):
             locations of points of a pose.
         """
 
-    # type: ignore
-    def start(self, pose_queue: mp.Queue) -> Iterable[mp.Process]:
+    def start(self,
+              pose_queues: Iterable[mp.Queue]
+              ) -> Iterable[mp.Process]:  # type: ignore
         """
         Completes any configuration that needs to be done \
         after initialization. Useful if the frame input is \
