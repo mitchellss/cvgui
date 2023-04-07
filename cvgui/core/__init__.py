@@ -8,7 +8,7 @@ therefore be considered fit to fulfill the requirements of
 that function. For instance, both a MOCAP system and a
 computer vision + camera combo can provide a set of points
 when called upon that represent a human figure. These systems
-therefore fulfill the requirements of the `recieving` core
+therefore fulfill the requirements of the `receiving` core
 package and could theoretically be implemented as core classes.
 """
 from .displaying import (  # noqa
@@ -20,4 +20,5 @@ from .displaying import (  # noqa
     Button,
     TrackingBubble
   )
-from .recieving import CVModel, FrameInput, PoseGenerator  # noqa
+from .receiving import CVModel, FrameInput, PoseGenerator  # noqa
+from .logging import PoseLogger  # noqa

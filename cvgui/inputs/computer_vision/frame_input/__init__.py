@@ -1,4 +1,2 @@
-"""
-Implementations of devices that can regularly provide
-video frames.
-"""
+"""Implementations of devices that can regularly provide \
+video frames."""
