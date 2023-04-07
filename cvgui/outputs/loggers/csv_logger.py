@@ -42,7 +42,7 @@ class CSVPoseLogger:
             Iterable[mp.Process]: Any processes created by the \
                 logger that will need to be cleaned up later.
         """
-        self._save_queue: mpq.Queue = mp.Queue()
+        self._save_queue = mp.Queue()
         cap = mp.Process(target=self._log_data, args=(
             pose_queue, self._save_queue))
         cap.start()
