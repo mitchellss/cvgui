@@ -40,9 +40,6 @@
                                 <a class="function" href="#PoseLogger.start">start</a>
                         </li>
                         <li>
-                                <a class="function" href="#PoseLogger.log_data">log_data</a>
-                        </li>
-                        <li>
                                 <a class="function" href="#PoseLogger.save">save</a>
                         </li>
                         <li>
@@ -93,15 +90,12 @@
 </span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="sd">            instead of the init function due to the way \</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a><span class="sd">                windows handles multiprocessing.&quot;&quot;&quot;</span>
 </span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">log_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Log data from the queue.&quot;&quot;&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Save logged data to the disk.&quot;&quot;&quot;</span>
 </span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Save logged data to the disk.&quot;&quot;&quot;</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish logging poses and safely close any \</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a><span class="sd">        files or repositories.&quot;&quot;&quot;</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish logging poses and safely close any \</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        files or repositories.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -129,15 +123,12 @@
 </span><span id="PoseLogger-18"><a href="#PoseLogger-18"><span class="linenos">18</span></a><span class="sd">            instead of the init function due to the way \</span>
 </span><span id="PoseLogger-19"><a href="#PoseLogger-19"><span class="linenos">19</span></a><span class="sd">                windows handles multiprocessing.&quot;&quot;&quot;</span>
 </span><span id="PoseLogger-20"><a href="#PoseLogger-20"><span class="linenos">20</span></a>
-</span><span id="PoseLogger-21"><a href="#PoseLogger-21"><span class="linenos">21</span></a>    <span class="k">def</span> <span class="nf">log_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PoseLogger-22"><a href="#PoseLogger-22"><span class="linenos">22</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Log data from the queue.&quot;&quot;&quot;</span>
+</span><span id="PoseLogger-21"><a href="#PoseLogger-21"><span class="linenos">21</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseLogger-22"><a href="#PoseLogger-22"><span class="linenos">22</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Save logged data to the disk.&quot;&quot;&quot;</span>
 </span><span id="PoseLogger-23"><a href="#PoseLogger-23"><span class="linenos">23</span></a>
-</span><span id="PoseLogger-24"><a href="#PoseLogger-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="PoseLogger-25"><a href="#PoseLogger-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Save logged data to the disk.&quot;&quot;&quot;</span>
-</span><span id="PoseLogger-26"><a href="#PoseLogger-26"><span class="linenos">26</span></a>
-</span><span id="PoseLogger-27"><a href="#PoseLogger-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="PoseLogger-28"><a href="#PoseLogger-28"><span class="linenos">28</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish logging poses and safely close any \</span>
-</span><span id="PoseLogger-29"><a href="#PoseLogger-29"><span class="linenos">29</span></a><span class="sd">        files or repositories.&quot;&quot;&quot;</span>
+</span><span id="PoseLogger-24"><a href="#PoseLogger-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseLogger-25"><a href="#PoseLogger-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish logging poses and safely close any \</span>
+</span><span id="PoseLogger-26"><a href="#PoseLogger-26"><span class="linenos">26</span></a><span class="sd">        files or repositories.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -213,40 +204,19 @@
 
 
                             </div>
-                            <div id="PoseLogger.log_data" class="classattr">
-                                        <input id="PoseLogger.log_data-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
-<div class="attr function">
-            
-        <span class="def">def</span>
-        <span class="name">log_data</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span>, </span><span class="param"><span class="n">pose_queue</span><span class="p">:</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">queues</span><span class="o">.</span><span class="n">Queue</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
-
-                <label class="view-source-button" for="PoseLogger.log_data-view-source"><span>View Source</span></label>
-
-    </div>
-    <a class="headerlink" href="#PoseLogger.log_data"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseLogger.log_data-21"><a href="#PoseLogger.log_data-21"><span class="linenos">21</span></a>    <span class="k">def</span> <span class="nf">log_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="PoseLogger.log_data-22"><a href="#PoseLogger.log_data-22"><span class="linenos">22</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Log data from the queue.&quot;&quot;&quot;</span>
-</span></pre></div>
-
-
-            <div class="docstring"><p>Log data from the queue.</p>
-</div>
-
-
-                            </div>
                             <div id="PoseLogger.save" class="classattr">
                                         <input id="PoseLogger.save-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">save</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+        <span class="name">save</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="PoseLogger.save-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#PoseLogger.save"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseLogger.save-24"><a href="#PoseLogger.save-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="PoseLogger.save-25"><a href="#PoseLogger.save-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Save logged data to the disk.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseLogger.save-21"><a href="#PoseLogger.save-21"><span class="linenos">21</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseLogger.save-22"><a href="#PoseLogger.save-22"><span class="linenos">22</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Save logged data to the disk.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -260,15 +230,15 @@
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">close</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="nb">bool</span>:</span></span>
+        <span class="name">close</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
                 <label class="view-source-button" for="PoseLogger.close-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#PoseLogger.close"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseLogger.close-27"><a href="#PoseLogger.close-27"><span class="linenos">27</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="PoseLogger.close-28"><a href="#PoseLogger.close-28"><span class="linenos">28</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish logging poses and safely close any \</span>
-</span><span id="PoseLogger.close-29"><a href="#PoseLogger.close-29"><span class="linenos">29</span></a><span class="sd">        files or repositories.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseLogger.close-24"><a href="#PoseLogger.close-24"><span class="linenos">24</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseLogger.close-25"><a href="#PoseLogger.close-25"><span class="linenos">25</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish logging poses and safely close any \</span>
+</span><span id="PoseLogger.close-26"><a href="#PoseLogger.close-26"><span class="linenos">26</span></a><span class="sd">        files or repositories.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 

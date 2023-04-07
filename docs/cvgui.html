@@ -101,20 +101,19 @@ can be found in the <code>bin/examples</code> directory.</p>
 <span class="n">WINDOW_HEIGHT</span> <span class="o">=</span> <span class="mi">720</span>
 <span class="n">WINDOW_FPS</span> <span class="o">=</span> <span class="mi">60</span>
 
-<span class="c1"># This name == main line is required for windows multiprocessing</span>
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
 
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
     <span class="c1"># Specify input as a webcam and computer vision model as blazepose</span>
-    <span class="n">frame_input</span><span class="p">:</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">FrameInput</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">Webcam</span><span class="p">(</span><span class="n">device_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-    <span class="n">cv_model</span><span class="p">:</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">CVModel</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">BlazePose</span><span class="p">()</span>
+    <span class="n">frame_input</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">Webcam</span><span class="p">(</span><span class="n">device_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">cv_model</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">BlazePose</span><span class="p">()</span>
 
     <span class="c1"># Create a pose generator based on a webcam + blazepose</span>
-    <span class="n">pose_input</span><span class="p">:</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">PoseGenerator</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">ComputerVisionPose</span><span class="p">(</span>
+    <span class="n">pose_input</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">ComputerVisionPose</span><span class="p">(</span>
         <span class="n">frame_input</span><span class="o">=</span><span class="n">frame_input</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">cv_model</span><span class="p">)</span>
 
     <span class="c1"># Specify GUI to be pygame</span>
-    <span class="n">ui</span><span class="p">:</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">UserInterface</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">PyGameUI</span><span class="p">(</span>
-        <span class="n">width</span><span class="o">=</span><span class="n">WINDOW_WIDTH</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="n">WINDOW_HEIGHT</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">WINDOW_FPS</span><span class="p">)</span>
+    <span class="n">ui</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">PyGameUI</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="n">WINDOW_WIDTH</span><span class="p">,</span>
+                        <span class="n">height</span><span class="o">=</span><span class="n">WINDOW_HEIGHT</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="n">WINDOW_FPS</span><span class="p">)</span>
 
     <span class="c1"># Create activity</span>
     <span class="n">activity</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">Activity</span><span class="p">(</span><span class="n">pose_input</span><span class="o">=</span><span class="n">pose_input</span><span class="p">,</span> <span class="n">frontend</span><span class="o">=</span><span class="n">ui</span><span class="p">)</span>
@@ -124,32 +123,34 @@ can be found in the <code>bin/examples</code> directory.</p>
     <span class="n">activity</span><span class="o">.</span><span class="n">add_scene</span><span class="p">(</span><span class="n">scene_1</span><span class="p">)</span>
 
     <span class="c1"># Create a new button</span>
-    <span class="n">button_1</span><span class="p">:</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">Button</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">button</span><span class="p">(</span><span class="n">gui</span><span class="o">=</span><span class="n">ui</span><span class="p">,</span>
-                                          <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="n">WINDOW_WIDTH</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span>
-                                               <span class="n">WINDOW_HEIGHT</span><span class="o">//</span><span class="mi">2</span><span class="p">),</span>
-                                          <span class="n">activation_distance</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
-                                          <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
-                                          <span class="n">radius</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">button_1</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">button</span><span class="p">(</span>
+        <span class="n">gui</span><span class="o">=</span><span class="n">ui</span><span class="p">,</span>
+        <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="n">WINDOW_WIDTH</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span>
+             <span class="n">WINDOW_HEIGHT</span><span class="o">//</span><span class="mi">2</span><span class="p">),</span>
+        <span class="n">activation_distance</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span>
+        <span class="n">radius</span><span class="o">=</span><span class="mi">50</span>
+    <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="n">button</span><span class="p">:</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">Button</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">callback</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Define what the button should do when clicked.</span>
 <span class="sd">        In this case, randomly set a new button position</span>
 <span class="sd">        and randomly select a new color.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
-        <span class="n">button</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
-        <span class="n">button</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                        <span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">255</span><span class="p">)</span>
+        <span class="n">button_1</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="n">button_1</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="p">(</span><span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                          <span class="n">randrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">255</span><span class="p">)</span>
 
     <span class="c1"># Set the button to be clicked using the user&#39;s left or right hand</span>
     <span class="n">button_1</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="p">[</span><span class="n">cv_model</span><span class="o">.</span><span class="n">LEFT_HAND</span><span class="p">,</span> <span class="n">cv_model</span><span class="o">.</span><span class="n">RIGHT_HAND</span><span class="p">]</span>
 
     <span class="c1"># Link the callback function to the button</span>
-    <span class="n">button_1</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">callback</span><span class="p">(</span><span class="n">button_1</span><span class="p">)</span>
+    <span class="n">button_1</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
 
     <span class="c1"># Create a skeleton to map pose points to</span>
-    <span class="n">skeleton</span><span class="p">:</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">Skeleton</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">skeleton</span><span class="p">(</span>
-        <span class="n">gui</span><span class="o">=</span><span class="n">ui</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="n">cv_model</span><span class="o">.</span><span class="n">DEFAULT_SCALE</span><span class="p">)</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="n">cvgui</span><span class="o">.</span><span class="n">skeleton</span><span class="p">(</span><span class="n">gui</span><span class="o">=</span><span class="n">ui</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span>
+        <span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="n">cv_model</span><span class="o">.</span><span class="n">DEFAULT_SCALE</span><span class="p">)</span>
 
     <span class="c1"># Add the skeleton and button to the scene</span>
     <span class="n">scene_1</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="n">button_1</span><span class="p">)</span>
@@ -157,6 +158,12 @@ can be found in the <code>bin/examples</code> directory.</p>
 
     <span class="c1"># Start activity</span>
     <span class="n">activity</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+
+<span class="c1"># Everything must be run under &quot;__name__ == __main__&quot;</span>
+<span class="c1"># for windows multiprocessing</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
 </code></pre>
 </div>
 </div>

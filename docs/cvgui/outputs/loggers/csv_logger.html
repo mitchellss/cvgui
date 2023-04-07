@@ -31,22 +31,22 @@
             <h2>API Documentation</h2>
                 <ul class="memberlist">
             <li>
-                    <a class="class" href="#CSVLogger">CSVLogger</a>
+                    <a class="class" href="#CSVPoseLogger">CSVPoseLogger</a>
                             <ul class="memberlist">
                         <li>
-                                <a class="function" href="#CSVLogger.__init__">CSVLogger</a>
+                                <a class="function" href="#CSVPoseLogger.__init__">CSVPoseLogger</a>
                         </li>
                         <li>
-                                <a class="variable" href="#CSVLogger.active">active</a>
+                                <a class="variable" href="#CSVPoseLogger.active">active</a>
                         </li>
                         <li>
-                                <a class="function" href="#CSVLogger.start">start</a>
+                                <a class="function" href="#CSVPoseLogger.start">start</a>
                         </li>
                         <li>
-                                <a class="function" href="#CSVLogger.save">save</a>
+                                <a class="function" href="#CSVPoseLogger.save">save</a>
                         </li>
                         <li>
-                                <a class="function" href="#CSVLogger.close">close</a>
+                                <a class="function" href="#CSVPoseLogger.close">close</a>
                         </li>
                 </ul>
 
@@ -78,213 +78,230 @@
 </span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">classes related to logging data to csv \</span>
 </span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">files.&quot;&quot;&quot;</span>
 </span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span> <span class="nn">multiprocessing.queues</span> <span class="k">as</span> <span class="nn">mpq</span>
-</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">time</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a><span class="kn">import</span> <span class="nn">multiprocessing.queues</span> <span class="k">as</span> <span class="nn">mpq</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 </span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="k">class</span> <span class="nc">CSVLogger</span><span class="p">:</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A pose logger that saves data to a csv file.&quot;&quot;&quot;</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the logger should be actively saving \</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">        pose data.&quot;&quot;&quot;</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new csv logger.</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a><span class="sd">        Args:</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">            filepath (Path): The path to where the csv log \</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">                file should be saved.</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">filepath</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">132</span><span class="p">))</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CSVLogger.</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="sd">        This needs to be done here instead of the init function \</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">            because of how windows multiprocessing works.</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a><span class="sd">        Args:</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">            pose_queue (mpq.Queue): The queue where pose data \</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">                will be coming in.</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a><span class="sd">        Returns:</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">            Iterable[mp.Process]: Any processes created by the \</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">                logger that will need to be cleaned up later.</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="n">cap</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>            <span class="n">pose_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">))</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>        <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="k">return</span> <span class="p">[</span><span class="n">cap</span><span class="p">]</span>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>    <span class="k">def</span> <span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>    <span class="k">def</span> <span class="nf">_log_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">,</span> <span class="n">save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data from queue and add it to the internal numpy array.</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="sd">        Args:</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">            pose_queue (mpq.Queue): The queue of pose data coming in.</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">            save_queue (mpq.Queue): The queue to notify of when to save.</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>                <span class="k">if</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>                    <span class="k">continue</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>                <span class="n">pose_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>                <span class="n">newdata</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>                <span class="c1"># Create numpy array if not already created</span>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>                    <span class="n">data_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="n">data_length</span><span class="p">)</span>
-</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">newdata</span><span class="p">])</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="k">class</span> <span class="nc">CSVPoseLogger</span><span class="p">:</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A pose logger that saves data to a csv file.&quot;&quot;&quot;</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a>    <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the logger should be actively saving \</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a><span class="sd">        pose data.&quot;&quot;&quot;</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new csv logger.</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="sd">        Args:</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">            filepath (Path): The path to where the csv log \</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">                file should be saved.</span>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">filepath</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CSVLogger.</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">        This needs to be done here instead of the init function \</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">            because of how windows multiprocessing works.</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="sd">        Args:</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">            pose_queue (mpq.Queue): The queue where pose data \</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">                will be coming in.</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="sd">        Returns:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">            Iterable[mp.Process]: Any processes created by the \</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">                logger that will need to be cleaned up later.</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a>        <span class="n">cap</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>            <span class="n">pose_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">))</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>        <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>        <span class="k">return</span> <span class="p">[</span><span class="n">cap</span><span class="p">]</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>    <span class="k">def</span> <span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>        <span class="c1"># Add one to make room for the timestamp</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="k">def</span> <span class="nf">_log_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">,</span> <span class="n">save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data from queue and add it to the internal numpy array.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">        Args:</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a><span class="sd">            pose_queue (mpq.Queue): The queue of pose data coming in.</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="sd">            save_queue (mpq.Queue): The queue to notify of when to save.</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>                <span class="k">if</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>                    <span class="k">continue</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>                <span class="n">pose_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>                <span class="n">newdata</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a>                <span class="c1"># Create numpy array if not already created</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>                    <span class="n">data_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="n">data_length</span><span class="p">)</span>
 </span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">save_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>                    <span class="n">save_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>                    <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_header</span><span class="p">()</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>                    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>                               <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%5.5f</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>    <span class="k">def</span> <span class="nf">_build_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        Create the csv file header.</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a>                <span class="c1"># insert timestamp into first index</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a>                <span class="n">newdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">newdata</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()])</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">newdata</span><span class="p">])</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>                <span class="c1"># Save the data if the save queue has been pushed</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>                <span class="c1"># to or if data hasn&#39;t been saved for 1 second.</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">save_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>                    <span class="n">save_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_to_csv</span><span class="p">()</span>
 </span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">        This method assumes each pose point has 4 points \</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">            (x, y, z, visibility).</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>        <span class="n">header_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="mi">4</span><span class="p">):</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>            <span class="n">header_array</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>                             <span class="sa">f</span><span class="s2">&quot;z</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;vis</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a>        <span class="k">return</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_array</span><span class="p">)</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>    <span class="k">def</span> <span class="nf">_save_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>        <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_header</span><span class="p">()</span>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>                   <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%5.5f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>    <span class="k">def</span> <span class="nf">_build_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">        Create the csv file header.</span>
 </span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the most current data to the disk.&quot;&quot;&quot;</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish writing to the file.&quot;&quot;&quot;</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        This method assumes each pose point has 4 points \</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">            (x, y, z, visibility).</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>        <span class="n">header_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>            <span class="n">header_array</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>                             <span class="sa">f</span><span class="s2">&quot;z</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;vis</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>        <span class="k">return</span> <span class="s2">&quot;timestamp,&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_array</span><span class="p">)</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the most current data to the disk.&quot;&quot;&quot;</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish writing to the file.&quot;&quot;&quot;</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
             </section>
-                <section id="CSVLogger">
-                            <input id="CSVLogger-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                <section id="CSVPoseLogger">
+                            <input id="CSVPoseLogger-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr class">
             
     <span class="def">class</span>
-    <span class="name">CSVLogger</span>:
+    <span class="name">CSVPoseLogger</span>:
 
-                <label class="view-source-button" for="CSVLogger-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="CSVPoseLogger-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#CSVLogger"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVLogger-12"><a href="#CSVLogger-12"><span class="linenos"> 12</span></a><span class="k">class</span> <span class="nc">CSVLogger</span><span class="p">:</span>
-</span><span id="CSVLogger-13"><a href="#CSVLogger-13"><span class="linenos"> 13</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A pose logger that saves data to a csv file.&quot;&quot;&quot;</span>
-</span><span id="CSVLogger-14"><a href="#CSVLogger-14"><span class="linenos"> 14</span></a>
-</span><span id="CSVLogger-15"><a href="#CSVLogger-15"><span class="linenos"> 15</span></a>    <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-</span><span id="CSVLogger-16"><a href="#CSVLogger-16"><span class="linenos"> 16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the logger should be actively saving \</span>
-</span><span id="CSVLogger-17"><a href="#CSVLogger-17"><span class="linenos"> 17</span></a><span class="sd">        pose data.&quot;&quot;&quot;</span>
-</span><span id="CSVLogger-18"><a href="#CSVLogger-18"><span class="linenos"> 18</span></a>
-</span><span id="CSVLogger-19"><a href="#CSVLogger-19"><span class="linenos"> 19</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger-20"><a href="#CSVLogger-20"><span class="linenos"> 20</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new csv logger.</span>
-</span><span id="CSVLogger-21"><a href="#CSVLogger-21"><span class="linenos"> 21</span></a>
-</span><span id="CSVLogger-22"><a href="#CSVLogger-22"><span class="linenos"> 22</span></a><span class="sd">        Args:</span>
-</span><span id="CSVLogger-23"><a href="#CSVLogger-23"><span class="linenos"> 23</span></a><span class="sd">            filepath (Path): The path to where the csv log \</span>
-</span><span id="CSVLogger-24"><a href="#CSVLogger-24"><span class="linenos"> 24</span></a><span class="sd">                file should be saved.</span>
-</span><span id="CSVLogger-25"><a href="#CSVLogger-25"><span class="linenos"> 25</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CSVLogger-26"><a href="#CSVLogger-26"><span class="linenos"> 26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">filepath</span>
-</span><span id="CSVLogger-27"><a href="#CSVLogger-27"><span class="linenos"> 27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">132</span><span class="p">))</span>
-</span><span id="CSVLogger-28"><a href="#CSVLogger-28"><span class="linenos"> 28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="CSVLogger-29"><a href="#CSVLogger-29"><span class="linenos"> 29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="CSVLogger-30"><a href="#CSVLogger-30"><span class="linenos"> 30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span>
-</span><span id="CSVLogger-31"><a href="#CSVLogger-31"><span class="linenos"> 31</span></a>
-</span><span id="CSVLogger-32"><a href="#CSVLogger-32"><span class="linenos"> 32</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
-</span><span id="CSVLogger-33"><a href="#CSVLogger-33"><span class="linenos"> 33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CSVLogger.</span>
-</span><span id="CSVLogger-34"><a href="#CSVLogger-34"><span class="linenos"> 34</span></a>
-</span><span id="CSVLogger-35"><a href="#CSVLogger-35"><span class="linenos"> 35</span></a><span class="sd">        This needs to be done here instead of the init function \</span>
-</span><span id="CSVLogger-36"><a href="#CSVLogger-36"><span class="linenos"> 36</span></a><span class="sd">            because of how windows multiprocessing works.</span>
-</span><span id="CSVLogger-37"><a href="#CSVLogger-37"><span class="linenos"> 37</span></a>
-</span><span id="CSVLogger-38"><a href="#CSVLogger-38"><span class="linenos"> 38</span></a><span class="sd">        Args:</span>
-</span><span id="CSVLogger-39"><a href="#CSVLogger-39"><span class="linenos"> 39</span></a><span class="sd">            pose_queue (mpq.Queue): The queue where pose data \</span>
-</span><span id="CSVLogger-40"><a href="#CSVLogger-40"><span class="linenos"> 40</span></a><span class="sd">                will be coming in.</span>
-</span><span id="CSVLogger-41"><a href="#CSVLogger-41"><span class="linenos"> 41</span></a>
-</span><span id="CSVLogger-42"><a href="#CSVLogger-42"><span class="linenos"> 42</span></a><span class="sd">        Returns:</span>
-</span><span id="CSVLogger-43"><a href="#CSVLogger-43"><span class="linenos"> 43</span></a><span class="sd">            Iterable[mp.Process]: Any processes created by the \</span>
-</span><span id="CSVLogger-44"><a href="#CSVLogger-44"><span class="linenos"> 44</span></a><span class="sd">                logger that will need to be cleaned up later.</span>
-</span><span id="CSVLogger-45"><a href="#CSVLogger-45"><span class="linenos"> 45</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CSVLogger-46"><a href="#CSVLogger-46"><span class="linenos"> 46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
-</span><span id="CSVLogger-47"><a href="#CSVLogger-47"><span class="linenos"> 47</span></a>        <span class="n">cap</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
-</span><span id="CSVLogger-48"><a href="#CSVLogger-48"><span class="linenos"> 48</span></a>            <span class="n">pose_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">))</span>
-</span><span id="CSVLogger-49"><a href="#CSVLogger-49"><span class="linenos"> 49</span></a>        <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span id="CSVLogger-50"><a href="#CSVLogger-50"><span class="linenos"> 50</span></a>        <span class="k">return</span> <span class="p">[</span><span class="n">cap</span><span class="p">]</span>
-</span><span id="CSVLogger-51"><a href="#CSVLogger-51"><span class="linenos"> 51</span></a>
-</span><span id="CSVLogger-52"><a href="#CSVLogger-52"><span class="linenos"> 52</span></a>    <span class="k">def</span> <span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger-53"><a href="#CSVLogger-53"><span class="linenos"> 53</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span>
-</span><span id="CSVLogger-54"><a href="#CSVLogger-54"><span class="linenos"> 54</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
-</span><span id="CSVLogger-55"><a href="#CSVLogger-55"><span class="linenos"> 55</span></a>
-</span><span id="CSVLogger-56"><a href="#CSVLogger-56"><span class="linenos"> 56</span></a>    <span class="k">def</span> <span class="nf">_log_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">,</span> <span class="n">save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger-57"><a href="#CSVLogger-57"><span class="linenos"> 57</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data from queue and add it to the internal numpy array.</span>
-</span><span id="CSVLogger-58"><a href="#CSVLogger-58"><span class="linenos"> 58</span></a>
-</span><span id="CSVLogger-59"><a href="#CSVLogger-59"><span class="linenos"> 59</span></a><span class="sd">        Args:</span>
-</span><span id="CSVLogger-60"><a href="#CSVLogger-60"><span class="linenos"> 60</span></a><span class="sd">            pose_queue (mpq.Queue): The queue of pose data coming in.</span>
-</span><span id="CSVLogger-61"><a href="#CSVLogger-61"><span class="linenos"> 61</span></a><span class="sd">            save_queue (mpq.Queue): The queue to notify of when to save.</span>
-</span><span id="CSVLogger-62"><a href="#CSVLogger-62"><span class="linenos"> 62</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CSVLogger-63"><a href="#CSVLogger-63"><span class="linenos"> 63</span></a>        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span><span id="CSVLogger-64"><a href="#CSVLogger-64"><span class="linenos"> 64</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
-</span><span id="CSVLogger-65"><a href="#CSVLogger-65"><span class="linenos"> 65</span></a>                <span class="k">if</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
-</span><span id="CSVLogger-66"><a href="#CSVLogger-66"><span class="linenos"> 66</span></a>                    <span class="k">continue</span>
-</span><span id="CSVLogger-67"><a href="#CSVLogger-67"><span class="linenos"> 67</span></a>
-</span><span id="CSVLogger-68"><a href="#CSVLogger-68"><span class="linenos"> 68</span></a>                <span class="n">pose_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="CSVLogger-69"><a href="#CSVLogger-69"><span class="linenos"> 69</span></a>                <span class="n">newdata</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-</span><span id="CSVLogger-70"><a href="#CSVLogger-70"><span class="linenos"> 70</span></a>
-</span><span id="CSVLogger-71"><a href="#CSVLogger-71"><span class="linenos"> 71</span></a>                <span class="c1"># Create numpy array if not already created</span>
-</span><span id="CSVLogger-72"><a href="#CSVLogger-72"><span class="linenos"> 72</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger-73"><a href="#CSVLogger-73"><span class="linenos"> 73</span></a>                    <span class="n">data_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-</span><span id="CSVLogger-74"><a href="#CSVLogger-74"><span class="linenos"> 74</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="n">data_length</span><span class="p">)</span>
-</span><span id="CSVLogger-75"><a href="#CSVLogger-75"><span class="linenos"> 75</span></a>
-</span><span id="CSVLogger-76"><a href="#CSVLogger-76"><span class="linenos"> 76</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">newdata</span><span class="p">])</span>
-</span><span id="CSVLogger-77"><a href="#CSVLogger-77"><span class="linenos"> 77</span></a>
-</span><span id="CSVLogger-78"><a href="#CSVLogger-78"><span class="linenos"> 78</span></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">save_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
-</span><span id="CSVLogger-79"><a href="#CSVLogger-79"><span class="linenos"> 79</span></a>                    <span class="n">save_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-</span><span id="CSVLogger-80"><a href="#CSVLogger-80"><span class="linenos"> 80</span></a>                    <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_header</span><span class="p">()</span>
-</span><span id="CSVLogger-81"><a href="#CSVLogger-81"><span class="linenos"> 81</span></a>                    <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
-</span><span id="CSVLogger-82"><a href="#CSVLogger-82"><span class="linenos"> 82</span></a>                               <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%5.5f</span><span class="s2">&quot;</span><span class="p">)</span>
-</span><span id="CSVLogger-83"><a href="#CSVLogger-83"><span class="linenos"> 83</span></a>
-</span><span id="CSVLogger-84"><a href="#CSVLogger-84"><span class="linenos"> 84</span></a>    <span class="k">def</span> <span class="nf">_build_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-</span><span id="CSVLogger-85"><a href="#CSVLogger-85"><span class="linenos"> 85</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="CSVLogger-86"><a href="#CSVLogger-86"><span class="linenos"> 86</span></a><span class="sd">        Create the csv file header.</span>
-</span><span id="CSVLogger-87"><a href="#CSVLogger-87"><span class="linenos"> 87</span></a>
-</span><span id="CSVLogger-88"><a href="#CSVLogger-88"><span class="linenos"> 88</span></a><span class="sd">        This method assumes each pose point has 4 points \</span>
-</span><span id="CSVLogger-89"><a href="#CSVLogger-89"><span class="linenos"> 89</span></a><span class="sd">            (x, y, z, visibility).</span>
-</span><span id="CSVLogger-90"><a href="#CSVLogger-90"><span class="linenos"> 90</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CSVLogger-91"><a href="#CSVLogger-91"><span class="linenos"> 91</span></a>        <span class="n">header_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-</span><span id="CSVLogger-92"><a href="#CSVLogger-92"><span class="linenos"> 92</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="mi">4</span><span class="p">):</span>
-</span><span id="CSVLogger-93"><a href="#CSVLogger-93"><span class="linenos"> 93</span></a>            <span class="n">header_array</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-</span><span id="CSVLogger-94"><a href="#CSVLogger-94"><span class="linenos"> 94</span></a>                             <span class="sa">f</span><span class="s2">&quot;z</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;vis</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
-</span><span id="CSVLogger-95"><a href="#CSVLogger-95"><span class="linenos"> 95</span></a>        <span class="k">return</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_array</span><span class="p">)</span>
-</span><span id="CSVLogger-96"><a href="#CSVLogger-96"><span class="linenos"> 96</span></a>
-</span><span id="CSVLogger-97"><a href="#CSVLogger-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger-98"><a href="#CSVLogger-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the most current data to the disk.&quot;&quot;&quot;</span>
-</span><span id="CSVLogger-99"><a href="#CSVLogger-99"><span class="linenos"> 99</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="CSVLogger-100"><a href="#CSVLogger-100"><span class="linenos">100</span></a>
-</span><span id="CSVLogger-101"><a href="#CSVLogger-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger-102"><a href="#CSVLogger-102"><span class="linenos">102</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish writing to the file.&quot;&quot;&quot;</span>
-</span><span id="CSVLogger-103"><a href="#CSVLogger-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="CSVLogger-104"><a href="#CSVLogger-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+    <a class="headerlink" href="#CSVPoseLogger"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVPoseLogger-13"><a href="#CSVPoseLogger-13"><span class="linenos"> 13</span></a><span class="k">class</span> <span class="nc">CSVPoseLogger</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-14"><a href="#CSVPoseLogger-14"><span class="linenos"> 14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A pose logger that saves data to a csv file.&quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-15"><a href="#CSVPoseLogger-15"><span class="linenos"> 15</span></a>
+</span><span id="CSVPoseLogger-16"><a href="#CSVPoseLogger-16"><span class="linenos"> 16</span></a>    <span class="n">active</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+</span><span id="CSVPoseLogger-17"><a href="#CSVPoseLogger-17"><span class="linenos"> 17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the logger should be actively saving \</span>
+</span><span id="CSVPoseLogger-18"><a href="#CSVPoseLogger-18"><span class="linenos"> 18</span></a><span class="sd">        pose data.&quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-19"><a href="#CSVPoseLogger-19"><span class="linenos"> 19</span></a>
+</span><span id="CSVPoseLogger-20"><a href="#CSVPoseLogger-20"><span class="linenos"> 20</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-21"><a href="#CSVPoseLogger-21"><span class="linenos"> 21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new csv logger.</span>
+</span><span id="CSVPoseLogger-22"><a href="#CSVPoseLogger-22"><span class="linenos"> 22</span></a>
+</span><span id="CSVPoseLogger-23"><a href="#CSVPoseLogger-23"><span class="linenos"> 23</span></a><span class="sd">        Args:</span>
+</span><span id="CSVPoseLogger-24"><a href="#CSVPoseLogger-24"><span class="linenos"> 24</span></a><span class="sd">            filepath (Path): The path to where the csv log \</span>
+</span><span id="CSVPoseLogger-25"><a href="#CSVPoseLogger-25"><span class="linenos"> 25</span></a><span class="sd">                file should be saved.</span>
+</span><span id="CSVPoseLogger-26"><a href="#CSVPoseLogger-26"><span class="linenos"> 26</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-27"><a href="#CSVPoseLogger-27"><span class="linenos"> 27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">filepath</span>
+</span><span id="CSVPoseLogger-28"><a href="#CSVPoseLogger-28"><span class="linenos"> 28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="CSVPoseLogger-29"><a href="#CSVPoseLogger-29"><span class="linenos"> 29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="CSVPoseLogger-30"><a href="#CSVPoseLogger-30"><span class="linenos"> 30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="CSVPoseLogger-31"><a href="#CSVPoseLogger-31"><span class="linenos"> 31</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span>
+</span><span id="CSVPoseLogger-32"><a href="#CSVPoseLogger-32"><span class="linenos"> 32</span></a>
+</span><span id="CSVPoseLogger-33"><a href="#CSVPoseLogger-33"><span class="linenos"> 33</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
+</span><span id="CSVPoseLogger-34"><a href="#CSVPoseLogger-34"><span class="linenos"> 34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CSVLogger.</span>
+</span><span id="CSVPoseLogger-35"><a href="#CSVPoseLogger-35"><span class="linenos"> 35</span></a>
+</span><span id="CSVPoseLogger-36"><a href="#CSVPoseLogger-36"><span class="linenos"> 36</span></a><span class="sd">        This needs to be done here instead of the init function \</span>
+</span><span id="CSVPoseLogger-37"><a href="#CSVPoseLogger-37"><span class="linenos"> 37</span></a><span class="sd">            because of how windows multiprocessing works.</span>
+</span><span id="CSVPoseLogger-38"><a href="#CSVPoseLogger-38"><span class="linenos"> 38</span></a>
+</span><span id="CSVPoseLogger-39"><a href="#CSVPoseLogger-39"><span class="linenos"> 39</span></a><span class="sd">        Args:</span>
+</span><span id="CSVPoseLogger-40"><a href="#CSVPoseLogger-40"><span class="linenos"> 40</span></a><span class="sd">            pose_queue (mpq.Queue): The queue where pose data \</span>
+</span><span id="CSVPoseLogger-41"><a href="#CSVPoseLogger-41"><span class="linenos"> 41</span></a><span class="sd">                will be coming in.</span>
+</span><span id="CSVPoseLogger-42"><a href="#CSVPoseLogger-42"><span class="linenos"> 42</span></a>
+</span><span id="CSVPoseLogger-43"><a href="#CSVPoseLogger-43"><span class="linenos"> 43</span></a><span class="sd">        Returns:</span>
+</span><span id="CSVPoseLogger-44"><a href="#CSVPoseLogger-44"><span class="linenos"> 44</span></a><span class="sd">            Iterable[mp.Process]: Any processes created by the \</span>
+</span><span id="CSVPoseLogger-45"><a href="#CSVPoseLogger-45"><span class="linenos"> 45</span></a><span class="sd">                logger that will need to be cleaned up later.</span>
+</span><span id="CSVPoseLogger-46"><a href="#CSVPoseLogger-46"><span class="linenos"> 46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-47"><a href="#CSVPoseLogger-47"><span class="linenos"> 47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+</span><span id="CSVPoseLogger-48"><a href="#CSVPoseLogger-48"><span class="linenos"> 48</span></a>        <span class="n">cap</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+</span><span id="CSVPoseLogger-49"><a href="#CSVPoseLogger-49"><span class="linenos"> 49</span></a>            <span class="n">pose_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">))</span>
+</span><span id="CSVPoseLogger-50"><a href="#CSVPoseLogger-50"><span class="linenos"> 50</span></a>        <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span id="CSVPoseLogger-51"><a href="#CSVPoseLogger-51"><span class="linenos"> 51</span></a>        <span class="k">return</span> <span class="p">[</span><span class="n">cap</span><span class="p">]</span>
+</span><span id="CSVPoseLogger-52"><a href="#CSVPoseLogger-52"><span class="linenos"> 52</span></a>
+</span><span id="CSVPoseLogger-53"><a href="#CSVPoseLogger-53"><span class="linenos"> 53</span></a>    <span class="k">def</span> <span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-54"><a href="#CSVPoseLogger-54"><span class="linenos"> 54</span></a>        <span class="c1"># Add one to make room for the timestamp</span>
+</span><span id="CSVPoseLogger-55"><a href="#CSVPoseLogger-55"><span class="linenos"> 55</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+</span><span id="CSVPoseLogger-56"><a href="#CSVPoseLogger-56"><span class="linenos"> 56</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">size</span>
+</span><span id="CSVPoseLogger-57"><a href="#CSVPoseLogger-57"><span class="linenos"> 57</span></a>
+</span><span id="CSVPoseLogger-58"><a href="#CSVPoseLogger-58"><span class="linenos"> 58</span></a>    <span class="k">def</span> <span class="nf">_log_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">,</span> <span class="n">save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-59"><a href="#CSVPoseLogger-59"><span class="linenos"> 59</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data from queue and add it to the internal numpy array.</span>
+</span><span id="CSVPoseLogger-60"><a href="#CSVPoseLogger-60"><span class="linenos"> 60</span></a>
+</span><span id="CSVPoseLogger-61"><a href="#CSVPoseLogger-61"><span class="linenos"> 61</span></a><span class="sd">        Args:</span>
+</span><span id="CSVPoseLogger-62"><a href="#CSVPoseLogger-62"><span class="linenos"> 62</span></a><span class="sd">            pose_queue (mpq.Queue): The queue of pose data coming in.</span>
+</span><span id="CSVPoseLogger-63"><a href="#CSVPoseLogger-63"><span class="linenos"> 63</span></a><span class="sd">            save_queue (mpq.Queue): The queue to notify of when to save.</span>
+</span><span id="CSVPoseLogger-64"><a href="#CSVPoseLogger-64"><span class="linenos"> 64</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-65"><a href="#CSVPoseLogger-65"><span class="linenos"> 65</span></a>        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-66"><a href="#CSVPoseLogger-66"><span class="linenos"> 66</span></a>            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-67"><a href="#CSVPoseLogger-67"><span class="linenos"> 67</span></a>                <span class="k">if</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+</span><span id="CSVPoseLogger-68"><a href="#CSVPoseLogger-68"><span class="linenos"> 68</span></a>                    <span class="k">continue</span>
+</span><span id="CSVPoseLogger-69"><a href="#CSVPoseLogger-69"><span class="linenos"> 69</span></a>
+</span><span id="CSVPoseLogger-70"><a href="#CSVPoseLogger-70"><span class="linenos"> 70</span></a>                <span class="n">pose_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="CSVPoseLogger-71"><a href="#CSVPoseLogger-71"><span class="linenos"> 71</span></a>                <span class="n">newdata</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">pose_data</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+</span><span id="CSVPoseLogger-72"><a href="#CSVPoseLogger-72"><span class="linenos"> 72</span></a>
+</span><span id="CSVPoseLogger-73"><a href="#CSVPoseLogger-73"><span class="linenos"> 73</span></a>                <span class="c1"># Create numpy array if not already created</span>
+</span><span id="CSVPoseLogger-74"><a href="#CSVPoseLogger-74"><span class="linenos"> 74</span></a>                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-75"><a href="#CSVPoseLogger-75"><span class="linenos"> 75</span></a>                    <span class="n">data_length</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">newdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="CSVPoseLogger-76"><a href="#CSVPoseLogger-76"><span class="linenos"> 76</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="n">data_length</span><span class="p">)</span>
+</span><span id="CSVPoseLogger-77"><a href="#CSVPoseLogger-77"><span class="linenos"> 77</span></a>
+</span><span id="CSVPoseLogger-78"><a href="#CSVPoseLogger-78"><span class="linenos"> 78</span></a>                <span class="c1"># insert timestamp into first index</span>
+</span><span id="CSVPoseLogger-79"><a href="#CSVPoseLogger-79"><span class="linenos"> 79</span></a>                <span class="n">newdata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">newdata</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()])</span>
+</span><span id="CSVPoseLogger-80"><a href="#CSVPoseLogger-80"><span class="linenos"> 80</span></a>                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">newdata</span><span class="p">])</span>
+</span><span id="CSVPoseLogger-81"><a href="#CSVPoseLogger-81"><span class="linenos"> 81</span></a>
+</span><span id="CSVPoseLogger-82"><a href="#CSVPoseLogger-82"><span class="linenos"> 82</span></a>                <span class="c1"># Save the data if the save queue has been pushed</span>
+</span><span id="CSVPoseLogger-83"><a href="#CSVPoseLogger-83"><span class="linenos"> 83</span></a>                <span class="c1"># to or if data hasn&#39;t been saved for 1 second.</span>
+</span><span id="CSVPoseLogger-84"><a href="#CSVPoseLogger-84"><span class="linenos"> 84</span></a>                <span class="k">if</span> <span class="ow">not</span> <span class="n">save_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+</span><span id="CSVPoseLogger-85"><a href="#CSVPoseLogger-85"><span class="linenos"> 85</span></a>                    <span class="n">save_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</span><span id="CSVPoseLogger-86"><a href="#CSVPoseLogger-86"><span class="linenos"> 86</span></a>                    <span class="bp">self</span><span class="o">.</span><span class="n">_save_to_csv</span><span class="p">()</span>
+</span><span id="CSVPoseLogger-87"><a href="#CSVPoseLogger-87"><span class="linenos"> 87</span></a>
+</span><span id="CSVPoseLogger-88"><a href="#CSVPoseLogger-88"><span class="linenos"> 88</span></a>    <span class="k">def</span> <span class="nf">_save_to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-89"><a href="#CSVPoseLogger-89"><span class="linenos"> 89</span></a>        <span class="n">header</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_header</span><span class="p">()</span>
+</span><span id="CSVPoseLogger-90"><a href="#CSVPoseLogger-90"><span class="linenos"> 90</span></a>        <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span>
+</span><span id="CSVPoseLogger-91"><a href="#CSVPoseLogger-91"><span class="linenos"> 91</span></a>                   <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%5.5f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">comments</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+</span><span id="CSVPoseLogger-92"><a href="#CSVPoseLogger-92"><span class="linenos"> 92</span></a>
+</span><span id="CSVPoseLogger-93"><a href="#CSVPoseLogger-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">_build_header</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-94"><a href="#CSVPoseLogger-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-95"><a href="#CSVPoseLogger-95"><span class="linenos"> 95</span></a><span class="sd">        Create the csv file header.</span>
+</span><span id="CSVPoseLogger-96"><a href="#CSVPoseLogger-96"><span class="linenos"> 96</span></a>
+</span><span id="CSVPoseLogger-97"><a href="#CSVPoseLogger-97"><span class="linenos"> 97</span></a><span class="sd">        This method assumes each pose point has 4 points \</span>
+</span><span id="CSVPoseLogger-98"><a href="#CSVPoseLogger-98"><span class="linenos"> 98</span></a><span class="sd">            (x, y, z, visibility).</span>
+</span><span id="CSVPoseLogger-99"><a href="#CSVPoseLogger-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-100"><a href="#CSVPoseLogger-100"><span class="linenos">100</span></a>        <span class="n">header_array</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="CSVPoseLogger-101"><a href="#CSVPoseLogger-101"><span class="linenos">101</span></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">//</span><span class="mi">4</span><span class="p">):</span>
+</span><span id="CSVPoseLogger-102"><a href="#CSVPoseLogger-102"><span class="linenos">102</span></a>            <span class="n">header_array</span> <span class="o">+=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;x</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;y</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+</span><span id="CSVPoseLogger-103"><a href="#CSVPoseLogger-103"><span class="linenos">103</span></a>                             <span class="sa">f</span><span class="s2">&quot;z</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;vis</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+</span><span id="CSVPoseLogger-104"><a href="#CSVPoseLogger-104"><span class="linenos">104</span></a>        <span class="k">return</span> <span class="s2">&quot;timestamp,&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header_array</span><span class="p">)</span>
+</span><span id="CSVPoseLogger-105"><a href="#CSVPoseLogger-105"><span class="linenos">105</span></a>
+</span><span id="CSVPoseLogger-106"><a href="#CSVPoseLogger-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-107"><a href="#CSVPoseLogger-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the most current data to the disk.&quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-108"><a href="#CSVPoseLogger-108"><span class="linenos">108</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="CSVPoseLogger-109"><a href="#CSVPoseLogger-109"><span class="linenos">109</span></a>
+</span><span id="CSVPoseLogger-110"><a href="#CSVPoseLogger-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger-111"><a href="#CSVPoseLogger-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish writing to the file.&quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger-112"><a href="#CSVPoseLogger-112"><span class="linenos">112</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="CSVPoseLogger-113"><a href="#CSVPoseLogger-113"><span class="linenos">113</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
@@ -292,28 +309,28 @@
 </div>
 
 
-                            <div id="CSVLogger.__init__" class="classattr">
-                                        <input id="CSVLogger.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="CSVPoseLogger.__init__" class="classattr">
+                                        <input id="CSVPoseLogger.__init__-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
-        <span class="name">CSVLogger</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">filepath</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span></span>)</span>
+        <span class="name">CSVPoseLogger</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">filepath</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span></span>)</span>
 
-                <label class="view-source-button" for="CSVLogger.__init__-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="CSVPoseLogger.__init__-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#CSVLogger.__init__"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVLogger.__init__-19"><a href="#CSVLogger.__init__-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger.__init__-20"><a href="#CSVLogger.__init__-20"><span class="linenos">20</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new csv logger.</span>
-</span><span id="CSVLogger.__init__-21"><a href="#CSVLogger.__init__-21"><span class="linenos">21</span></a>
-</span><span id="CSVLogger.__init__-22"><a href="#CSVLogger.__init__-22"><span class="linenos">22</span></a><span class="sd">        Args:</span>
-</span><span id="CSVLogger.__init__-23"><a href="#CSVLogger.__init__-23"><span class="linenos">23</span></a><span class="sd">            filepath (Path): The path to where the csv log \</span>
-</span><span id="CSVLogger.__init__-24"><a href="#CSVLogger.__init__-24"><span class="linenos">24</span></a><span class="sd">                file should be saved.</span>
-</span><span id="CSVLogger.__init__-25"><a href="#CSVLogger.__init__-25"><span class="linenos">25</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CSVLogger.__init__-26"><a href="#CSVLogger.__init__-26"><span class="linenos">26</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">filepath</span>
-</span><span id="CSVLogger.__init__-27"><a href="#CSVLogger.__init__-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">132</span><span class="p">))</span>
-</span><span id="CSVLogger.__init__-28"><a href="#CSVLogger.__init__-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="CSVLogger.__init__-29"><a href="#CSVLogger.__init__-29"><span class="linenos">29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
-</span><span id="CSVLogger.__init__-30"><a href="#CSVLogger.__init__-30"><span class="linenos">30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span>
+    <a class="headerlink" href="#CSVPoseLogger.__init__"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVPoseLogger.__init__-20"><a href="#CSVPoseLogger.__init__-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger.__init__-21"><a href="#CSVPoseLogger.__init__-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new csv logger.</span>
+</span><span id="CSVPoseLogger.__init__-22"><a href="#CSVPoseLogger.__init__-22"><span class="linenos">22</span></a>
+</span><span id="CSVPoseLogger.__init__-23"><a href="#CSVPoseLogger.__init__-23"><span class="linenos">23</span></a><span class="sd">        Args:</span>
+</span><span id="CSVPoseLogger.__init__-24"><a href="#CSVPoseLogger.__init__-24"><span class="linenos">24</span></a><span class="sd">            filepath (Path): The path to where the csv log \</span>
+</span><span id="CSVPoseLogger.__init__-25"><a href="#CSVPoseLogger.__init__-25"><span class="linenos">25</span></a><span class="sd">                file should be saved.</span>
+</span><span id="CSVPoseLogger.__init__-26"><a href="#CSVPoseLogger.__init__-26"><span class="linenos">26</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger.__init__-27"><a href="#CSVPoseLogger.__init__-27"><span class="linenos">27</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">filepath</span>
+</span><span id="CSVPoseLogger.__init__-28"><a href="#CSVPoseLogger.__init__-28"><span class="linenos">28</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="CSVPoseLogger.__init__-29"><a href="#CSVPoseLogger.__init__-29"><span class="linenos">29</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="CSVPoseLogger.__init__-30"><a href="#CSVPoseLogger.__init__-30"><span class="linenos">30</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="CSVPoseLogger.__init__-31"><a href="#CSVPoseLogger.__init__-31"><span class="linenos">31</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span>
 </span></pre></div>
 
 
@@ -325,50 +342,50 @@
 
 
                             </div>
-                            <div id="CSVLogger.active" class="classattr">
+                            <div id="CSVPoseLogger.active" class="classattr">
                                 <div class="attr variable">
             <span class="name">active</span><span class="annotation">: bool</span>        =
 <span class="default_value">True</span>
 
         
     </div>
-    <a class="headerlink" href="#CSVLogger.active"></a>
+    <a class="headerlink" href="#CSVPoseLogger.active"></a>
     
             <div class="docstring"><p>Whether the logger should be actively saving         pose data.</p>
 </div>
 
 
                             </div>
-                            <div id="CSVLogger.start" class="classattr">
-                                        <input id="CSVLogger.start-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="CSVPoseLogger.start" class="classattr">
+                                        <input id="CSVPoseLogger.start-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">start</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">pose_queue</span><span class="p">:</span> <span class="n">multiprocessing</span><span class="o">.</span><span class="n">queues</span><span class="o">.</span><span class="n">Queue</span></span><span class="return-annotation">) -> <span class="n">Iterable</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">Process</span><span class="p">]</span>:</span></span>
 
-                <label class="view-source-button" for="CSVLogger.start-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="CSVPoseLogger.start-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#CSVLogger.start"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVLogger.start-32"><a href="#CSVLogger.start-32"><span class="linenos">32</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
-</span><span id="CSVLogger.start-33"><a href="#CSVLogger.start-33"><span class="linenos">33</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CSVLogger.</span>
-</span><span id="CSVLogger.start-34"><a href="#CSVLogger.start-34"><span class="linenos">34</span></a>
-</span><span id="CSVLogger.start-35"><a href="#CSVLogger.start-35"><span class="linenos">35</span></a><span class="sd">        This needs to be done here instead of the init function \</span>
-</span><span id="CSVLogger.start-36"><a href="#CSVLogger.start-36"><span class="linenos">36</span></a><span class="sd">            because of how windows multiprocessing works.</span>
-</span><span id="CSVLogger.start-37"><a href="#CSVLogger.start-37"><span class="linenos">37</span></a>
-</span><span id="CSVLogger.start-38"><a href="#CSVLogger.start-38"><span class="linenos">38</span></a><span class="sd">        Args:</span>
-</span><span id="CSVLogger.start-39"><a href="#CSVLogger.start-39"><span class="linenos">39</span></a><span class="sd">            pose_queue (mpq.Queue): The queue where pose data \</span>
-</span><span id="CSVLogger.start-40"><a href="#CSVLogger.start-40"><span class="linenos">40</span></a><span class="sd">                will be coming in.</span>
-</span><span id="CSVLogger.start-41"><a href="#CSVLogger.start-41"><span class="linenos">41</span></a>
-</span><span id="CSVLogger.start-42"><a href="#CSVLogger.start-42"><span class="linenos">42</span></a><span class="sd">        Returns:</span>
-</span><span id="CSVLogger.start-43"><a href="#CSVLogger.start-43"><span class="linenos">43</span></a><span class="sd">            Iterable[mp.Process]: Any processes created by the \</span>
-</span><span id="CSVLogger.start-44"><a href="#CSVLogger.start-44"><span class="linenos">44</span></a><span class="sd">                logger that will need to be cleaned up later.</span>
-</span><span id="CSVLogger.start-45"><a href="#CSVLogger.start-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="CSVLogger.start-46"><a href="#CSVLogger.start-46"><span class="linenos">46</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
-</span><span id="CSVLogger.start-47"><a href="#CSVLogger.start-47"><span class="linenos">47</span></a>        <span class="n">cap</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
-</span><span id="CSVLogger.start-48"><a href="#CSVLogger.start-48"><span class="linenos">48</span></a>            <span class="n">pose_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">))</span>
-</span><span id="CSVLogger.start-49"><a href="#CSVLogger.start-49"><span class="linenos">49</span></a>        <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</span><span id="CSVLogger.start-50"><a href="#CSVLogger.start-50"><span class="linenos">50</span></a>        <span class="k">return</span> <span class="p">[</span><span class="n">cap</span><span class="p">]</span>
+    <a class="headerlink" href="#CSVPoseLogger.start"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVPoseLogger.start-33"><a href="#CSVPoseLogger.start-33"><span class="linenos">33</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
+</span><span id="CSVPoseLogger.start-34"><a href="#CSVPoseLogger.start-34"><span class="linenos">34</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the CSVLogger.</span>
+</span><span id="CSVPoseLogger.start-35"><a href="#CSVPoseLogger.start-35"><span class="linenos">35</span></a>
+</span><span id="CSVPoseLogger.start-36"><a href="#CSVPoseLogger.start-36"><span class="linenos">36</span></a><span class="sd">        This needs to be done here instead of the init function \</span>
+</span><span id="CSVPoseLogger.start-37"><a href="#CSVPoseLogger.start-37"><span class="linenos">37</span></a><span class="sd">            because of how windows multiprocessing works.</span>
+</span><span id="CSVPoseLogger.start-38"><a href="#CSVPoseLogger.start-38"><span class="linenos">38</span></a>
+</span><span id="CSVPoseLogger.start-39"><a href="#CSVPoseLogger.start-39"><span class="linenos">39</span></a><span class="sd">        Args:</span>
+</span><span id="CSVPoseLogger.start-40"><a href="#CSVPoseLogger.start-40"><span class="linenos">40</span></a><span class="sd">            pose_queue (mpq.Queue): The queue where pose data \</span>
+</span><span id="CSVPoseLogger.start-41"><a href="#CSVPoseLogger.start-41"><span class="linenos">41</span></a><span class="sd">                will be coming in.</span>
+</span><span id="CSVPoseLogger.start-42"><a href="#CSVPoseLogger.start-42"><span class="linenos">42</span></a>
+</span><span id="CSVPoseLogger.start-43"><a href="#CSVPoseLogger.start-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="CSVPoseLogger.start-44"><a href="#CSVPoseLogger.start-44"><span class="linenos">44</span></a><span class="sd">            Iterable[mp.Process]: Any processes created by the \</span>
+</span><span id="CSVPoseLogger.start-45"><a href="#CSVPoseLogger.start-45"><span class="linenos">45</span></a><span class="sd">                logger that will need to be cleaned up later.</span>
+</span><span id="CSVPoseLogger.start-46"><a href="#CSVPoseLogger.start-46"><span class="linenos">46</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger.start-47"><a href="#CSVPoseLogger.start-47"><span class="linenos">47</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">()</span>
+</span><span id="CSVPoseLogger.start-48"><a href="#CSVPoseLogger.start-48"><span class="linenos">48</span></a>        <span class="n">cap</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_log_data</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span>
+</span><span id="CSVPoseLogger.start-49"><a href="#CSVPoseLogger.start-49"><span class="linenos">49</span></a>            <span class="n">pose_queue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="p">))</span>
+</span><span id="CSVPoseLogger.start-50"><a href="#CSVPoseLogger.start-50"><span class="linenos">50</span></a>        <span class="n">cap</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</span><span id="CSVPoseLogger.start-51"><a href="#CSVPoseLogger.start-51"><span class="linenos">51</span></a>        <span class="k">return</span> <span class="p">[</span><span class="n">cap</span><span class="p">]</span>
 </span></pre></div>
 
 
@@ -385,20 +402,20 @@
 
 
                             </div>
-                            <div id="CSVLogger.save" class="classattr">
-                                        <input id="CSVLogger.save-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="CSVPoseLogger.save" class="classattr">
+                                        <input id="CSVPoseLogger.save-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">save</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="CSVLogger.save-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="CSVPoseLogger.save-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#CSVLogger.save"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVLogger.save-97"><a href="#CSVLogger.save-97"><span class="linenos">97</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger.save-98"><a href="#CSVLogger.save-98"><span class="linenos">98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the most current data to the disk.&quot;&quot;&quot;</span>
-</span><span id="CSVLogger.save-99"><a href="#CSVLogger.save-99"><span class="linenos">99</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <a class="headerlink" href="#CSVPoseLogger.save"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVPoseLogger.save-106"><a href="#CSVPoseLogger.save-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger.save-107"><a href="#CSVPoseLogger.save-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Write the most current data to the disk.&quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger.save-108"><a href="#CSVPoseLogger.save-108"><span class="linenos">108</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 </span></pre></div>
 
 
@@ -407,21 +424,21 @@
 
 
                             </div>
-                            <div id="CSVLogger.close" class="classattr">
-                                        <input id="CSVLogger.close-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+                            <div id="CSVPoseLogger.close" class="classattr">
+                                        <input id="CSVPoseLogger.close-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
             
         <span class="def">def</span>
         <span class="name">close</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">self</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
 
-                <label class="view-source-button" for="CSVLogger.close-view-source"><span>View Source</span></label>
+                <label class="view-source-button" for="CSVPoseLogger.close-view-source"><span>View Source</span></label>
 
     </div>
-    <a class="headerlink" href="#CSVLogger.close"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVLogger.close-101"><a href="#CSVLogger.close-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="CSVLogger.close-102"><a href="#CSVLogger.close-102"><span class="linenos">102</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish writing to the file.&quot;&quot;&quot;</span>
-</span><span id="CSVLogger.close-103"><a href="#CSVLogger.close-103"><span class="linenos">103</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span id="CSVLogger.close-104"><a href="#CSVLogger.close-104"><span class="linenos">104</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
+    <a class="headerlink" href="#CSVPoseLogger.close"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CSVPoseLogger.close-110"><a href="#CSVPoseLogger.close-110"><span class="linenos">110</span></a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="CSVPoseLogger.close-111"><a href="#CSVPoseLogger.close-111"><span class="linenos">111</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Finish writing to the file.&quot;&quot;&quot;</span>
+</span><span id="CSVPoseLogger.close-112"><a href="#CSVPoseLogger.close-112"><span class="linenos">112</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_save_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span id="CSVPoseLogger.close-113"><a href="#CSVPoseLogger.close-113"><span class="linenos">113</span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="kc">False</span>
 </span></pre></div>
 
 
