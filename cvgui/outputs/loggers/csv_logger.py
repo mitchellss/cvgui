@@ -2,6 +2,7 @@
 classes related to logging data to csv \
 files."""
 from pathlib import Path
+import time
 from typing import Iterable, List
 import multiprocessing as mp
 import multiprocessing.queues as mpq
@@ -67,10 +68,15 @@ class CSVPoseLogger:
                 pose_data: np.ndarray = pose_queue.get()
                 newdata: np.ndarray = pose_data.ravel()
 
+                # insert timestamp into first index
+                newdata = np.insert(newdata, 0, [int(time.time())])
+
                 # Create numpy array if not already created
                 if self.data is None:
                     data_length: int = newdata.shape[0]
-                    self._configure(data_length)
+
+                    # Add one to make room for timestamp
+                    self._configure(data_length + 1)
 
                 self.data = np.vstack([self.data, newdata])
 
