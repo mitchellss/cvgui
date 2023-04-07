@@ -8,7 +8,7 @@ import multiprocessing.queues as mpq
 import numpy as np
 
 
-class CSVLogger:
+class CSVPoseLogger:
     """A pose logger that saves data to a csv file."""
 
     active: bool = True
