@@ -17,12 +17,9 @@ class PoseLogger(Protocol):
             instead of the init function due to the way \
                 windows handles multiprocessing."""
 
-    def log_data(self, pose_queue: mpq.Queue) -> None:
-        """Log data from the queue."""
-
-    def save(self) -> bool:  # type: ignore
+    def save(self) -> None:  # type: ignore
         """Save logged data to the disk."""
 
-    def close(self) -> bool:  # type: ignore
+    def close(self) -> None:  # type: ignore
         """Finish logging poses and safely close any \
         files or repositories."""
