@@ -1,5 +1,4 @@
 """FrameInput implementation for a computer webcam."""
-from typing import Any
 import numpy as np
 import cv2
 
@@ -21,9 +20,9 @@ class Webcam:
 
     def _configure(self) -> None:
         """
-        Creates and configures the capture object. 
+        Create and configures the capture object.
 
-        This cannot be done in the init function because of how 
+        This cannot be done in the init function because of how \
         Windows handles multiprocessing.
         """
         self.cap = cv2.VideoCapture(self.device_num)
@@ -32,7 +31,7 @@ class Webcam:
                      cv2.VideoWriter_fourcc("M", "J", "P", "G"))
 
     def get_frame(self) -> np.ndarray:
-        """Gets a frame from the webcam."""
+        """Get a frame from the webcam."""
         if self.cap is None:
             self._configure()
 

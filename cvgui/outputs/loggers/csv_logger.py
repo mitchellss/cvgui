@@ -1,22 +1,49 @@
+"""The `csv_logger` module contains \
+classes related to logging data to csv \
+files."""
 from pathlib import Path
 from typing import Iterable, List
-import numpy as np
 import multiprocessing as mp
+import multiprocessing.queues as mpq
+import numpy as np
 
 
 class CSVLogger:
+    """A pose logger that saves data to a csv file."""
 
     active: bool = True
+    """Whether the logger should be actively saving \
+        pose data."""
 
     def __init__(self, filepath: Path) -> None:
+        """Create a new csv logger.
+
+        Args:
+            filepath (Path): The path to where the csv log \
+                file should be saved.
+        """
         self.filepath: Path = filepath
         self.data: np.ndarray = np.empty((0, 132))
         self.size: int = 0
         self.count = 0
+        self._save_queue: mpq.Queue
 
-    def start(self, pose_queue: mp.Queue) -> Iterable[mp.Process]:
-        self._save_queue: mp.Queue = mp.Queue()
-        cap = mp.Process(target=self.log_data, args=(
+    def start(self, pose_queue: mpq.Queue) -> Iterable[mp.Process]:
+        """Initialize the CSVLogger.
+
+        This needs to be done here instead of the init function \
+            because of how windows multiprocessing works.
+
+        Args:
+            pose_queue (mpq.Queue): The queue where pose data \
+                will be coming in.
+
+        Returns:
+            Iterable[mp.Process]: Any processes created by the \
+                logger that will need to be cleaned up later.
+        """
+        self._save_queue: mpq.Queue = mp.Queue()
+        cap = mp.Process(target=self._log_data, args=(
             pose_queue, self._save_queue))
         cap.start()
         return [cap]
@@ -25,8 +52,13 @@ class CSVLogger:
         self.data = np.empty((0, size))
         self.size = size
 
-    def log_data(self, pose_queue: mp.Queue, save_queue: mp.Queue) -> None:
-        # Get data from queue and append it to numpy array
+    def _log_data(self, pose_queue: mpq.Queue, save_queue: mpq.Queue) -> None:
+        """Get data from queue and add it to the internal numpy array.
+
+        Args:
+            pose_queue (mpq.Queue): The queue of pose data coming in.
+            save_queue (mpq.Queue): The queue to notify of when to save.
+        """
         while True:
             if self.active:
                 if pose_queue.empty():
@@ -49,20 +81,23 @@ class CSVLogger:
                                delimiter=",", fmt="%5.5f")
 
     def _build_header(self) -> str:
+        """
+        Create the csv file header.
+
+        This method assumes each pose point has 4 points \
+            (x, y, z, visibility).
+        """
         header_array: List[str] = []
         for i in range(self.size//4):
             header_array += [f"x{i:02d}", f"y{i:02d}",
                              f"z{i:02d}", f"vis{i:02d}"]
         return ",".join(header_array)
 
-    def save(self) -> bool:
-        # Notify the running process that it is time
-        # to save.
+    def save(self) -> None:
+        """Write the most current data to the disk."""
         self._save_queue.put(0)
-        return True
 
-    def close(self) -> bool:
-        # Finish writing to the file
+    def close(self) -> None:
+        """Finish writing to the file."""
         self._save_queue.put(0)
         self.active = False
-        return True

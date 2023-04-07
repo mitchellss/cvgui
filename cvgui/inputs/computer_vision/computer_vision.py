@@ -1,12 +1,11 @@
-"""
-The computer_vision module contains the main ComputerVisionPose class \
+"""The computer_vision module contains the main ComputerVisionPose class \
     that dictates the interactions between frame inputs and computer \
-        vision models.
-"""
+        vision models."""
 from typing import Any, Iterable
+import multiprocessing as mp
+import multiprocessing.queues as mpq
 import cv2
 import numpy as np
-import multiprocessing as mp
 from cvgui.core.receiving.service import CVModel, FrameInput
 
 
@@ -14,7 +13,7 @@ class ComputerVisionPose:
     """Generates poses based on a computer vision model and a frame input."""
 
     def __init__(self, frame_input: FrameInput, model: CVModel) -> None:
-        """Creates a new pose generator based on a computer vision \
+        """Create a new pose generator based on a computer vision \
         model.
 
         Args:
@@ -26,17 +25,17 @@ class ComputerVisionPose:
         self.frame_input: FrameInput = frame_input
         self.model: CVModel = model
 
-    def start(self, pose_queues: Iterable[mp.Queue]) -> Iterable[mp.Process]:
-        """
-        Starts two processes, one for \
+    def start(self, pose_queues: Iterable[mpq.Queue]) -> Iterable[mp.Process]:
+        """Start two processes, one for \
         capturing/displaying frame input data and \
         one for processing that frame input \
-        data to get poses out of them. \
+        data to get poses out of them.
+
         These are done as separate processes \
         because otherwise the pose \
         processing greatly slows down the \
         speed at which frames are collected, \
-        resulting in video feedback that is "laggy". \
+        resulting in video feedback that is "laggy".
 
         Args:
             pose_queue (multiprocessing.Queue): The queue to put pose \
@@ -46,7 +45,7 @@ class ComputerVisionPose:
             list[multiprocessing.Process]: All the processes started by this \
                 method so they can be closed correctly later down the line.
         """
-        image_queue: mp.Queue = mp.Queue()
+        image_queue: mpq.Queue = mp.Queue()
         print("Starting image processing pipeline "
               "(This might take a while on Windows)...")
         cap = mp.Process(target=self._capture_and_show, args=(image_queue,))
@@ -57,11 +56,9 @@ class ComputerVisionPose:
         return [cap, proc]
 
     def _capture_and_show(self, image_queue) -> None:
-        """
-        Infinitely retrieves new frames and places them in the image \
-        queue. Additionally, displays incoming frames to the user in \
-        real-time.
-        """
+        """Infinitely retrieve new frames and place them in the image \
+        queue. Additionally, display incoming frames to the user in \
+        real-time."""
         while True:
             frame: np.ndarray = self.frame_input.get_frame()
             image_queue.put(frame)
@@ -70,23 +67,19 @@ class ComputerVisionPose:
             if wait_key == 27:
                 pass
 
-    def _process_image(self, image_queue, pose_queues):
-        """
-        Infinitely takes images from the given queue and turns them into \
-        pose data using a computer vision model.
-        """
+    def _process_image(self, image_queue, pose_queues) -> None:
+        """Infinitely take images from the given queue and turn them into \
+        pose data using a computer vision model."""
         while True:
             if image_queue.empty():
                 continue
-            skeleton = self.model.get_pose(image_queue.get())
+            skeleton: np.ndarray = self.model.get_pose(image_queue.get())
             for queue in pose_queues:
                 queue.put(skeleton)
 
     def get_pose(self) -> np.ndarray:
-        """
-        Uses the frame input and computer vision model in tandem \
-        to generate a single pose.
-        """
+        """Use the frame input and computer vision model in tandem \
+        to generate a single pose."""
         frame: np.ndarray = self.frame_input.get_frame()
         # Shaves about 5ms off each frame by passing by reference, not value
         frame.flags.writeable = False

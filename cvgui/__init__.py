@@ -1,6 +1,6 @@
 """
-`cvgui` is a library for creating body-interactive GUIs using computer
-vison.
+`cvgui` is a library for creating body-interactive GUIs \
+using computer vison.
 
 Documentation can be [found here](https://mitchellss.github.io/cvgui).
 
@@ -17,9 +17,11 @@ Requires Python 3.9 or later
 
 ## Contributing
 
-Pull requests are welcome. Please see the [contributing guide](CONTRIBUTING.md) for more information.
+Pull requests are welcome. Please see the \
+    [contributing guide](CONTRIBUTING.md) for more information.
 
-To begin development, first ensure that your python version is 3.9 or greater by running:
+To begin development, first ensure that your python version \
+    is 3.9 or greater by running:
 > python --version
 
 Then, create a virtual environment...
@@ -43,7 +45,8 @@ And install the package in editable mode by running:
 (The -e option makes it so any changes you make to the package are reflected
 at runtime and you don't have to re-install the package every time)
 
-To test and see if everything worked correctly, make sure you have a webcam plugged in and run:
+To test and see if everything worked correctly, make sure you have \
+    a webcam plugged in and run:
 
 > python ./bin/examples/working_example.py
 
@@ -122,9 +125,12 @@ if __name__ == "__main__":
 ```
 """
 
-from .outputs import *
+# These two need to be at the top to silence the pygame
+# welcome message in the terminal.
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+
+from .outputs import *  # noqa
 from .core import *  # noqa
 from .inputs.computer_vision import *  # noqa
 from .user_interface import *  # noqa

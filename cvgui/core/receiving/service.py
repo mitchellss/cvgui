@@ -1,11 +1,9 @@
-"""
-Collection of interfaces for receiving data.
-"""
+"""Collection of interfaces for receiving data."""
 from typing import Iterable
 import multiprocessing as mp
+import multiprocessing.queues as mpq
 from typing_extensions import Protocol
 import numpy as np
-import multiprocessing as mp
 
 
 class CVModel(Protocol):
@@ -64,7 +62,7 @@ class CVModel(Protocol):
     """How the model should be sized by default"""
 
     def get_pose(self, frame: np.ndarray) -> np.ndarray:  # type: ignore
-        """Retrieves the pose for a given image.
+        """Retrieve the pose for a given image.
 
         Args:
             frame (np.ndarray): A numpy array representing an image.
@@ -75,10 +73,9 @@ class CVModel(Protocol):
 
 
 class FrameInput(Protocol):
-    """
-    Abstract object that can provide image frames on-demand
-    such as a webcam input or video file.
-    """
+    """Abstract object that can provide image \
+        frames on-demand such as a webcam input \
+            or video file."""
 
     def get_frame(self) -> np.ndarray:  # type: ignore
         """Retrieve a frame from the repository.
@@ -90,10 +87,8 @@ class FrameInput(Protocol):
 
 
 class PoseGenerator(Protocol):
-    """
-    Abstract generator of poses such as a computer \
-    vision model or a motion capture system.
-    """
+    """Abstract generator of poses such as a computer \
+    vision model or a motion capture system."""
 
     def get_pose(self) -> np.ndarray:  # type: ignore
         """Retrieve a pose from the generator.
@@ -104,7 +99,7 @@ class PoseGenerator(Protocol):
         """
 
     def start(self,
-              pose_queues: Iterable[mp.Queue]
+              pose_queues: Iterable[mpq.Queue]
               ) -> Iterable[mp.Process]:  # type: ignore
         """
         Completes any configuration that needs to be done \
@@ -113,7 +108,7 @@ class PoseGenerator(Protocol):
         can be done post-fork.
 
         Args:
-            pose_queue (mp.Queue): The multiprocessing queue to put \
+            pose_queue (mpq.Queue): The multiprocessing queue to put \
                 pose data in.
 
         Returns:
