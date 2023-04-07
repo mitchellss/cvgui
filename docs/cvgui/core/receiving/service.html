@@ -131,126 +131,123 @@
 
                         <label class="view-source-button" for="mod-service-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="sd">Collection of interfaces for receiving data.</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
-</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
-</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Protocol</span>
-</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">  1</span></a><span class="sd">&quot;&quot;&quot;Collection of interfaces for receiving data.&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">  2</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">  3</span></a><span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos">  4</span></a><span class="kn">import</span> <span class="nn">multiprocessing.queues</span> <span class="k">as</span> <span class="nn">mpq</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos">  5</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Protocol</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos">  6</span></a><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos">  7</span></a>
 </span><span id="L-8"><a href="#L-8"><span class="linenos">  8</span></a>
-</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a>
-</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="k">class</span> <span class="nc">CVModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract object that can generate a pose given \</span>
-</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a><span class="sd">        an consisting of various body parts.&quot;&quot;&quot;</span>
-</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>
-</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a>    <span class="n">LEFT_HAND</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a><span class="sd">    represents the user&#39;s left hand&quot;&quot;&quot;</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>
-</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a>    <span class="n">LEFT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a><span class="sd">    represents the user&#39;s left elbow&quot;&quot;&quot;</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>
-</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a>    <span class="n">LEFT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a><span class="sd">    represents the user&#39;s left shoulder&quot;&quot;&quot;</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>
-</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a>    <span class="n">LEFT_HIP</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a><span class="sd">    represents the user&#39;s left hip&quot;&quot;&quot;</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>
-</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a>    <span class="n">LEFT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a><span class="sd">    represents the user&#39;s left knee&quot;&quot;&quot;</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>
-</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a>    <span class="n">LEFT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a><span class="sd">    represents the user&#39;s left foot&quot;&quot;&quot;</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>
-</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a>    <span class="n">RIGHT_HAND</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a><span class="sd">    represents the user&#39;s right hand&quot;&quot;&quot;</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>
-</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a>    <span class="n">RIGHT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a><span class="sd">    represents the user&#39;s right elbow&quot;&quot;&quot;</span>
-</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>
-</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a>    <span class="n">RIGHT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a><span class="sd">    represents the user&#39;s right shoulder&quot;&quot;&quot;</span>
-</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>
-</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a>    <span class="n">RIGHT_HIP</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a><span class="sd">    represents the user&#39;s right hip&quot;&quot;&quot;</span>
-</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>
-</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a>    <span class="n">RIGHT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a><span class="sd">    represents the user&#39;s right knee&quot;&quot;&quot;</span>
-</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>
-</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a>    <span class="n">RIGHT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a><span class="sd">    represents the user&#39;s right foot&quot;&quot;&quot;</span>
-</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>
-</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a>    <span class="n">DEFAULT_SCALE</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;How the model should be sized by default&quot;&quot;&quot;</span>
-</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>
-</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the pose for a given image.</span>
-</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a>
-</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">        Args:</span>
-</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a><span class="sd">            frame (np.ndarray): A numpy array representing an image.</span>
-</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a>
-</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">        Returns:</span>
-</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">            np.ndarray: An array of points that describe the pose.</span>
-</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos">  9</span></a><span class="k">class</span> <span class="nc">CVModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos"> 10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract object that can generate a pose given \</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos"> 11</span></a><span class="sd">        an consisting of various body parts.&quot;&quot;&quot;</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos"> 12</span></a>
+</span><span id="L-13"><a href="#L-13"><span class="linenos"> 13</span></a>    <span class="n">LEFT_HAND</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos"> 14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos"> 15</span></a><span class="sd">    represents the user&#39;s left hand&quot;&quot;&quot;</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos"> 16</span></a>
+</span><span id="L-17"><a href="#L-17"><span class="linenos"> 17</span></a>    <span class="n">LEFT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos"> 18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos"> 19</span></a><span class="sd">    represents the user&#39;s left elbow&quot;&quot;&quot;</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos"> 20</span></a>
+</span><span id="L-21"><a href="#L-21"><span class="linenos"> 21</span></a>    <span class="n">LEFT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-22"><a href="#L-22"><span class="linenos"> 22</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos"> 23</span></a><span class="sd">    represents the user&#39;s left shoulder&quot;&quot;&quot;</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos"> 24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos"> 25</span></a>    <span class="n">LEFT_HIP</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos"> 26</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos"> 27</span></a><span class="sd">    represents the user&#39;s left hip&quot;&quot;&quot;</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos"> 28</span></a>
+</span><span id="L-29"><a href="#L-29"><span class="linenos"> 29</span></a>    <span class="n">LEFT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos"> 30</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos"> 31</span></a><span class="sd">    represents the user&#39;s left knee&quot;&quot;&quot;</span>
+</span><span id="L-32"><a href="#L-32"><span class="linenos"> 32</span></a>
+</span><span id="L-33"><a href="#L-33"><span class="linenos"> 33</span></a>    <span class="n">LEFT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos"> 34</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos"> 35</span></a><span class="sd">    represents the user&#39;s left foot&quot;&quot;&quot;</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos"> 36</span></a>
+</span><span id="L-37"><a href="#L-37"><span class="linenos"> 37</span></a>    <span class="n">RIGHT_HAND</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos"> 38</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos"> 39</span></a><span class="sd">    represents the user&#39;s right hand&quot;&quot;&quot;</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos"> 40</span></a>
+</span><span id="L-41"><a href="#L-41"><span class="linenos"> 41</span></a>    <span class="n">RIGHT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-42"><a href="#L-42"><span class="linenos"> 42</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos"> 43</span></a><span class="sd">    represents the user&#39;s right elbow&quot;&quot;&quot;</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos"> 44</span></a>
+</span><span id="L-45"><a href="#L-45"><span class="linenos"> 45</span></a>    <span class="n">RIGHT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-46"><a href="#L-46"><span class="linenos"> 46</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos"> 47</span></a><span class="sd">    represents the user&#39;s right shoulder&quot;&quot;&quot;</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos"> 48</span></a>
+</span><span id="L-49"><a href="#L-49"><span class="linenos"> 49</span></a>    <span class="n">RIGHT_HIP</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos"> 50</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-51"><a href="#L-51"><span class="linenos"> 51</span></a><span class="sd">    represents the user&#39;s right hip&quot;&quot;&quot;</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos"> 52</span></a>
+</span><span id="L-53"><a href="#L-53"><span class="linenos"> 53</span></a>    <span class="n">RIGHT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos"> 54</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos"> 55</span></a><span class="sd">    represents the user&#39;s right knee&quot;&quot;&quot;</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos"> 56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos"> 57</span></a>    <span class="n">RIGHT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos"> 58</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos"> 59</span></a><span class="sd">    represents the user&#39;s right foot&quot;&quot;&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos"> 60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos"> 61</span></a>    <span class="n">DEFAULT_SCALE</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos"> 62</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;How the model should be sized by default&quot;&quot;&quot;</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos"> 63</span></a>
+</span><span id="L-64"><a href="#L-64"><span class="linenos"> 64</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos"> 65</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the pose for a given image.</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos"> 66</span></a>
+</span><span id="L-67"><a href="#L-67"><span class="linenos"> 67</span></a><span class="sd">        Args:</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos"> 68</span></a><span class="sd">            frame (np.ndarray): A numpy array representing an image.</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos"> 69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos"> 70</span></a><span class="sd">        Returns:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos"> 71</span></a><span class="sd">            np.ndarray: An array of points that describe the pose.</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos"> 72</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos"> 73</span></a>
 </span><span id="L-74"><a href="#L-74"><span class="linenos"> 74</span></a>
-</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a>
-</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="k">class</span> <span class="nc">FrameInput</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">    Abstract object that can provide image frames on-demand</span>
-</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a><span class="sd">    such as a webcam input or video file.</span>
-</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a>
-</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a frame from the repository.</span>
-</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a>
-</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">        Returns:</span>
-</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">            np.ndarray: An array of points that describe the</span>
-</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a><span class="sd">            locations of points of a pose (skeleton).</span>
-</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a>
-</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a>
-</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="k">class</span> <span class="nc">PoseGenerator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a><span class="sd">    Abstract generator of poses such as a computer \</span>
-</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="sd">    vision model or a motion capture system.</span>
-</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a>
-</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a pose from the generator.</span>
-</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a>
-</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a><span class="sd">        Returns:</span>
-</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a><span class="sd">            np.ndarray: An array of points that describe the \</span>
-</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a><span class="sd">            locations of points of a pose.</span>
-</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a>
-</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a>    <span class="c1"># type: ignore</span>
-</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
-</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        Completes any configuration that needs to be done \</span>
-</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a><span class="sd">        after initialization. Useful if the frame input is \</span>
-</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        being run in a separate process so that configruation \</span>
-</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">        can be done post-fork.</span>
-</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a>
-</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a><span class="sd">        Args:</span>
-</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">            pose_queue (mp.Queue): The multiprocessing queue to put \</span>
-</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">                pose data in.</span>
-</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a>
-</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        Returns:</span>
-</span><span id="L-118"><a href="#L-118"><span class="linenos">118</span></a><span class="sd">            Iterable[mp.Process]: A collection of processes started \</span>
-</span><span id="L-119"><a href="#L-119"><span class="linenos">119</span></a><span class="sd">                by the function that must be cleaned up later.</span>
-</span><span id="L-120"><a href="#L-120"><span class="linenos">120</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos"> 75</span></a><span class="k">class</span> <span class="nc">FrameInput</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos"> 76</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract object that can provide image \</span>
+</span><span id="L-77"><a href="#L-77"><span class="linenos"> 77</span></a><span class="sd">        frames on-demand such as a webcam input \</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos"> 78</span></a><span class="sd">            or video file.&quot;&quot;&quot;</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos"> 79</span></a>
+</span><span id="L-80"><a href="#L-80"><span class="linenos"> 80</span></a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos"> 81</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a frame from the repository.</span>
+</span><span id="L-82"><a href="#L-82"><span class="linenos"> 82</span></a>
+</span><span id="L-83"><a href="#L-83"><span class="linenos"> 83</span></a><span class="sd">        Returns:</span>
+</span><span id="L-84"><a href="#L-84"><span class="linenos"> 84</span></a><span class="sd">            np.ndarray: An array of points that describe the</span>
+</span><span id="L-85"><a href="#L-85"><span class="linenos"> 85</span></a><span class="sd">            locations of points of a pose (skeleton).</span>
+</span><span id="L-86"><a href="#L-86"><span class="linenos"> 86</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-87"><a href="#L-87"><span class="linenos"> 87</span></a>
+</span><span id="L-88"><a href="#L-88"><span class="linenos"> 88</span></a>
+</span><span id="L-89"><a href="#L-89"><span class="linenos"> 89</span></a><span class="k">class</span> <span class="nc">PoseGenerator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-90"><a href="#L-90"><span class="linenos"> 90</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract generator of poses such as a computer \</span>
+</span><span id="L-91"><a href="#L-91"><span class="linenos"> 91</span></a><span class="sd">    vision model or a motion capture system.&quot;&quot;&quot;</span>
+</span><span id="L-92"><a href="#L-92"><span class="linenos"> 92</span></a>
+</span><span id="L-93"><a href="#L-93"><span class="linenos"> 93</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-94"><a href="#L-94"><span class="linenos"> 94</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a pose from the generator.</span>
+</span><span id="L-95"><a href="#L-95"><span class="linenos"> 95</span></a>
+</span><span id="L-96"><a href="#L-96"><span class="linenos"> 96</span></a><span class="sd">        Returns:</span>
+</span><span id="L-97"><a href="#L-97"><span class="linenos"> 97</span></a><span class="sd">            np.ndarray: An array of points that describe the \</span>
+</span><span id="L-98"><a href="#L-98"><span class="linenos"> 98</span></a><span class="sd">            locations of points of a pose.</span>
+</span><span id="L-99"><a href="#L-99"><span class="linenos"> 99</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-100"><a href="#L-100"><span class="linenos">100</span></a>
+</span><span id="L-101"><a href="#L-101"><span class="linenos">101</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="L-102"><a href="#L-102"><span class="linenos">102</span></a>              <span class="n">pose_queues</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">]</span>
+</span><span id="L-103"><a href="#L-103"><span class="linenos">103</span></a>              <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-104"><a href="#L-104"><span class="linenos">104</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-105"><a href="#L-105"><span class="linenos">105</span></a><span class="sd">        Completes any configuration that needs to be done \</span>
+</span><span id="L-106"><a href="#L-106"><span class="linenos">106</span></a><span class="sd">        after initialization. Useful if the frame input is \</span>
+</span><span id="L-107"><a href="#L-107"><span class="linenos">107</span></a><span class="sd">        being run in a separate process so that configruation \</span>
+</span><span id="L-108"><a href="#L-108"><span class="linenos">108</span></a><span class="sd">        can be done post-fork.</span>
+</span><span id="L-109"><a href="#L-109"><span class="linenos">109</span></a>
+</span><span id="L-110"><a href="#L-110"><span class="linenos">110</span></a><span class="sd">        Args:</span>
+</span><span id="L-111"><a href="#L-111"><span class="linenos">111</span></a><span class="sd">            pose_queue (mpq.Queue): The multiprocessing queue to put \</span>
+</span><span id="L-112"><a href="#L-112"><span class="linenos">112</span></a><span class="sd">                pose data in.</span>
+</span><span id="L-113"><a href="#L-113"><span class="linenos">113</span></a>
+</span><span id="L-114"><a href="#L-114"><span class="linenos">114</span></a><span class="sd">        Returns:</span>
+</span><span id="L-115"><a href="#L-115"><span class="linenos">115</span></a><span class="sd">            Iterable[mp.Process]: A collection of processes started \</span>
+</span><span id="L-116"><a href="#L-116"><span class="linenos">116</span></a><span class="sd">                by the function that must be cleaned up later.</span>
+</span><span id="L-117"><a href="#L-117"><span class="linenos">117</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -266,70 +263,70 @@
 
     </div>
     <a class="headerlink" href="#CVModel"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CVModel-11"><a href="#CVModel-11"><span class="linenos">11</span></a><span class="k">class</span> <span class="nc">CVModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="CVModel-12"><a href="#CVModel-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract object that can generate a pose given \</span>
-</span><span id="CVModel-13"><a href="#CVModel-13"><span class="linenos">13</span></a><span class="sd">        an consisting of various body parts.&quot;&quot;&quot;</span>
-</span><span id="CVModel-14"><a href="#CVModel-14"><span class="linenos">14</span></a>
-</span><span id="CVModel-15"><a href="#CVModel-15"><span class="linenos">15</span></a>    <span class="n">LEFT_HAND</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-16"><a href="#CVModel-16"><span class="linenos">16</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-17"><a href="#CVModel-17"><span class="linenos">17</span></a><span class="sd">    represents the user&#39;s left hand&quot;&quot;&quot;</span>
-</span><span id="CVModel-18"><a href="#CVModel-18"><span class="linenos">18</span></a>
-</span><span id="CVModel-19"><a href="#CVModel-19"><span class="linenos">19</span></a>    <span class="n">LEFT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-20"><a href="#CVModel-20"><span class="linenos">20</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-21"><a href="#CVModel-21"><span class="linenos">21</span></a><span class="sd">    represents the user&#39;s left elbow&quot;&quot;&quot;</span>
-</span><span id="CVModel-22"><a href="#CVModel-22"><span class="linenos">22</span></a>
-</span><span id="CVModel-23"><a href="#CVModel-23"><span class="linenos">23</span></a>    <span class="n">LEFT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-24"><a href="#CVModel-24"><span class="linenos">24</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-25"><a href="#CVModel-25"><span class="linenos">25</span></a><span class="sd">    represents the user&#39;s left shoulder&quot;&quot;&quot;</span>
-</span><span id="CVModel-26"><a href="#CVModel-26"><span class="linenos">26</span></a>
-</span><span id="CVModel-27"><a href="#CVModel-27"><span class="linenos">27</span></a>    <span class="n">LEFT_HIP</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-28"><a href="#CVModel-28"><span class="linenos">28</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-29"><a href="#CVModel-29"><span class="linenos">29</span></a><span class="sd">    represents the user&#39;s left hip&quot;&quot;&quot;</span>
-</span><span id="CVModel-30"><a href="#CVModel-30"><span class="linenos">30</span></a>
-</span><span id="CVModel-31"><a href="#CVModel-31"><span class="linenos">31</span></a>    <span class="n">LEFT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-32"><a href="#CVModel-32"><span class="linenos">32</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-33"><a href="#CVModel-33"><span class="linenos">33</span></a><span class="sd">    represents the user&#39;s left knee&quot;&quot;&quot;</span>
-</span><span id="CVModel-34"><a href="#CVModel-34"><span class="linenos">34</span></a>
-</span><span id="CVModel-35"><a href="#CVModel-35"><span class="linenos">35</span></a>    <span class="n">LEFT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-36"><a href="#CVModel-36"><span class="linenos">36</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-37"><a href="#CVModel-37"><span class="linenos">37</span></a><span class="sd">    represents the user&#39;s left foot&quot;&quot;&quot;</span>
-</span><span id="CVModel-38"><a href="#CVModel-38"><span class="linenos">38</span></a>
-</span><span id="CVModel-39"><a href="#CVModel-39"><span class="linenos">39</span></a>    <span class="n">RIGHT_HAND</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-40"><a href="#CVModel-40"><span class="linenos">40</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-41"><a href="#CVModel-41"><span class="linenos">41</span></a><span class="sd">    represents the user&#39;s right hand&quot;&quot;&quot;</span>
-</span><span id="CVModel-42"><a href="#CVModel-42"><span class="linenos">42</span></a>
-</span><span id="CVModel-43"><a href="#CVModel-43"><span class="linenos">43</span></a>    <span class="n">RIGHT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-44"><a href="#CVModel-44"><span class="linenos">44</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-45"><a href="#CVModel-45"><span class="linenos">45</span></a><span class="sd">    represents the user&#39;s right elbow&quot;&quot;&quot;</span>
-</span><span id="CVModel-46"><a href="#CVModel-46"><span class="linenos">46</span></a>
-</span><span id="CVModel-47"><a href="#CVModel-47"><span class="linenos">47</span></a>    <span class="n">RIGHT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-48"><a href="#CVModel-48"><span class="linenos">48</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-49"><a href="#CVModel-49"><span class="linenos">49</span></a><span class="sd">    represents the user&#39;s right shoulder&quot;&quot;&quot;</span>
-</span><span id="CVModel-50"><a href="#CVModel-50"><span class="linenos">50</span></a>
-</span><span id="CVModel-51"><a href="#CVModel-51"><span class="linenos">51</span></a>    <span class="n">RIGHT_HIP</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-52"><a href="#CVModel-52"><span class="linenos">52</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-53"><a href="#CVModel-53"><span class="linenos">53</span></a><span class="sd">    represents the user&#39;s right hip&quot;&quot;&quot;</span>
-</span><span id="CVModel-54"><a href="#CVModel-54"><span class="linenos">54</span></a>
-</span><span id="CVModel-55"><a href="#CVModel-55"><span class="linenos">55</span></a>    <span class="n">RIGHT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-56"><a href="#CVModel-56"><span class="linenos">56</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-57"><a href="#CVModel-57"><span class="linenos">57</span></a><span class="sd">    represents the user&#39;s right knee&quot;&quot;&quot;</span>
-</span><span id="CVModel-58"><a href="#CVModel-58"><span class="linenos">58</span></a>
-</span><span id="CVModel-59"><a href="#CVModel-59"><span class="linenos">59</span></a>    <span class="n">RIGHT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-60"><a href="#CVModel-60"><span class="linenos">60</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
-</span><span id="CVModel-61"><a href="#CVModel-61"><span class="linenos">61</span></a><span class="sd">    represents the user&#39;s right foot&quot;&quot;&quot;</span>
-</span><span id="CVModel-62"><a href="#CVModel-62"><span class="linenos">62</span></a>
-</span><span id="CVModel-63"><a href="#CVModel-63"><span class="linenos">63</span></a>    <span class="n">DEFAULT_SCALE</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="CVModel-64"><a href="#CVModel-64"><span class="linenos">64</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;How the model should be sized by default&quot;&quot;&quot;</span>
-</span><span id="CVModel-65"><a href="#CVModel-65"><span class="linenos">65</span></a>
-</span><span id="CVModel-66"><a href="#CVModel-66"><span class="linenos">66</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="CVModel-67"><a href="#CVModel-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the pose for a given image.</span>
-</span><span id="CVModel-68"><a href="#CVModel-68"><span class="linenos">68</span></a>
-</span><span id="CVModel-69"><a href="#CVModel-69"><span class="linenos">69</span></a><span class="sd">        Args:</span>
-</span><span id="CVModel-70"><a href="#CVModel-70"><span class="linenos">70</span></a><span class="sd">            frame (np.ndarray): A numpy array representing an image.</span>
-</span><span id="CVModel-71"><a href="#CVModel-71"><span class="linenos">71</span></a>
-</span><span id="CVModel-72"><a href="#CVModel-72"><span class="linenos">72</span></a><span class="sd">        Returns:</span>
-</span><span id="CVModel-73"><a href="#CVModel-73"><span class="linenos">73</span></a><span class="sd">            np.ndarray: An array of points that describe the pose.</span>
-</span><span id="CVModel-74"><a href="#CVModel-74"><span class="linenos">74</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CVModel-10"><a href="#CVModel-10"><span class="linenos">10</span></a><span class="k">class</span> <span class="nc">CVModel</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="CVModel-11"><a href="#CVModel-11"><span class="linenos">11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract object that can generate a pose given \</span>
+</span><span id="CVModel-12"><a href="#CVModel-12"><span class="linenos">12</span></a><span class="sd">        an consisting of various body parts.&quot;&quot;&quot;</span>
+</span><span id="CVModel-13"><a href="#CVModel-13"><span class="linenos">13</span></a>
+</span><span id="CVModel-14"><a href="#CVModel-14"><span class="linenos">14</span></a>    <span class="n">LEFT_HAND</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-15"><a href="#CVModel-15"><span class="linenos">15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-16"><a href="#CVModel-16"><span class="linenos">16</span></a><span class="sd">    represents the user&#39;s left hand&quot;&quot;&quot;</span>
+</span><span id="CVModel-17"><a href="#CVModel-17"><span class="linenos">17</span></a>
+</span><span id="CVModel-18"><a href="#CVModel-18"><span class="linenos">18</span></a>    <span class="n">LEFT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-19"><a href="#CVModel-19"><span class="linenos">19</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-20"><a href="#CVModel-20"><span class="linenos">20</span></a><span class="sd">    represents the user&#39;s left elbow&quot;&quot;&quot;</span>
+</span><span id="CVModel-21"><a href="#CVModel-21"><span class="linenos">21</span></a>
+</span><span id="CVModel-22"><a href="#CVModel-22"><span class="linenos">22</span></a>    <span class="n">LEFT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-23"><a href="#CVModel-23"><span class="linenos">23</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-24"><a href="#CVModel-24"><span class="linenos">24</span></a><span class="sd">    represents the user&#39;s left shoulder&quot;&quot;&quot;</span>
+</span><span id="CVModel-25"><a href="#CVModel-25"><span class="linenos">25</span></a>
+</span><span id="CVModel-26"><a href="#CVModel-26"><span class="linenos">26</span></a>    <span class="n">LEFT_HIP</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-27"><a href="#CVModel-27"><span class="linenos">27</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-28"><a href="#CVModel-28"><span class="linenos">28</span></a><span class="sd">    represents the user&#39;s left hip&quot;&quot;&quot;</span>
+</span><span id="CVModel-29"><a href="#CVModel-29"><span class="linenos">29</span></a>
+</span><span id="CVModel-30"><a href="#CVModel-30"><span class="linenos">30</span></a>    <span class="n">LEFT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-31"><a href="#CVModel-31"><span class="linenos">31</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-32"><a href="#CVModel-32"><span class="linenos">32</span></a><span class="sd">    represents the user&#39;s left knee&quot;&quot;&quot;</span>
+</span><span id="CVModel-33"><a href="#CVModel-33"><span class="linenos">33</span></a>
+</span><span id="CVModel-34"><a href="#CVModel-34"><span class="linenos">34</span></a>    <span class="n">LEFT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-35"><a href="#CVModel-35"><span class="linenos">35</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-36"><a href="#CVModel-36"><span class="linenos">36</span></a><span class="sd">    represents the user&#39;s left foot&quot;&quot;&quot;</span>
+</span><span id="CVModel-37"><a href="#CVModel-37"><span class="linenos">37</span></a>
+</span><span id="CVModel-38"><a href="#CVModel-38"><span class="linenos">38</span></a>    <span class="n">RIGHT_HAND</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-39"><a href="#CVModel-39"><span class="linenos">39</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-40"><a href="#CVModel-40"><span class="linenos">40</span></a><span class="sd">    represents the user&#39;s right hand&quot;&quot;&quot;</span>
+</span><span id="CVModel-41"><a href="#CVModel-41"><span class="linenos">41</span></a>
+</span><span id="CVModel-42"><a href="#CVModel-42"><span class="linenos">42</span></a>    <span class="n">RIGHT_ELBOW</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-43"><a href="#CVModel-43"><span class="linenos">43</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-44"><a href="#CVModel-44"><span class="linenos">44</span></a><span class="sd">    represents the user&#39;s right elbow&quot;&quot;&quot;</span>
+</span><span id="CVModel-45"><a href="#CVModel-45"><span class="linenos">45</span></a>
+</span><span id="CVModel-46"><a href="#CVModel-46"><span class="linenos">46</span></a>    <span class="n">RIGHT_SHOULDER</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-47"><a href="#CVModel-47"><span class="linenos">47</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-48"><a href="#CVModel-48"><span class="linenos">48</span></a><span class="sd">    represents the user&#39;s right shoulder&quot;&quot;&quot;</span>
+</span><span id="CVModel-49"><a href="#CVModel-49"><span class="linenos">49</span></a>
+</span><span id="CVModel-50"><a href="#CVModel-50"><span class="linenos">50</span></a>    <span class="n">RIGHT_HIP</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-51"><a href="#CVModel-51"><span class="linenos">51</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-52"><a href="#CVModel-52"><span class="linenos">52</span></a><span class="sd">    represents the user&#39;s right hip&quot;&quot;&quot;</span>
+</span><span id="CVModel-53"><a href="#CVModel-53"><span class="linenos">53</span></a>
+</span><span id="CVModel-54"><a href="#CVModel-54"><span class="linenos">54</span></a>    <span class="n">RIGHT_KNEE</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-55"><a href="#CVModel-55"><span class="linenos">55</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-56"><a href="#CVModel-56"><span class="linenos">56</span></a><span class="sd">    represents the user&#39;s right knee&quot;&quot;&quot;</span>
+</span><span id="CVModel-57"><a href="#CVModel-57"><span class="linenos">57</span></a>
+</span><span id="CVModel-58"><a href="#CVModel-58"><span class="linenos">58</span></a>    <span class="n">RIGHT_FOOT</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-59"><a href="#CVModel-59"><span class="linenos">59</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Index of the model&#39;s pose array that</span>
+</span><span id="CVModel-60"><a href="#CVModel-60"><span class="linenos">60</span></a><span class="sd">    represents the user&#39;s right foot&quot;&quot;&quot;</span>
+</span><span id="CVModel-61"><a href="#CVModel-61"><span class="linenos">61</span></a>
+</span><span id="CVModel-62"><a href="#CVModel-62"><span class="linenos">62</span></a>    <span class="n">DEFAULT_SCALE</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="CVModel-63"><a href="#CVModel-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;How the model should be sized by default&quot;&quot;&quot;</span>
+</span><span id="CVModel-64"><a href="#CVModel-64"><span class="linenos">64</span></a>
+</span><span id="CVModel-65"><a href="#CVModel-65"><span class="linenos">65</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="CVModel-66"><a href="#CVModel-66"><span class="linenos">66</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the pose for a given image.</span>
+</span><span id="CVModel-67"><a href="#CVModel-67"><span class="linenos">67</span></a>
+</span><span id="CVModel-68"><a href="#CVModel-68"><span class="linenos">68</span></a><span class="sd">        Args:</span>
+</span><span id="CVModel-69"><a href="#CVModel-69"><span class="linenos">69</span></a><span class="sd">            frame (np.ndarray): A numpy array representing an image.</span>
+</span><span id="CVModel-70"><a href="#CVModel-70"><span class="linenos">70</span></a>
+</span><span id="CVModel-71"><a href="#CVModel-71"><span class="linenos">71</span></a><span class="sd">        Returns:</span>
+</span><span id="CVModel-72"><a href="#CVModel-72"><span class="linenos">72</span></a><span class="sd">            np.ndarray: An array of points that describe the pose.</span>
+</span><span id="CVModel-73"><a href="#CVModel-73"><span class="linenos">73</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -572,19 +569,19 @@ represents the user's right foot</p>
 
     </div>
     <a class="headerlink" href="#CVModel.get_pose"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="CVModel.get_pose-66"><a href="#CVModel.get_pose-66"><span class="linenos">66</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="CVModel.get_pose-67"><a href="#CVModel.get_pose-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the pose for a given image.</span>
-</span><span id="CVModel.get_pose-68"><a href="#CVModel.get_pose-68"><span class="linenos">68</span></a>
-</span><span id="CVModel.get_pose-69"><a href="#CVModel.get_pose-69"><span class="linenos">69</span></a><span class="sd">        Args:</span>
-</span><span id="CVModel.get_pose-70"><a href="#CVModel.get_pose-70"><span class="linenos">70</span></a><span class="sd">            frame (np.ndarray): A numpy array representing an image.</span>
-</span><span id="CVModel.get_pose-71"><a href="#CVModel.get_pose-71"><span class="linenos">71</span></a>
-</span><span id="CVModel.get_pose-72"><a href="#CVModel.get_pose-72"><span class="linenos">72</span></a><span class="sd">        Returns:</span>
-</span><span id="CVModel.get_pose-73"><a href="#CVModel.get_pose-73"><span class="linenos">73</span></a><span class="sd">            np.ndarray: An array of points that describe the pose.</span>
-</span><span id="CVModel.get_pose-74"><a href="#CVModel.get_pose-74"><span class="linenos">74</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="CVModel.get_pose-65"><a href="#CVModel.get_pose-65"><span class="linenos">65</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="CVModel.get_pose-66"><a href="#CVModel.get_pose-66"><span class="linenos">66</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve the pose for a given image.</span>
+</span><span id="CVModel.get_pose-67"><a href="#CVModel.get_pose-67"><span class="linenos">67</span></a>
+</span><span id="CVModel.get_pose-68"><a href="#CVModel.get_pose-68"><span class="linenos">68</span></a><span class="sd">        Args:</span>
+</span><span id="CVModel.get_pose-69"><a href="#CVModel.get_pose-69"><span class="linenos">69</span></a><span class="sd">            frame (np.ndarray): A numpy array representing an image.</span>
+</span><span id="CVModel.get_pose-70"><a href="#CVModel.get_pose-70"><span class="linenos">70</span></a>
+</span><span id="CVModel.get_pose-71"><a href="#CVModel.get_pose-71"><span class="linenos">71</span></a><span class="sd">        Returns:</span>
+</span><span id="CVModel.get_pose-72"><a href="#CVModel.get_pose-72"><span class="linenos">72</span></a><span class="sd">            np.ndarray: An array of points that describe the pose.</span>
+</span><span id="CVModel.get_pose-73"><a href="#CVModel.get_pose-73"><span class="linenos">73</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Retrieves the pose for a given image.</p>
+            <div class="docstring"><p>Retrieve the pose for a given image.</p>
 
 <p>Args:
     frame (np.ndarray): A numpy array representing an image.</p>
@@ -607,24 +604,22 @@ represents the user's right foot</p>
 
     </div>
     <a class="headerlink" href="#FrameInput"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FrameInput-77"><a href="#FrameInput-77"><span class="linenos">77</span></a><span class="k">class</span> <span class="nc">FrameInput</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="FrameInput-78"><a href="#FrameInput-78"><span class="linenos">78</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="FrameInput-79"><a href="#FrameInput-79"><span class="linenos">79</span></a><span class="sd">    Abstract object that can provide image frames on-demand</span>
-</span><span id="FrameInput-80"><a href="#FrameInput-80"><span class="linenos">80</span></a><span class="sd">    such as a webcam input or video file.</span>
-</span><span id="FrameInput-81"><a href="#FrameInput-81"><span class="linenos">81</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="FrameInput-82"><a href="#FrameInput-82"><span class="linenos">82</span></a>
-</span><span id="FrameInput-83"><a href="#FrameInput-83"><span class="linenos">83</span></a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="FrameInput-84"><a href="#FrameInput-84"><span class="linenos">84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a frame from the repository.</span>
-</span><span id="FrameInput-85"><a href="#FrameInput-85"><span class="linenos">85</span></a>
-</span><span id="FrameInput-86"><a href="#FrameInput-86"><span class="linenos">86</span></a><span class="sd">        Returns:</span>
-</span><span id="FrameInput-87"><a href="#FrameInput-87"><span class="linenos">87</span></a><span class="sd">            np.ndarray: An array of points that describe the</span>
-</span><span id="FrameInput-88"><a href="#FrameInput-88"><span class="linenos">88</span></a><span class="sd">            locations of points of a pose (skeleton).</span>
-</span><span id="FrameInput-89"><a href="#FrameInput-89"><span class="linenos">89</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FrameInput-76"><a href="#FrameInput-76"><span class="linenos">76</span></a><span class="k">class</span> <span class="nc">FrameInput</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="FrameInput-77"><a href="#FrameInput-77"><span class="linenos">77</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract object that can provide image \</span>
+</span><span id="FrameInput-78"><a href="#FrameInput-78"><span class="linenos">78</span></a><span class="sd">        frames on-demand such as a webcam input \</span>
+</span><span id="FrameInput-79"><a href="#FrameInput-79"><span class="linenos">79</span></a><span class="sd">            or video file.&quot;&quot;&quot;</span>
+</span><span id="FrameInput-80"><a href="#FrameInput-80"><span class="linenos">80</span></a>
+</span><span id="FrameInput-81"><a href="#FrameInput-81"><span class="linenos">81</span></a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="FrameInput-82"><a href="#FrameInput-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a frame from the repository.</span>
+</span><span id="FrameInput-83"><a href="#FrameInput-83"><span class="linenos">83</span></a>
+</span><span id="FrameInput-84"><a href="#FrameInput-84"><span class="linenos">84</span></a><span class="sd">        Returns:</span>
+</span><span id="FrameInput-85"><a href="#FrameInput-85"><span class="linenos">85</span></a><span class="sd">            np.ndarray: An array of points that describe the</span>
+</span><span id="FrameInput-86"><a href="#FrameInput-86"><span class="linenos">86</span></a><span class="sd">            locations of points of a pose (skeleton).</span>
+</span><span id="FrameInput-87"><a href="#FrameInput-87"><span class="linenos">87</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Abstract object that can provide image frames on-demand
-such as a webcam input or video file.</p>
+            <div class="docstring"><p>Abstract object that can provide image         frames on-demand such as a webcam input             or video file.</p>
 </div>
 
 
@@ -682,13 +677,13 @@ such as a webcam input or video file.</p>
 
     </div>
     <a class="headerlink" href="#FrameInput.get_frame"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="FrameInput.get_frame-83"><a href="#FrameInput.get_frame-83"><span class="linenos">83</span></a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="FrameInput.get_frame-84"><a href="#FrameInput.get_frame-84"><span class="linenos">84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a frame from the repository.</span>
-</span><span id="FrameInput.get_frame-85"><a href="#FrameInput.get_frame-85"><span class="linenos">85</span></a>
-</span><span id="FrameInput.get_frame-86"><a href="#FrameInput.get_frame-86"><span class="linenos">86</span></a><span class="sd">        Returns:</span>
-</span><span id="FrameInput.get_frame-87"><a href="#FrameInput.get_frame-87"><span class="linenos">87</span></a><span class="sd">            np.ndarray: An array of points that describe the</span>
-</span><span id="FrameInput.get_frame-88"><a href="#FrameInput.get_frame-88"><span class="linenos">88</span></a><span class="sd">            locations of points of a pose (skeleton).</span>
-</span><span id="FrameInput.get_frame-89"><a href="#FrameInput.get_frame-89"><span class="linenos">89</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="FrameInput.get_frame-81"><a href="#FrameInput.get_frame-81"><span class="linenos">81</span></a>    <span class="k">def</span> <span class="nf">get_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="FrameInput.get_frame-82"><a href="#FrameInput.get_frame-82"><span class="linenos">82</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a frame from the repository.</span>
+</span><span id="FrameInput.get_frame-83"><a href="#FrameInput.get_frame-83"><span class="linenos">83</span></a>
+</span><span id="FrameInput.get_frame-84"><a href="#FrameInput.get_frame-84"><span class="linenos">84</span></a><span class="sd">        Returns:</span>
+</span><span id="FrameInput.get_frame-85"><a href="#FrameInput.get_frame-85"><span class="linenos">85</span></a><span class="sd">            np.ndarray: An array of points that describe the</span>
+</span><span id="FrameInput.get_frame-86"><a href="#FrameInput.get_frame-86"><span class="linenos">86</span></a><span class="sd">            locations of points of a pose (skeleton).</span>
+</span><span id="FrameInput.get_frame-87"><a href="#FrameInput.get_frame-87"><span class="linenos">87</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -713,36 +708,35 @@ such as a webcam input or video file.</p>
 
     </div>
     <a class="headerlink" href="#PoseGenerator"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseGenerator-92"><a href="#PoseGenerator-92"><span class="linenos"> 92</span></a><span class="k">class</span> <span class="nc">PoseGenerator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="PoseGenerator-93"><a href="#PoseGenerator-93"><span class="linenos"> 93</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PoseGenerator-94"><a href="#PoseGenerator-94"><span class="linenos"> 94</span></a><span class="sd">    Abstract generator of poses such as a computer \</span>
-</span><span id="PoseGenerator-95"><a href="#PoseGenerator-95"><span class="linenos"> 95</span></a><span class="sd">    vision model or a motion capture system.</span>
-</span><span id="PoseGenerator-96"><a href="#PoseGenerator-96"><span class="linenos"> 96</span></a><span class="sd">    &quot;&quot;&quot;</span>
-</span><span id="PoseGenerator-97"><a href="#PoseGenerator-97"><span class="linenos"> 97</span></a>
-</span><span id="PoseGenerator-98"><a href="#PoseGenerator-98"><span class="linenos"> 98</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="PoseGenerator-99"><a href="#PoseGenerator-99"><span class="linenos"> 99</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a pose from the generator.</span>
-</span><span id="PoseGenerator-100"><a href="#PoseGenerator-100"><span class="linenos">100</span></a>
-</span><span id="PoseGenerator-101"><a href="#PoseGenerator-101"><span class="linenos">101</span></a><span class="sd">        Returns:</span>
-</span><span id="PoseGenerator-102"><a href="#PoseGenerator-102"><span class="linenos">102</span></a><span class="sd">            np.ndarray: An array of points that describe the \</span>
-</span><span id="PoseGenerator-103"><a href="#PoseGenerator-103"><span class="linenos">103</span></a><span class="sd">            locations of points of a pose.</span>
-</span><span id="PoseGenerator-104"><a href="#PoseGenerator-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="PoseGenerator-105"><a href="#PoseGenerator-105"><span class="linenos">105</span></a>
-</span><span id="PoseGenerator-106"><a href="#PoseGenerator-106"><span class="linenos">106</span></a>    <span class="c1"># type: ignore</span>
-</span><span id="PoseGenerator-107"><a href="#PoseGenerator-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
-</span><span id="PoseGenerator-108"><a href="#PoseGenerator-108"><span class="linenos">108</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PoseGenerator-109"><a href="#PoseGenerator-109"><span class="linenos">109</span></a><span class="sd">        Completes any configuration that needs to be done \</span>
-</span><span id="PoseGenerator-110"><a href="#PoseGenerator-110"><span class="linenos">110</span></a><span class="sd">        after initialization. Useful if the frame input is \</span>
-</span><span id="PoseGenerator-111"><a href="#PoseGenerator-111"><span class="linenos">111</span></a><span class="sd">        being run in a separate process so that configruation \</span>
-</span><span id="PoseGenerator-112"><a href="#PoseGenerator-112"><span class="linenos">112</span></a><span class="sd">        can be done post-fork.</span>
-</span><span id="PoseGenerator-113"><a href="#PoseGenerator-113"><span class="linenos">113</span></a>
-</span><span id="PoseGenerator-114"><a href="#PoseGenerator-114"><span class="linenos">114</span></a><span class="sd">        Args:</span>
-</span><span id="PoseGenerator-115"><a href="#PoseGenerator-115"><span class="linenos">115</span></a><span class="sd">            pose_queue (mp.Queue): The multiprocessing queue to put \</span>
-</span><span id="PoseGenerator-116"><a href="#PoseGenerator-116"><span class="linenos">116</span></a><span class="sd">                pose data in.</span>
-</span><span id="PoseGenerator-117"><a href="#PoseGenerator-117"><span class="linenos">117</span></a>
-</span><span id="PoseGenerator-118"><a href="#PoseGenerator-118"><span class="linenos">118</span></a><span class="sd">        Returns:</span>
-</span><span id="PoseGenerator-119"><a href="#PoseGenerator-119"><span class="linenos">119</span></a><span class="sd">            Iterable[mp.Process]: A collection of processes started \</span>
-</span><span id="PoseGenerator-120"><a href="#PoseGenerator-120"><span class="linenos">120</span></a><span class="sd">                by the function that must be cleaned up later.</span>
-</span><span id="PoseGenerator-121"><a href="#PoseGenerator-121"><span class="linenos">121</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseGenerator-90"><a href="#PoseGenerator-90"><span class="linenos"> 90</span></a><span class="k">class</span> <span class="nc">PoseGenerator</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="PoseGenerator-91"><a href="#PoseGenerator-91"><span class="linenos"> 91</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract generator of poses such as a computer \</span>
+</span><span id="PoseGenerator-92"><a href="#PoseGenerator-92"><span class="linenos"> 92</span></a><span class="sd">    vision model or a motion capture system.&quot;&quot;&quot;</span>
+</span><span id="PoseGenerator-93"><a href="#PoseGenerator-93"><span class="linenos"> 93</span></a>
+</span><span id="PoseGenerator-94"><a href="#PoseGenerator-94"><span class="linenos"> 94</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseGenerator-95"><a href="#PoseGenerator-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a pose from the generator.</span>
+</span><span id="PoseGenerator-96"><a href="#PoseGenerator-96"><span class="linenos"> 96</span></a>
+</span><span id="PoseGenerator-97"><a href="#PoseGenerator-97"><span class="linenos"> 97</span></a><span class="sd">        Returns:</span>
+</span><span id="PoseGenerator-98"><a href="#PoseGenerator-98"><span class="linenos"> 98</span></a><span class="sd">            np.ndarray: An array of points that describe the \</span>
+</span><span id="PoseGenerator-99"><a href="#PoseGenerator-99"><span class="linenos"> 99</span></a><span class="sd">            locations of points of a pose.</span>
+</span><span id="PoseGenerator-100"><a href="#PoseGenerator-100"><span class="linenos">100</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="PoseGenerator-101"><a href="#PoseGenerator-101"><span class="linenos">101</span></a>
+</span><span id="PoseGenerator-102"><a href="#PoseGenerator-102"><span class="linenos">102</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="PoseGenerator-103"><a href="#PoseGenerator-103"><span class="linenos">103</span></a>              <span class="n">pose_queues</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">]</span>
+</span><span id="PoseGenerator-104"><a href="#PoseGenerator-104"><span class="linenos">104</span></a>              <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseGenerator-105"><a href="#PoseGenerator-105"><span class="linenos">105</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PoseGenerator-106"><a href="#PoseGenerator-106"><span class="linenos">106</span></a><span class="sd">        Completes any configuration that needs to be done \</span>
+</span><span id="PoseGenerator-107"><a href="#PoseGenerator-107"><span class="linenos">107</span></a><span class="sd">        after initialization. Useful if the frame input is \</span>
+</span><span id="PoseGenerator-108"><a href="#PoseGenerator-108"><span class="linenos">108</span></a><span class="sd">        being run in a separate process so that configruation \</span>
+</span><span id="PoseGenerator-109"><a href="#PoseGenerator-109"><span class="linenos">109</span></a><span class="sd">        can be done post-fork.</span>
+</span><span id="PoseGenerator-110"><a href="#PoseGenerator-110"><span class="linenos">110</span></a>
+</span><span id="PoseGenerator-111"><a href="#PoseGenerator-111"><span class="linenos">111</span></a><span class="sd">        Args:</span>
+</span><span id="PoseGenerator-112"><a href="#PoseGenerator-112"><span class="linenos">112</span></a><span class="sd">            pose_queue (mpq.Queue): The multiprocessing queue to put \</span>
+</span><span id="PoseGenerator-113"><a href="#PoseGenerator-113"><span class="linenos">113</span></a><span class="sd">                pose data in.</span>
+</span><span id="PoseGenerator-114"><a href="#PoseGenerator-114"><span class="linenos">114</span></a>
+</span><span id="PoseGenerator-115"><a href="#PoseGenerator-115"><span class="linenos">115</span></a><span class="sd">        Returns:</span>
+</span><span id="PoseGenerator-116"><a href="#PoseGenerator-116"><span class="linenos">116</span></a><span class="sd">            Iterable[mp.Process]: A collection of processes started \</span>
+</span><span id="PoseGenerator-117"><a href="#PoseGenerator-117"><span class="linenos">117</span></a><span class="sd">                by the function that must be cleaned up later.</span>
+</span><span id="PoseGenerator-118"><a href="#PoseGenerator-118"><span class="linenos">118</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -804,13 +798,13 @@ such as a webcam input or video file.</p>
 
     </div>
     <a class="headerlink" href="#PoseGenerator.get_pose"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseGenerator.get_pose-98"><a href="#PoseGenerator.get_pose-98"><span class="linenos"> 98</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="PoseGenerator.get_pose-99"><a href="#PoseGenerator.get_pose-99"><span class="linenos"> 99</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a pose from the generator.</span>
-</span><span id="PoseGenerator.get_pose-100"><a href="#PoseGenerator.get_pose-100"><span class="linenos">100</span></a>
-</span><span id="PoseGenerator.get_pose-101"><a href="#PoseGenerator.get_pose-101"><span class="linenos">101</span></a><span class="sd">        Returns:</span>
-</span><span id="PoseGenerator.get_pose-102"><a href="#PoseGenerator.get_pose-102"><span class="linenos">102</span></a><span class="sd">            np.ndarray: An array of points that describe the \</span>
-</span><span id="PoseGenerator.get_pose-103"><a href="#PoseGenerator.get_pose-103"><span class="linenos">103</span></a><span class="sd">            locations of points of a pose.</span>
-</span><span id="PoseGenerator.get_pose-104"><a href="#PoseGenerator.get_pose-104"><span class="linenos">104</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseGenerator.get_pose-94"><a href="#PoseGenerator.get_pose-94"><span class="linenos"> 94</span></a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseGenerator.get_pose-95"><a href="#PoseGenerator.get_pose-95"><span class="linenos"> 95</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieve a pose from the generator.</span>
+</span><span id="PoseGenerator.get_pose-96"><a href="#PoseGenerator.get_pose-96"><span class="linenos"> 96</span></a>
+</span><span id="PoseGenerator.get_pose-97"><a href="#PoseGenerator.get_pose-97"><span class="linenos"> 97</span></a><span class="sd">        Returns:</span>
+</span><span id="PoseGenerator.get_pose-98"><a href="#PoseGenerator.get_pose-98"><span class="linenos"> 98</span></a><span class="sd">            np.ndarray: An array of points that describe the \</span>
+</span><span id="PoseGenerator.get_pose-99"><a href="#PoseGenerator.get_pose-99"><span class="linenos"> 99</span></a><span class="sd">            locations of points of a pose.</span>
+</span><span id="PoseGenerator.get_pose-100"><a href="#PoseGenerator.get_pose-100"><span class="linenos">100</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -827,34 +821,36 @@ such as a webcam input or video file.</p>
 <div class="attr function">
             
         <span class="def">def</span>
-        <span class="name">start</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">pose_queue</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">bound</span> <span class="n">method</span> <span class="n">BaseContext</span><span class="o">.</span><span class="n">Queue</span> <span class="n">of</span> <span class="o">&lt;</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">DefaultContext</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x000001FBD7AEBDC0</span><span class="o">&gt;&gt;</span></span><span class="return-annotation">) -> <span class="n">Iterable</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">Process</span><span class="p">]</span>:</span></span>
+        <span class="name">start</span><span class="signature pdoc-code multiline">(<span class="param">	<span class="bp">self</span>,</span><span class="param">	<span class="n">pose_queues</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">queues</span><span class="o">.</span><span class="n">Queue</span><span class="p">]</span></span><span class="return-annotation">) -> <span class="n">Iterable</span><span class="p">[</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">Process</span><span class="p">]</span>:</span></span>
 
                 <label class="view-source-button" for="PoseGenerator.start-view-source"><span>View Source</span></label>
 
     </div>
     <a class="headerlink" href="#PoseGenerator.start"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseGenerator.start-107"><a href="#PoseGenerator.start-107"><span class="linenos">107</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pose_queue</span><span class="p">:</span> <span class="n">mp</span><span class="o">.</span><span class="n">Queue</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>
-</span><span id="PoseGenerator.start-108"><a href="#PoseGenerator.start-108"><span class="linenos">108</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="PoseGenerator.start-109"><a href="#PoseGenerator.start-109"><span class="linenos">109</span></a><span class="sd">        Completes any configuration that needs to be done \</span>
-</span><span id="PoseGenerator.start-110"><a href="#PoseGenerator.start-110"><span class="linenos">110</span></a><span class="sd">        after initialization. Useful if the frame input is \</span>
-</span><span id="PoseGenerator.start-111"><a href="#PoseGenerator.start-111"><span class="linenos">111</span></a><span class="sd">        being run in a separate process so that configruation \</span>
-</span><span id="PoseGenerator.start-112"><a href="#PoseGenerator.start-112"><span class="linenos">112</span></a><span class="sd">        can be done post-fork.</span>
-</span><span id="PoseGenerator.start-113"><a href="#PoseGenerator.start-113"><span class="linenos">113</span></a>
-</span><span id="PoseGenerator.start-114"><a href="#PoseGenerator.start-114"><span class="linenos">114</span></a><span class="sd">        Args:</span>
-</span><span id="PoseGenerator.start-115"><a href="#PoseGenerator.start-115"><span class="linenos">115</span></a><span class="sd">            pose_queue (mp.Queue): The multiprocessing queue to put \</span>
-</span><span id="PoseGenerator.start-116"><a href="#PoseGenerator.start-116"><span class="linenos">116</span></a><span class="sd">                pose data in.</span>
-</span><span id="PoseGenerator.start-117"><a href="#PoseGenerator.start-117"><span class="linenos">117</span></a>
-</span><span id="PoseGenerator.start-118"><a href="#PoseGenerator.start-118"><span class="linenos">118</span></a><span class="sd">        Returns:</span>
-</span><span id="PoseGenerator.start-119"><a href="#PoseGenerator.start-119"><span class="linenos">119</span></a><span class="sd">            Iterable[mp.Process]: A collection of processes started \</span>
-</span><span id="PoseGenerator.start-120"><a href="#PoseGenerator.start-120"><span class="linenos">120</span></a><span class="sd">                by the function that must be cleaned up later.</span>
-</span><span id="PoseGenerator.start-121"><a href="#PoseGenerator.start-121"><span class="linenos">121</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PoseGenerator.start-102"><a href="#PoseGenerator.start-102"><span class="linenos">102</span></a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+</span><span id="PoseGenerator.start-103"><a href="#PoseGenerator.start-103"><span class="linenos">103</span></a>              <span class="n">pose_queues</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mpq</span><span class="o">.</span><span class="n">Queue</span><span class="p">]</span>
+</span><span id="PoseGenerator.start-104"><a href="#PoseGenerator.start-104"><span class="linenos">104</span></a>              <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">]:</span>  <span class="c1"># type: ignore</span>
+</span><span id="PoseGenerator.start-105"><a href="#PoseGenerator.start-105"><span class="linenos">105</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="PoseGenerator.start-106"><a href="#PoseGenerator.start-106"><span class="linenos">106</span></a><span class="sd">        Completes any configuration that needs to be done \</span>
+</span><span id="PoseGenerator.start-107"><a href="#PoseGenerator.start-107"><span class="linenos">107</span></a><span class="sd">        after initialization. Useful if the frame input is \</span>
+</span><span id="PoseGenerator.start-108"><a href="#PoseGenerator.start-108"><span class="linenos">108</span></a><span class="sd">        being run in a separate process so that configruation \</span>
+</span><span id="PoseGenerator.start-109"><a href="#PoseGenerator.start-109"><span class="linenos">109</span></a><span class="sd">        can be done post-fork.</span>
+</span><span id="PoseGenerator.start-110"><a href="#PoseGenerator.start-110"><span class="linenos">110</span></a>
+</span><span id="PoseGenerator.start-111"><a href="#PoseGenerator.start-111"><span class="linenos">111</span></a><span class="sd">        Args:</span>
+</span><span id="PoseGenerator.start-112"><a href="#PoseGenerator.start-112"><span class="linenos">112</span></a><span class="sd">            pose_queue (mpq.Queue): The multiprocessing queue to put \</span>
+</span><span id="PoseGenerator.start-113"><a href="#PoseGenerator.start-113"><span class="linenos">113</span></a><span class="sd">                pose data in.</span>
+</span><span id="PoseGenerator.start-114"><a href="#PoseGenerator.start-114"><span class="linenos">114</span></a>
+</span><span id="PoseGenerator.start-115"><a href="#PoseGenerator.start-115"><span class="linenos">115</span></a><span class="sd">        Returns:</span>
+</span><span id="PoseGenerator.start-116"><a href="#PoseGenerator.start-116"><span class="linenos">116</span></a><span class="sd">            Iterable[mp.Process]: A collection of processes started \</span>
+</span><span id="PoseGenerator.start-117"><a href="#PoseGenerator.start-117"><span class="linenos">117</span></a><span class="sd">                by the function that must be cleaned up later.</span>
+</span><span id="PoseGenerator.start-118"><a href="#PoseGenerator.start-118"><span class="linenos">118</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
             <div class="docstring"><p>Completes any configuration that needs to be done         after initialization. Useful if the frame input is         being run in a separate process so that configruation         can be done post-fork.</p>
 
 <p>Args:
-    pose_queue (mp.Queue): The multiprocessing queue to put                 pose data in.</p>
+    pose_queue (mpq.Queue): The multiprocessing queue to put                 pose data in.</p>
 
 <p>Returns:
     Iterable[mp.Process]: A collection of processes started                 by the function that must be cleaned up later.</p>

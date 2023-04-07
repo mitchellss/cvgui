@@ -37,6 +37,12 @@
                                 <a class="function" href="#UserInterface.__init__">UserInterface</a>
                         </li>
                         <li>
+                                <a class="variable" href="#UserInterface.window">window</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#UserInterface.running">running</a>
+                        </li>
+                        <li>
                                 <a class="function" href="#UserInterface.clear">clear</a>
                         </li>
                         <li>
@@ -73,59 +79,96 @@
                     <h1 class="modulename">
 <a href="./../../../cvgui.html">cvgui</a><wbr>.<a href="./../../core.html">core</a><wbr>.<a href="./../displaying.html">displaying</a><wbr>.service    </h1>
 
-                        <div class="docstring"><p>The interface to implement to be considered a user interface.</p>
+                        <div class="docstring"><p>This module defines the interface for a class to be considered a user interface by <code><a href="../../../cvgui.html">cvgui</a></code>. This ensures that all user-created activities work reguardless of what user interface is used.</p>
 </div>
 
                         <input id="mod-service-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 
                         <label class="view-source-button" for="mod-service-view-source"><span>View Source</span></label>
 
-                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;The interface to implement to be considered a user interface.&quot;&quot;&quot;</span>
-</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
-</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Protocol</span>
-</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a>
-</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">cvgui.core.displaying.components</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="n">TrackingBubble</span>
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="sd">&quot;&quot;&quot;This module defines the interface for a class to be considered \</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="sd">a user interface by `cvgui`. This ensures that all user-created \</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="sd">activities work reguardless of what user interface is used.&quot;&quot;&quot;</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">Protocol</span>
 </span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a>
-</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a>
-</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="k">class</span> <span class="nc">UserInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract user interface capable of rendering components.&quot;&quot;&quot;</span>
-</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>    <span class="n">window</span><span class="p">:</span> <span class="n">Any</span>
-</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a>    <span class="n">running</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">from</span> <span class="nn">cvgui.core.displaying.components</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Skeleton</span><span class="p">,</span> <span class="n">TrackingBubble</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a><span class="k">class</span> <span class="nc">UserInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract user interface capable of rendering components.&quot;&quot;&quot;</span>
 </span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>
-</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the user interface display.&quot;&quot;&quot;</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="n">window</span><span class="p">:</span> <span class="n">Any</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The window to render componets onto.&quot;&quot;&quot;</span>
 </span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>
-</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="k">def</span> <span class="nf">new_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets up the user interface.&quot;&quot;&quot;</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="n">running</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the user interface should continue rendering.&quot;&quot;&quot;</span>
 </span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>
-</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>               <span class="n">activation_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>               <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>               <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Button</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a><span class="sd">        Creates a new button on the user</span>
-</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a><span class="sd">        interface at the location specfied.</span>
-</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>
-</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>    <span class="k">def</span> <span class="nf">skeleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a>                 <span class="n">scale</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Skeleton</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a><span class="sd">        Creates a new skeleton on the user</span>
-</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        interface at the location specfied.</span>
-</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a>
-</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a>    <span class="k">def</span> <span class="nf">tracking_bubble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a>                        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a>                        <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a>                        <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a>                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrackingBubble</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a><span class="sd">        Creates a new tracking bubble on the user</span>
-</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">        interface that tracks the given point.</span>
-</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a>
-</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Refreshes the user interface display.&quot;&quot;&quot;</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the user interface display.&quot;&quot;&quot;</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a>
+</span><span id="L-22"><a href="#L-22"><span class="linenos">22</span></a>    <span class="k">def</span> <span class="nf">new_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-23"><a href="#L-23"><span class="linenos">23</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up the user interface.&quot;&quot;&quot;</span>
+</span><span id="L-24"><a href="#L-24"><span class="linenos">24</span></a>
+</span><span id="L-25"><a href="#L-25"><span class="linenos">25</span></a>    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="L-26"><a href="#L-26"><span class="linenos">26</span></a>               <span class="n">activation_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="L-27"><a href="#L-27"><span class="linenos">27</span></a>               <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+</span><span id="L-28"><a href="#L-28"><span class="linenos">28</span></a>               <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Button</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-29"><a href="#L-29"><span class="linenos">29</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a circular button on the user \</span>
+</span><span id="L-30"><a href="#L-30"><span class="linenos">30</span></a><span class="sd">        interface.</span>
+</span><span id="L-31"><a href="#L-31"><span class="linenos">31</span></a>
+</span><span id="L-32"><a href="#L-32"><span class="linenos">32</span></a><span class="sd">        Args:</span>
+</span><span id="L-33"><a href="#L-33"><span class="linenos">33</span></a><span class="sd">            pos (Tuple[float, float]): The coordinates \</span>
+</span><span id="L-34"><a href="#L-34"><span class="linenos">34</span></a><span class="sd">                to render the button at.</span>
+</span><span id="L-35"><a href="#L-35"><span class="linenos">35</span></a><span class="sd">            activation_distance (float): The distance \</span>
+</span><span id="L-36"><a href="#L-36"><span class="linenos">36</span></a><span class="sd">                from the target to the button to be \</span>
+</span><span id="L-37"><a href="#L-37"><span class="linenos">37</span></a><span class="sd">                    considered a click.</span>
+</span><span id="L-38"><a href="#L-38"><span class="linenos">38</span></a><span class="sd">            color (Tuple[int, int, int, int]): The color \</span>
+</span><span id="L-39"><a href="#L-39"><span class="linenos">39</span></a><span class="sd">                of the button.</span>
+</span><span id="L-40"><a href="#L-40"><span class="linenos">40</span></a><span class="sd">            radius (int): The radius of the button \</span>
+</span><span id="L-41"><a href="#L-41"><span class="linenos">41</span></a>
+</span><span id="L-42"><a href="#L-42"><span class="linenos">42</span></a><span class="sd">        Returns:</span>
+</span><span id="L-43"><a href="#L-43"><span class="linenos">43</span></a><span class="sd">            Button: Button component with the specified settings.</span>
+</span><span id="L-44"><a href="#L-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-45"><a href="#L-45"><span class="linenos">45</span></a>
+</span><span id="L-46"><a href="#L-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="nf">skeleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="L-47"><a href="#L-47"><span class="linenos">47</span></a>                 <span class="n">scale</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Skeleton</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-48"><a href="#L-48"><span class="linenos">48</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new skeleton on the user \</span>
+</span><span id="L-49"><a href="#L-49"><span class="linenos">49</span></a><span class="sd">        interface at the location specfied.</span>
+</span><span id="L-50"><a href="#L-50"><span class="linenos">50</span></a>
+</span><span id="L-51"><a href="#L-51"><span class="linenos">51</span></a><span class="sd">        Args:</span>
+</span><span id="L-52"><a href="#L-52"><span class="linenos">52</span></a><span class="sd">            pos (Tuple[float, float]): The coordinates \</span>
+</span><span id="L-53"><a href="#L-53"><span class="linenos">53</span></a><span class="sd">                to center the skeleton at.</span>
+</span><span id="L-54"><a href="#L-54"><span class="linenos">54</span></a><span class="sd">            scale (int): How much to scale the skeleton \</span>
+</span><span id="L-55"><a href="#L-55"><span class="linenos">55</span></a><span class="sd">                points by.</span>
+</span><span id="L-56"><a href="#L-56"><span class="linenos">56</span></a>
+</span><span id="L-57"><a href="#L-57"><span class="linenos">57</span></a><span class="sd">        Returns:</span>
+</span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a><span class="sd">            Skeleton: Skeleton component with the specified settings.</span>
+</span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>    <span class="k">def</span> <span class="nf">tracking_bubble</span><span class="p">(</span>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a>        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>        <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a>        <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrackingBubble</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new tracking bubble on the user \</span>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">        interface that tracks the given point.</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">        Args:</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a><span class="sd">            target (int): Index of the skeleton point that the \</span>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">                tracking bubble should follow.</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">            color (Tuple[int, int, int, int]): The color of the \</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">                tracking bubble.</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a><span class="sd">            radius (int): The radius of the tracking bubble.</span>
+</span><span id="L-76"><a href="#L-76"><span class="linenos">76</span></a>
+</span><span id="L-77"><a href="#L-77"><span class="linenos">77</span></a><span class="sd">        Returns:</span>
+</span><span id="L-78"><a href="#L-78"><span class="linenos">78</span></a><span class="sd">            TrackingBubble: TrackingBubble component with the \</span>
+</span><span id="L-79"><a href="#L-79"><span class="linenos">79</span></a><span class="sd">                specified settings.</span>
+</span><span id="L-80"><a href="#L-80"><span class="linenos">80</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="L-81"><a href="#L-81"><span class="linenos">81</span></a>
+</span><span id="L-82"><a href="#L-82"><span class="linenos">82</span></a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="L-83"><a href="#L-83"><span class="linenos">83</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Refresh the user interface display.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -141,45 +184,80 @@
 
     </div>
     <a class="headerlink" href="#UserInterface"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface-9"><a href="#UserInterface-9"><span class="linenos"> 9</span></a><span class="k">class</span> <span class="nc">UserInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
-</span><span id="UserInterface-10"><a href="#UserInterface-10"><span class="linenos">10</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract user interface capable of rendering components.&quot;&quot;&quot;</span>
-</span><span id="UserInterface-11"><a href="#UserInterface-11"><span class="linenos">11</span></a>    <span class="n">window</span><span class="p">:</span> <span class="n">Any</span>
-</span><span id="UserInterface-12"><a href="#UserInterface-12"><span class="linenos">12</span></a>    <span class="n">running</span><span class="p">:</span> <span class="nb">bool</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface-11"><a href="#UserInterface-11"><span class="linenos">11</span></a><span class="k">class</span> <span class="nc">UserInterface</span><span class="p">(</span><span class="n">Protocol</span><span class="p">):</span>
+</span><span id="UserInterface-12"><a href="#UserInterface-12"><span class="linenos">12</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An abstract user interface capable of rendering components.&quot;&quot;&quot;</span>
 </span><span id="UserInterface-13"><a href="#UserInterface-13"><span class="linenos">13</span></a>
-</span><span id="UserInterface-14"><a href="#UserInterface-14"><span class="linenos">14</span></a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="UserInterface-15"><a href="#UserInterface-15"><span class="linenos">15</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the user interface display.&quot;&quot;&quot;</span>
+</span><span id="UserInterface-14"><a href="#UserInterface-14"><span class="linenos">14</span></a>    <span class="n">window</span><span class="p">:</span> <span class="n">Any</span>
+</span><span id="UserInterface-15"><a href="#UserInterface-15"><span class="linenos">15</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;The window to render componets onto.&quot;&quot;&quot;</span>
 </span><span id="UserInterface-16"><a href="#UserInterface-16"><span class="linenos">16</span></a>
-</span><span id="UserInterface-17"><a href="#UserInterface-17"><span class="linenos">17</span></a>    <span class="k">def</span> <span class="nf">new_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="UserInterface-18"><a href="#UserInterface-18"><span class="linenos">18</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets up the user interface.&quot;&quot;&quot;</span>
+</span><span id="UserInterface-17"><a href="#UserInterface-17"><span class="linenos">17</span></a>    <span class="n">running</span><span class="p">:</span> <span class="nb">bool</span>
+</span><span id="UserInterface-18"><a href="#UserInterface-18"><span class="linenos">18</span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether the user interface should continue rendering.&quot;&quot;&quot;</span>
 </span><span id="UserInterface-19"><a href="#UserInterface-19"><span class="linenos">19</span></a>
-</span><span id="UserInterface-20"><a href="#UserInterface-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="UserInterface-21"><a href="#UserInterface-21"><span class="linenos">21</span></a>               <span class="n">activation_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="UserInterface-22"><a href="#UserInterface-22"><span class="linenos">22</span></a>               <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-</span><span id="UserInterface-23"><a href="#UserInterface-23"><span class="linenos">23</span></a>               <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Button</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="UserInterface-24"><a href="#UserInterface-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserInterface-25"><a href="#UserInterface-25"><span class="linenos">25</span></a><span class="sd">        Creates a new button on the user</span>
-</span><span id="UserInterface-26"><a href="#UserInterface-26"><span class="linenos">26</span></a><span class="sd">        interface at the location specfied.</span>
-</span><span id="UserInterface-27"><a href="#UserInterface-27"><span class="linenos">27</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="UserInterface-28"><a href="#UserInterface-28"><span class="linenos">28</span></a>
-</span><span id="UserInterface-29"><a href="#UserInterface-29"><span class="linenos">29</span></a>    <span class="k">def</span> <span class="nf">skeleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="UserInterface-30"><a href="#UserInterface-30"><span class="linenos">30</span></a>                 <span class="n">scale</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Skeleton</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="UserInterface-31"><a href="#UserInterface-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserInterface-32"><a href="#UserInterface-32"><span class="linenos">32</span></a><span class="sd">        Creates a new skeleton on the user</span>
-</span><span id="UserInterface-33"><a href="#UserInterface-33"><span class="linenos">33</span></a><span class="sd">        interface at the location specfied.</span>
-</span><span id="UserInterface-34"><a href="#UserInterface-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="UserInterface-35"><a href="#UserInterface-35"><span class="linenos">35</span></a>
-</span><span id="UserInterface-36"><a href="#UserInterface-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="nf">tracking_bubble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="UserInterface-37"><a href="#UserInterface-37"><span class="linenos">37</span></a>                        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="UserInterface-38"><a href="#UserInterface-38"><span class="linenos">38</span></a>                        <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-</span><span id="UserInterface-39"><a href="#UserInterface-39"><span class="linenos">39</span></a>                        <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="UserInterface-40"><a href="#UserInterface-40"><span class="linenos">40</span></a>                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrackingBubble</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="UserInterface-41"><a href="#UserInterface-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserInterface-42"><a href="#UserInterface-42"><span class="linenos">42</span></a><span class="sd">        Creates a new tracking bubble on the user</span>
-</span><span id="UserInterface-43"><a href="#UserInterface-43"><span class="linenos">43</span></a><span class="sd">        interface that tracks the given point.</span>
-</span><span id="UserInterface-44"><a href="#UserInterface-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
-</span><span id="UserInterface-45"><a href="#UserInterface-45"><span class="linenos">45</span></a>
-</span><span id="UserInterface-46"><a href="#UserInterface-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="UserInterface-47"><a href="#UserInterface-47"><span class="linenos">47</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Refreshes the user interface display.&quot;&quot;&quot;</span>
+</span><span id="UserInterface-20"><a href="#UserInterface-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="UserInterface-21"><a href="#UserInterface-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the user interface display.&quot;&quot;&quot;</span>
+</span><span id="UserInterface-22"><a href="#UserInterface-22"><span class="linenos">22</span></a>
+</span><span id="UserInterface-23"><a href="#UserInterface-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">new_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="UserInterface-24"><a href="#UserInterface-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up the user interface.&quot;&quot;&quot;</span>
+</span><span id="UserInterface-25"><a href="#UserInterface-25"><span class="linenos">25</span></a>
+</span><span id="UserInterface-26"><a href="#UserInterface-26"><span class="linenos">26</span></a>    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="UserInterface-27"><a href="#UserInterface-27"><span class="linenos">27</span></a>               <span class="n">activation_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="UserInterface-28"><a href="#UserInterface-28"><span class="linenos">28</span></a>               <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+</span><span id="UserInterface-29"><a href="#UserInterface-29"><span class="linenos">29</span></a>               <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Button</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="UserInterface-30"><a href="#UserInterface-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a circular button on the user \</span>
+</span><span id="UserInterface-31"><a href="#UserInterface-31"><span class="linenos">31</span></a><span class="sd">        interface.</span>
+</span><span id="UserInterface-32"><a href="#UserInterface-32"><span class="linenos">32</span></a>
+</span><span id="UserInterface-33"><a href="#UserInterface-33"><span class="linenos">33</span></a><span class="sd">        Args:</span>
+</span><span id="UserInterface-34"><a href="#UserInterface-34"><span class="linenos">34</span></a><span class="sd">            pos (Tuple[float, float]): The coordinates \</span>
+</span><span id="UserInterface-35"><a href="#UserInterface-35"><span class="linenos">35</span></a><span class="sd">                to render the button at.</span>
+</span><span id="UserInterface-36"><a href="#UserInterface-36"><span class="linenos">36</span></a><span class="sd">            activation_distance (float): The distance \</span>
+</span><span id="UserInterface-37"><a href="#UserInterface-37"><span class="linenos">37</span></a><span class="sd">                from the target to the button to be \</span>
+</span><span id="UserInterface-38"><a href="#UserInterface-38"><span class="linenos">38</span></a><span class="sd">                    considered a click.</span>
+</span><span id="UserInterface-39"><a href="#UserInterface-39"><span class="linenos">39</span></a><span class="sd">            color (Tuple[int, int, int, int]): The color \</span>
+</span><span id="UserInterface-40"><a href="#UserInterface-40"><span class="linenos">40</span></a><span class="sd">                of the button.</span>
+</span><span id="UserInterface-41"><a href="#UserInterface-41"><span class="linenos">41</span></a><span class="sd">            radius (int): The radius of the button \</span>
+</span><span id="UserInterface-42"><a href="#UserInterface-42"><span class="linenos">42</span></a>
+</span><span id="UserInterface-43"><a href="#UserInterface-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="UserInterface-44"><a href="#UserInterface-44"><span class="linenos">44</span></a><span class="sd">            Button: Button component with the specified settings.</span>
+</span><span id="UserInterface-45"><a href="#UserInterface-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserInterface-46"><a href="#UserInterface-46"><span class="linenos">46</span></a>
+</span><span id="UserInterface-47"><a href="#UserInterface-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="nf">skeleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="UserInterface-48"><a href="#UserInterface-48"><span class="linenos">48</span></a>                 <span class="n">scale</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Skeleton</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="UserInterface-49"><a href="#UserInterface-49"><span class="linenos">49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new skeleton on the user \</span>
+</span><span id="UserInterface-50"><a href="#UserInterface-50"><span class="linenos">50</span></a><span class="sd">        interface at the location specfied.</span>
+</span><span id="UserInterface-51"><a href="#UserInterface-51"><span class="linenos">51</span></a>
+</span><span id="UserInterface-52"><a href="#UserInterface-52"><span class="linenos">52</span></a><span class="sd">        Args:</span>
+</span><span id="UserInterface-53"><a href="#UserInterface-53"><span class="linenos">53</span></a><span class="sd">            pos (Tuple[float, float]): The coordinates \</span>
+</span><span id="UserInterface-54"><a href="#UserInterface-54"><span class="linenos">54</span></a><span class="sd">                to center the skeleton at.</span>
+</span><span id="UserInterface-55"><a href="#UserInterface-55"><span class="linenos">55</span></a><span class="sd">            scale (int): How much to scale the skeleton \</span>
+</span><span id="UserInterface-56"><a href="#UserInterface-56"><span class="linenos">56</span></a><span class="sd">                points by.</span>
+</span><span id="UserInterface-57"><a href="#UserInterface-57"><span class="linenos">57</span></a>
+</span><span id="UserInterface-58"><a href="#UserInterface-58"><span class="linenos">58</span></a><span class="sd">        Returns:</span>
+</span><span id="UserInterface-59"><a href="#UserInterface-59"><span class="linenos">59</span></a><span class="sd">            Skeleton: Skeleton component with the specified settings.</span>
+</span><span id="UserInterface-60"><a href="#UserInterface-60"><span class="linenos">60</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserInterface-61"><a href="#UserInterface-61"><span class="linenos">61</span></a>
+</span><span id="UserInterface-62"><a href="#UserInterface-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">tracking_bubble</span><span class="p">(</span>
+</span><span id="UserInterface-63"><a href="#UserInterface-63"><span class="linenos">63</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="UserInterface-64"><a href="#UserInterface-64"><span class="linenos">64</span></a>        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="UserInterface-65"><a href="#UserInterface-65"><span class="linenos">65</span></a>        <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+</span><span id="UserInterface-66"><a href="#UserInterface-66"><span class="linenos">66</span></a>        <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="UserInterface-67"><a href="#UserInterface-67"><span class="linenos">67</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrackingBubble</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="UserInterface-68"><a href="#UserInterface-68"><span class="linenos">68</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new tracking bubble on the user \</span>
+</span><span id="UserInterface-69"><a href="#UserInterface-69"><span class="linenos">69</span></a><span class="sd">        interface that tracks the given point.</span>
+</span><span id="UserInterface-70"><a href="#UserInterface-70"><span class="linenos">70</span></a>
+</span><span id="UserInterface-71"><a href="#UserInterface-71"><span class="linenos">71</span></a><span class="sd">        Args:</span>
+</span><span id="UserInterface-72"><a href="#UserInterface-72"><span class="linenos">72</span></a><span class="sd">            target (int): Index of the skeleton point that the \</span>
+</span><span id="UserInterface-73"><a href="#UserInterface-73"><span class="linenos">73</span></a><span class="sd">                tracking bubble should follow.</span>
+</span><span id="UserInterface-74"><a href="#UserInterface-74"><span class="linenos">74</span></a><span class="sd">            color (Tuple[int, int, int, int]): The color of the \</span>
+</span><span id="UserInterface-75"><a href="#UserInterface-75"><span class="linenos">75</span></a><span class="sd">                tracking bubble.</span>
+</span><span id="UserInterface-76"><a href="#UserInterface-76"><span class="linenos">76</span></a><span class="sd">            radius (int): The radius of the tracking bubble.</span>
+</span><span id="UserInterface-77"><a href="#UserInterface-77"><span class="linenos">77</span></a>
+</span><span id="UserInterface-78"><a href="#UserInterface-78"><span class="linenos">78</span></a><span class="sd">        Returns:</span>
+</span><span id="UserInterface-79"><a href="#UserInterface-79"><span class="linenos">79</span></a><span class="sd">            TrackingBubble: TrackingBubble component with the \</span>
+</span><span id="UserInterface-80"><a href="#UserInterface-80"><span class="linenos">80</span></a><span class="sd">                specified settings.</span>
+</span><span id="UserInterface-81"><a href="#UserInterface-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
+</span><span id="UserInterface-82"><a href="#UserInterface-82"><span class="linenos">82</span></a>
+</span><span id="UserInterface-83"><a href="#UserInterface-83"><span class="linenos">83</span></a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="UserInterface-84"><a href="#UserInterface-84"><span class="linenos">84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Refresh the user interface display.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
@@ -230,6 +308,32 @@
     
 
                             </div>
+                            <div id="UserInterface.window" class="classattr">
+                                <div class="attr variable">
+            <span class="name">window</span><span class="annotation">: Any</span>
+
+        
+    </div>
+    <a class="headerlink" href="#UserInterface.window"></a>
+    
+            <div class="docstring"><p>The window to render componets onto.</p>
+</div>
+
+
+                            </div>
+                            <div id="UserInterface.running" class="classattr">
+                                <div class="attr variable">
+            <span class="name">running</span><span class="annotation">: bool</span>
+
+        
+    </div>
+    <a class="headerlink" href="#UserInterface.running"></a>
+    
+            <div class="docstring"><p>Whether the user interface should continue rendering.</p>
+</div>
+
+
+                            </div>
                             <div id="UserInterface.clear" class="classattr">
                                         <input id="UserInterface.clear-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
 <div class="attr function">
@@ -241,12 +345,12 @@
 
     </div>
     <a class="headerlink" href="#UserInterface.clear"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.clear-14"><a href="#UserInterface.clear-14"><span class="linenos">14</span></a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="UserInterface.clear-15"><a href="#UserInterface.clear-15"><span class="linenos">15</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the user interface display.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.clear-20"><a href="#UserInterface.clear-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="UserInterface.clear-21"><a href="#UserInterface.clear-21"><span class="linenos">21</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Reset the user interface display.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Resets the user interface display.</p>
+            <div class="docstring"><p>Reset the user interface display.</p>
 </div>
 
 
@@ -262,12 +366,12 @@
 
     </div>
     <a class="headerlink" href="#UserInterface.new_gui"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.new_gui-17"><a href="#UserInterface.new_gui-17"><span class="linenos">17</span></a>    <span class="k">def</span> <span class="nf">new_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="UserInterface.new_gui-18"><a href="#UserInterface.new_gui-18"><span class="linenos">18</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets up the user interface.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.new_gui-23"><a href="#UserInterface.new_gui-23"><span class="linenos">23</span></a>    <span class="k">def</span> <span class="nf">new_gui</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="UserInterface.new_gui-24"><a href="#UserInterface.new_gui-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up the user interface.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Sets up the user interface.</p>
+            <div class="docstring"><p>Set up the user interface.</p>
 </div>
 
 
@@ -283,19 +387,38 @@
 
     </div>
     <a class="headerlink" href="#UserInterface.button"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.button-20"><a href="#UserInterface.button-20"><span class="linenos">20</span></a>    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="UserInterface.button-21"><a href="#UserInterface.button-21"><span class="linenos">21</span></a>               <span class="n">activation_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
-</span><span id="UserInterface.button-22"><a href="#UserInterface.button-22"><span class="linenos">22</span></a>               <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-</span><span id="UserInterface.button-23"><a href="#UserInterface.button-23"><span class="linenos">23</span></a>               <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Button</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="UserInterface.button-24"><a href="#UserInterface.button-24"><span class="linenos">24</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserInterface.button-25"><a href="#UserInterface.button-25"><span class="linenos">25</span></a><span class="sd">        Creates a new button on the user</span>
-</span><span id="UserInterface.button-26"><a href="#UserInterface.button-26"><span class="linenos">26</span></a><span class="sd">        interface at the location specfied.</span>
-</span><span id="UserInterface.button-27"><a href="#UserInterface.button-27"><span class="linenos">27</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.button-26"><a href="#UserInterface.button-26"><span class="linenos">26</span></a>    <span class="k">def</span> <span class="nf">button</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="UserInterface.button-27"><a href="#UserInterface.button-27"><span class="linenos">27</span></a>               <span class="n">activation_distance</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+</span><span id="UserInterface.button-28"><a href="#UserInterface.button-28"><span class="linenos">28</span></a>               <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+</span><span id="UserInterface.button-29"><a href="#UserInterface.button-29"><span class="linenos">29</span></a>               <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Button</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="UserInterface.button-30"><a href="#UserInterface.button-30"><span class="linenos">30</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a circular button on the user \</span>
+</span><span id="UserInterface.button-31"><a href="#UserInterface.button-31"><span class="linenos">31</span></a><span class="sd">        interface.</span>
+</span><span id="UserInterface.button-32"><a href="#UserInterface.button-32"><span class="linenos">32</span></a>
+</span><span id="UserInterface.button-33"><a href="#UserInterface.button-33"><span class="linenos">33</span></a><span class="sd">        Args:</span>
+</span><span id="UserInterface.button-34"><a href="#UserInterface.button-34"><span class="linenos">34</span></a><span class="sd">            pos (Tuple[float, float]): The coordinates \</span>
+</span><span id="UserInterface.button-35"><a href="#UserInterface.button-35"><span class="linenos">35</span></a><span class="sd">                to render the button at.</span>
+</span><span id="UserInterface.button-36"><a href="#UserInterface.button-36"><span class="linenos">36</span></a><span class="sd">            activation_distance (float): The distance \</span>
+</span><span id="UserInterface.button-37"><a href="#UserInterface.button-37"><span class="linenos">37</span></a><span class="sd">                from the target to the button to be \</span>
+</span><span id="UserInterface.button-38"><a href="#UserInterface.button-38"><span class="linenos">38</span></a><span class="sd">                    considered a click.</span>
+</span><span id="UserInterface.button-39"><a href="#UserInterface.button-39"><span class="linenos">39</span></a><span class="sd">            color (Tuple[int, int, int, int]): The color \</span>
+</span><span id="UserInterface.button-40"><a href="#UserInterface.button-40"><span class="linenos">40</span></a><span class="sd">                of the button.</span>
+</span><span id="UserInterface.button-41"><a href="#UserInterface.button-41"><span class="linenos">41</span></a><span class="sd">            radius (int): The radius of the button \</span>
+</span><span id="UserInterface.button-42"><a href="#UserInterface.button-42"><span class="linenos">42</span></a>
+</span><span id="UserInterface.button-43"><a href="#UserInterface.button-43"><span class="linenos">43</span></a><span class="sd">        Returns:</span>
+</span><span id="UserInterface.button-44"><a href="#UserInterface.button-44"><span class="linenos">44</span></a><span class="sd">            Button: Button component with the specified settings.</span>
+</span><span id="UserInterface.button-45"><a href="#UserInterface.button-45"><span class="linenos">45</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Creates a new button on the user
-interface at the location specfied.</p>
+            <div class="docstring"><p>Create a circular button on the user         interface.</p>
+
+<p>Args:
+    pos (Tuple[float, float]): The coordinates                 to render the button at.
+    activation_distance (float): The distance                 from the target to the button to be                     considered a click.
+    color (Tuple[int, int, int, int]): The color                 of the button.
+    radius (int): The radius of the button 
+Returns:
+    Button: Button component with the specified settings.</p>
 </div>
 
 
@@ -311,17 +434,31 @@ interface at the location specfied.</p>
 
     </div>
     <a class="headerlink" href="#UserInterface.skeleton"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.skeleton-29"><a href="#UserInterface.skeleton-29"><span class="linenos">29</span></a>    <span class="k">def</span> <span class="nf">skeleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
-</span><span id="UserInterface.skeleton-30"><a href="#UserInterface.skeleton-30"><span class="linenos">30</span></a>                 <span class="n">scale</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Skeleton</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="UserInterface.skeleton-31"><a href="#UserInterface.skeleton-31"><span class="linenos">31</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserInterface.skeleton-32"><a href="#UserInterface.skeleton-32"><span class="linenos">32</span></a><span class="sd">        Creates a new skeleton on the user</span>
-</span><span id="UserInterface.skeleton-33"><a href="#UserInterface.skeleton-33"><span class="linenos">33</span></a><span class="sd">        interface at the location specfied.</span>
-</span><span id="UserInterface.skeleton-34"><a href="#UserInterface.skeleton-34"><span class="linenos">34</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.skeleton-47"><a href="#UserInterface.skeleton-47"><span class="linenos">47</span></a>    <span class="k">def</span> <span class="nf">skeleton</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+</span><span id="UserInterface.skeleton-48"><a href="#UserInterface.skeleton-48"><span class="linenos">48</span></a>                 <span class="n">scale</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Skeleton</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="UserInterface.skeleton-49"><a href="#UserInterface.skeleton-49"><span class="linenos">49</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new skeleton on the user \</span>
+</span><span id="UserInterface.skeleton-50"><a href="#UserInterface.skeleton-50"><span class="linenos">50</span></a><span class="sd">        interface at the location specfied.</span>
+</span><span id="UserInterface.skeleton-51"><a href="#UserInterface.skeleton-51"><span class="linenos">51</span></a>
+</span><span id="UserInterface.skeleton-52"><a href="#UserInterface.skeleton-52"><span class="linenos">52</span></a><span class="sd">        Args:</span>
+</span><span id="UserInterface.skeleton-53"><a href="#UserInterface.skeleton-53"><span class="linenos">53</span></a><span class="sd">            pos (Tuple[float, float]): The coordinates \</span>
+</span><span id="UserInterface.skeleton-54"><a href="#UserInterface.skeleton-54"><span class="linenos">54</span></a><span class="sd">                to center the skeleton at.</span>
+</span><span id="UserInterface.skeleton-55"><a href="#UserInterface.skeleton-55"><span class="linenos">55</span></a><span class="sd">            scale (int): How much to scale the skeleton \</span>
+</span><span id="UserInterface.skeleton-56"><a href="#UserInterface.skeleton-56"><span class="linenos">56</span></a><span class="sd">                points by.</span>
+</span><span id="UserInterface.skeleton-57"><a href="#UserInterface.skeleton-57"><span class="linenos">57</span></a>
+</span><span id="UserInterface.skeleton-58"><a href="#UserInterface.skeleton-58"><span class="linenos">58</span></a><span class="sd">        Returns:</span>
+</span><span id="UserInterface.skeleton-59"><a href="#UserInterface.skeleton-59"><span class="linenos">59</span></a><span class="sd">            Skeleton: Skeleton component with the specified settings.</span>
+</span><span id="UserInterface.skeleton-60"><a href="#UserInterface.skeleton-60"><span class="linenos">60</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Creates a new skeleton on the user
-interface at the location specfied.</p>
+            <div class="docstring"><p>Create a new skeleton on the user         interface at the location specfied.</p>
+
+<p>Args:
+    pos (Tuple[float, float]): The coordinates                 to center the skeleton at.
+    scale (int): How much to scale the skeleton                 points by.</p>
+
+<p>Returns:
+    Skeleton: Skeleton component with the specified settings.</p>
 </div>
 
 
@@ -337,20 +474,38 @@ interface at the location specfied.</p>
 
     </div>
     <a class="headerlink" href="#UserInterface.tracking_bubble"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.tracking_bubble-36"><a href="#UserInterface.tracking_bubble-36"><span class="linenos">36</span></a>    <span class="k">def</span> <span class="nf">tracking_bubble</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
-</span><span id="UserInterface.tracking_bubble-37"><a href="#UserInterface.tracking_bubble-37"><span class="linenos">37</span></a>                        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-</span><span id="UserInterface.tracking_bubble-38"><a href="#UserInterface.tracking_bubble-38"><span class="linenos">38</span></a>                        <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-</span><span id="UserInterface.tracking_bubble-39"><a href="#UserInterface.tracking_bubble-39"><span class="linenos">39</span></a>                        <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span>
-</span><span id="UserInterface.tracking_bubble-40"><a href="#UserInterface.tracking_bubble-40"><span class="linenos">40</span></a>                        <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrackingBubble</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
-</span><span id="UserInterface.tracking_bubble-41"><a href="#UserInterface.tracking_bubble-41"><span class="linenos">41</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-</span><span id="UserInterface.tracking_bubble-42"><a href="#UserInterface.tracking_bubble-42"><span class="linenos">42</span></a><span class="sd">        Creates a new tracking bubble on the user</span>
-</span><span id="UserInterface.tracking_bubble-43"><a href="#UserInterface.tracking_bubble-43"><span class="linenos">43</span></a><span class="sd">        interface that tracks the given point.</span>
-</span><span id="UserInterface.tracking_bubble-44"><a href="#UserInterface.tracking_bubble-44"><span class="linenos">44</span></a><span class="sd">        &quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.tracking_bubble-62"><a href="#UserInterface.tracking_bubble-62"><span class="linenos">62</span></a>    <span class="k">def</span> <span class="nf">tracking_bubble</span><span class="p">(</span>
+</span><span id="UserInterface.tracking_bubble-63"><a href="#UserInterface.tracking_bubble-63"><span class="linenos">63</span></a>        <span class="bp">self</span><span class="p">,</span>
+</span><span id="UserInterface.tracking_bubble-64"><a href="#UserInterface.tracking_bubble-64"><span class="linenos">64</span></a>        <span class="n">target</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+</span><span id="UserInterface.tracking_bubble-65"><a href="#UserInterface.tracking_bubble-65"><span class="linenos">65</span></a>        <span class="n">color</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+</span><span id="UserInterface.tracking_bubble-66"><a href="#UserInterface.tracking_bubble-66"><span class="linenos">66</span></a>        <span class="n">radius</span><span class="p">:</span> <span class="nb">int</span>
+</span><span id="UserInterface.tracking_bubble-67"><a href="#UserInterface.tracking_bubble-67"><span class="linenos">67</span></a>    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TrackingBubble</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+</span><span id="UserInterface.tracking_bubble-68"><a href="#UserInterface.tracking_bubble-68"><span class="linenos">68</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a new tracking bubble on the user \</span>
+</span><span id="UserInterface.tracking_bubble-69"><a href="#UserInterface.tracking_bubble-69"><span class="linenos">69</span></a><span class="sd">        interface that tracks the given point.</span>
+</span><span id="UserInterface.tracking_bubble-70"><a href="#UserInterface.tracking_bubble-70"><span class="linenos">70</span></a>
+</span><span id="UserInterface.tracking_bubble-71"><a href="#UserInterface.tracking_bubble-71"><span class="linenos">71</span></a><span class="sd">        Args:</span>
+</span><span id="UserInterface.tracking_bubble-72"><a href="#UserInterface.tracking_bubble-72"><span class="linenos">72</span></a><span class="sd">            target (int): Index of the skeleton point that the \</span>
+</span><span id="UserInterface.tracking_bubble-73"><a href="#UserInterface.tracking_bubble-73"><span class="linenos">73</span></a><span class="sd">                tracking bubble should follow.</span>
+</span><span id="UserInterface.tracking_bubble-74"><a href="#UserInterface.tracking_bubble-74"><span class="linenos">74</span></a><span class="sd">            color (Tuple[int, int, int, int]): The color of the \</span>
+</span><span id="UserInterface.tracking_bubble-75"><a href="#UserInterface.tracking_bubble-75"><span class="linenos">75</span></a><span class="sd">                tracking bubble.</span>
+</span><span id="UserInterface.tracking_bubble-76"><a href="#UserInterface.tracking_bubble-76"><span class="linenos">76</span></a><span class="sd">            radius (int): The radius of the tracking bubble.</span>
+</span><span id="UserInterface.tracking_bubble-77"><a href="#UserInterface.tracking_bubble-77"><span class="linenos">77</span></a>
+</span><span id="UserInterface.tracking_bubble-78"><a href="#UserInterface.tracking_bubble-78"><span class="linenos">78</span></a><span class="sd">        Returns:</span>
+</span><span id="UserInterface.tracking_bubble-79"><a href="#UserInterface.tracking_bubble-79"><span class="linenos">79</span></a><span class="sd">            TrackingBubble: TrackingBubble component with the \</span>
+</span><span id="UserInterface.tracking_bubble-80"><a href="#UserInterface.tracking_bubble-80"><span class="linenos">80</span></a><span class="sd">                specified settings.</span>
+</span><span id="UserInterface.tracking_bubble-81"><a href="#UserInterface.tracking_bubble-81"><span class="linenos">81</span></a><span class="sd">        &quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Creates a new tracking bubble on the user
-interface that tracks the given point.</p>
+            <div class="docstring"><p>Create a new tracking bubble on the user         interface that tracks the given point.</p>
+
+<p>Args:
+    target (int): Index of the skeleton point that the                 tracking bubble should follow.
+    color (Tuple[int, int, int, int]): The color of the                 tracking bubble.
+    radius (int): The radius of the tracking bubble.</p>
+
+<p>Returns:
+    TrackingBubble: TrackingBubble component with the                 specified settings.</p>
 </div>
 
 
@@ -366,12 +521,12 @@ interface that tracks the given point.</p>
 
     </div>
     <a class="headerlink" href="#UserInterface.update"></a>
-            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.update-46"><a href="#UserInterface.update-46"><span class="linenos">46</span></a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><span id="UserInterface.update-47"><a href="#UserInterface.update-47"><span class="linenos">47</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Refreshes the user interface display.&quot;&quot;&quot;</span>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="UserInterface.update-83"><a href="#UserInterface.update-83"><span class="linenos">83</span></a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="UserInterface.update-84"><a href="#UserInterface.update-84"><span class="linenos">84</span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Refresh the user interface display.&quot;&quot;&quot;</span>
 </span></pre></div>
 
 
-            <div class="docstring"><p>Refreshes the user interface display.</p>
+            <div class="docstring"><p>Refresh the user interface display.</p>
 </div>
 
 
