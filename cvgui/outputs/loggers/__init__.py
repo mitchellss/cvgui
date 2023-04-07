@@ -1,1 +1,4 @@
-from .csv_logger import CSVLogger
+"""The `loggers` package conatins implementations of \
+    interfaces located in the `cvgui.core.logging` \
+        package."""
+from .csv_logger import CSVLogger  # noqa

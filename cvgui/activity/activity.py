@@ -1,19 +1,18 @@
 """
 Operates on a collection of related scenes to create a specific experience.
 
-The activity module orchestrates the interfaces of `core` packages
+The activity module orchestrates the interfaces of `core` packages \
 to run concurrently and create a coherent flow of information.
 """
 import sys
 from typing import List
-
-import numpy as np
 import multiprocessing as mp
-
+import multiprocessing.queues as mpq
+import numpy as np
 from cvgui.activity.scene import Scene
 from cvgui.core.displaying import UserInterface
 from cvgui.core.displaying.components import Button, Skeleton, TrackingBubble
-from cvgui.core.recieving import PoseGenerator
+from cvgui.core.receiving import PoseGenerator
 from cvgui.core.logging import PoseLogger
 
 X = 0
@@ -21,7 +20,7 @@ Y = 1
 
 
 class Activity:
-    """A collection of scenes and the abstract logic
+    """A collection of scenes and the abstract logic \
     for their interaction."""
 
     # Private variables
@@ -35,6 +34,8 @@ class Activity:
     def __init__(self, pose_input: PoseGenerator,
                  frontend: UserInterface) -> None:
         """
+        Create a new activity.
+
         Args:
             pose_input (PoseGenerator): An object that can generate poses.
             frontend (UserInterface): An object that can create a
@@ -44,7 +45,7 @@ class Activity:
         self.frontend: UserInterface = frontend
 
     def add_scene(self, scene: Scene) -> None:
-        """Adds a scene to the activity.
+        """Add a scene to the activity.
 
         Args:
             scene (Scene): The scene to add
@@ -53,32 +54,35 @@ class Activity:
         self._scenes.append(scene)
 
     def add_logger(self, logger: PoseLogger) -> None:
+        """Add a pose logger to the activity.
+
+        Args:
+            logger (PoseLogger): The logger to add to \
+                the activity.
+        """
         self.pose_loggers.append(logger)
 
     def next_scene(self) -> None:
-        """
-        Sets the active scene to the next scene in the scene array.
-        Circles back to the first scene if current active scene is the
-        last in the array.
-        """
+        """Set the active scene to the next scene in the scene array. \
+        Circle back to the first scene if current active scene is the \
+        last in the array."""
         self._active_scene += 1
         if self._active_scene > len(self._scenes) - 1:
             self._active_scene = 0
 
     def previous_scene(self) -> None:
-        """
-        Sets the active scene to the previous scene in the scene array.
-        Circles back to the last scene if current active scene is the
-        first in the array.
-        """
+        """Set the active scene to the previous scene in \
+            the scene array. Circle back to the last \
+                scene if current active scene is the first \
+                    in the array."""
         self._active_scene -= 1
         if self._active_scene < 0:
             self._active_scene = len(self._scenes) - 1
 
     def set_scene(self, scene_num: int) -> bool:
-        """
-        Sets the active scene to the one specified by the given index.
-        Returns true if the scene switch was successful, false otherwise.
+        """Set the active scene to the one specified by \
+            the given index. Return True if the \
+                scene switch was successful, False otherwise.
 
         Args:
             scene_num (int): Index of the scene to switch to.
@@ -89,21 +93,19 @@ class Activity:
         return True
 
     def run(self) -> None:
-        """
-        Infinitely retrieves pose data and
-        renders the components of added scenes.
-        """
+        """Infinitely retrieve pose data and \
+        render the components of added scenes."""
         processes: List[mp.Process] = []
 
         # Create a queue to allow the UI to
         # recieve pose data.
-        ui_pose_queue: mp.Queue = mp.Queue()
-        pose_queues: List[mp.Queue] = [ui_pose_queue]
+        ui_pose_queue: mpq.Queue = mp.Queue()
+        pose_queues: List[mpq.Queue] = [ui_pose_queue]
 
         # Create a queue for each of the pose loggers
         # to recieve pose data.
         for logger in self.pose_loggers:
-            queue: mp.Queue = mp.Queue()
+            queue: mpq.Queue = mp.Queue()
             pose_queues.append(queue)
             processes += logger.start(queue)
 
@@ -127,11 +129,9 @@ class Activity:
         for process in processes:
             process.kill()
 
-    def update_ui(self, pose_queue: mp.Queue):
-        """Infinitely attempts to render the most current
-        version of the active scene of the user interface.
-        Intended to run in a sub-process to update the ui
-        concurrently while retrieving new data.
+    def update_ui(self, pose_queue: mpq.Queue) -> None:
+        """Infinitely render the active scene \
+            of the user interface.
 
         Args:
             frontend (UserInterface): The user interface to update.

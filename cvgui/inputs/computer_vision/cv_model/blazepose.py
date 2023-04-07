@@ -37,17 +37,29 @@ class BlazePose:
     def __init__(self, min_detection_confidence: float = 0.5,
                  min_tracking_confidence: float = 0.5,
                  model_complexity: int = 1) -> None:
+        """Create a blazepose object.
+
+        Args:
+            min_detection_confidence (float, optional): Blazepose minimum \
+                detection confidence. Defaults to 0.5.
+            min_tracking_confidence (float, optional): Blazepose \
+                minimum tracking confidence. Defaults to 0.5.
+            model_complexity (int, optional): Blazepose model \
+                complexity. 0 is lite, 1 is full, 2 is \
+                    heavy. Defaults to 1.
+        """
         self.min_detection_confidence = min_detection_confidence
         self.min_tracking_confidence = min_tracking_confidence
         self.model_complexity = model_complexity
-        self.pose_array: np.ndarray = np.zeros((33, 4))  # TODO: make these constants
+        self.pose_array: np.ndarray = np.zeros(
+            (33, 4))  # TODO: make these constants
         self.model = None
 
     def _configure(self):
         """
-        Creates the blazepose model.
+        Create the blazepose model.
 
-        This cannot be done in the init function due to how Windows handles
+        This cannot be done in the init function due to how Windows handles \
         multiprocessing.
         """
         mp_pose = mp.solutions.pose  # type: ignore
@@ -57,8 +69,8 @@ class BlazePose:
             model_complexity=self.model_complexity)
 
     def get_pose(self, frame: np.ndarray) -> np.ndarray:
-        """Processes an image using Google's BlazePose and
-        returns the pose data (skeleton)."""
+        """Process an image using Google's BlazePose and \
+        returns the pose data."""
         if self.model is None:
             self._configure()
 

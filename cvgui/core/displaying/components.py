@@ -1,26 +1,26 @@
-"""
-Interfaces for common UI objects.
-
-Abstract components to be implemented by concrete
-GUI classes and interafaces that require the implementation
-of said classes.
-"""
+"""This module contains interfaces for common UI objects."""
 from typing import Any, Callable, List, Tuple
 from typing_extensions import Protocol, runtime_checkable
 import numpy as np
 
 
 class Component(Protocol):
-    """The base interface that defines what a component is.
-    In order to be a component, an object must have x and
-    y coordinates and be able to be rendered."""
+    """
+    The base interface that defines what a component is.
+
+    Components comprise the basic building blocks of an \
+    activity's user interface.
+    """
+
     pos: Tuple[float, float]
+    """The position to render the component at."""
 
     def render(self, window: Any) -> None:
-        """Renders the component onto the specified window.
+        """
+        Render the component onto the specified window.
 
         Args:
-            window (Any): Reference to the screen that the
+            window (Any): Reference to the screen that the \
             selected component should be displayed upon.
         """
 
@@ -28,116 +28,137 @@ class Component(Protocol):
 @runtime_checkable
 class Button(Protocol):
     """Interface describing what a button must do."""
+
     pos: Tuple[float, float]
+    """The position to render the component at."""
+
     activation_distance: float
+    """The distance between an action and the button for the \
+        button to be considered "clicked"."""
+
     targets: List[int]
+    """The indices of the skeleton component that can \
+        "click" the button."""
+
     callback: Callable
+    """The function to execute when the button is clicked."""
+
     color: Tuple[int, int, int, int]
+    """The color to make the button."""
+
     radius: int
+    """The radius to make the button."""
 
     def is_clicked(self, pos: Tuple[float, float]) -> bool:  # type: ignore
-        """Method to check whether or not the button is clicked given
-        the coordinates of an action
+        """Check whether or not the button is clicked given \
+        the coordinates of an action.
 
         Args:
-            pos (Tuple[float, float]): The position of the button as an
+            pos (Tuple[float, float]): The position of the button as an \
             x,y tuple
 
         Returns:
-            bool: True if the button is considered "clicked" for the given
+            bool: True if the button is considered "clicked" for the given \
             conditions, False otherwise.
         """
 
     def render(self, window: Any) -> None:
-        """Required method to fulfill the requirements of the
-        Component interface."""
+        """Render the component on the given window.
+
+        Args:
+            window (Any): The space to render the component in.
+        """
 
 
 class HasButton(Protocol):
-    """
-    Interface describing what methods a gui must implement to be used in the
-    creation of a button.
-    """
+    """Interface describing what methods a gui must implement to \
+        be used in the creation of a button."""
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
                color: Tuple[int, int, int, int],
                radius: int
                ) -> Button:  # type: ignore
-        """Creates an abstract button.
+        """Create a button component.
 
         Args:
-            pos (Tuple[float, float]): The position of the
+            pos (Tuple[float, float]): The position of the \
                 button as an x,y tuple
-            activation_distance (float): The minimum distance
-                between the target and the button to be considered
+            activation_distance (float): The minimum distance \
+                between the target and the button to be considered \
                 clicked
-            color (Tuple[int, int, int, int]): rgba color value of
+            color (Tuple[int, int, int, int]): rgba color value of \
                 the button
             radius (int): Radius of the button
 
         Returns:
-            Button: Object that implements the Button interface.
+            Button: Component that implements the Button interface.
         """
 
 
 @runtime_checkable
 class TrackingBubble(Protocol):
-    """
-    Interface describing what methods a tracking bubble needs.
-    """
+    """Interface describing what methods a tracking bubble needs."""
+
     color: Tuple[int, int, int, int]
+    """The color to make the tracking bubble."""
+
     radius: int
+    """The radius to make the tracking bubble."""
+
     target: int
+    """The index of the skeleton component that the \
+        tracking bubble should follow."""
+
     pos: Tuple[float, float]
+    """The position the tracking bubble should render at."""
 
     def render(self, window: Any) -> None:
-        """Required method to fulfill the requirements of the
-        Component interface."""
+        """Render the tracking bubble to the given window.
+
+        Args:
+            window (Any): The space to render the component in.
+        """
 
 
 class HasTrackingBubble(Protocol):
-    """
-    Interface describing what methods a gui must implement to be used in the
-    creation of a tracking bubble.
-    """
+    """Interface describing what methods a gui must \
+        implement to be used in the \
+        creation of a tracking bubble."""
 
     def tracking_bubble(self,
                         target: int,
                         color: Tuple[int, int, int, int],
                         radius: int
                         ) -> TrackingBubble:  # type: ignore
-        """Creates an abstract tracking bubble"""
+        """Create an abstract tracking bubble."""
 
 
 @runtime_checkable
 class Skeleton(Protocol):
-    """
-    Interface describing how a component must act to be considered
-    a Skeleton.
-    """
+    """Interface describing how a component must act to be considered \
+    a Skeleton."""
+
     pos: Tuple[float, float]
     scale: int
     skeleton_points: np.ndarray
 
-    def render(self, window: Any):
-        """Required method to fulfill the requirements of the
-        Component interface."""
+    def render(self, window: Any) -> None:
+        """Render the skeleton component on the given window."""
 
 
 class HasSkeleton(Protocol):
-    """
-    Interface describing what methods a gui must implement to be used in the
-    creation of a skeleton.
-    """
+    """Interface describing what methods a gui must implement to \
+        be used in the creation of a skeleton."""
 
     def skeleton(self, pos: Tuple[float, float],
                  scale: int) -> Skeleton:  # type: ignore
-        """Creates an abstract skeleton
+        """Create an abstract skeleton.
 
         Args:
-            pos (Tuple[float, float]): The position of the skeleton as an
-            x,y tuple
+            pos (Tuple[float, float]): The position of the skeleton \
+                as an x,y tuple
+            scale (int): The scale to size the skeleton at.
 
         Returns:
             Skeleton: Object that implements the Skeleton interface.
@@ -149,20 +170,20 @@ def button(gui: HasButton, pos: Tuple[float, float],
            radius: int,
            color: Tuple[int, int, int, int] = (100, 100, 100, 255)
            ) -> Button:
-    """Function that can be called to create a button for any gui
-    that implements the HasButton interface. This method is used
-    instead of instantiating concrete types of ui components to
-    reduce the coupling between activity files and the gui being
+    """Create a button for any gui \
+    that implements the HasButton interface. This method is used \
+    instead of instantiating concrete types of ui components to \
+    reduce the coupling between activity files and the gui being \
     used.
 
     Args:
         gui (HasButton): A gui that can create a button.
-        pos (Tuple[float, float]): The position of the
+        pos (Tuple[float, float]): The position of the \
             button as an x,y tuple
-        activation_distance (float): The minimum distance
-            between the target and the button to be considered
+        activation_distance (float): The minimum distance \
+            between the target and the button to be considered \
             clicked
-        color (Tuple[int, int, int, int]): rgba color value of
+        color (Tuple[int, int, int, int]): rgba color value of \
             the button
         radius (int): Radius of the button
 
@@ -176,16 +197,16 @@ def button(gui: HasButton, pos: Tuple[float, float],
 
 def skeleton(gui: HasSkeleton, pos: Tuple[float, float],
              scale: int) -> Skeleton:
-    """Function that can be called to create a skeleton for any gui
-    that implements the HasSkeleton interface. This method is used
-    instead of instantiating concrete types of ui components to
-    reduce the coupling between activity files and the gui being
+    """Create a skeleton for any gui \
+    that implements the HasSkeleton interface. This method is used \
+    instead of instantiating concrete types of ui components to \
+    reduce the coupling between activity files and the gui being \
     used.
 
     Args:
         gui (HasButton): A gui that can create a skeleton.
-        pos (Tuple[float, float]): The position of the skeleton as an
-        x,y tuple
+        pos (Tuple[float, float]): The position of the skeleton as an \
+            x,y tuple
 
     Returns:
         Skeleton: The skeleton implementation for the respective gui.
@@ -198,7 +219,7 @@ def tracking_bubble(gui: HasTrackingBubble,
                     target: int,
                     color: Tuple[int, int, int, int] = (100, 100, 100, 255)
                     ) -> TrackingBubble:
-    """Function that can be called to create a tracking bubble.
+    """Create a tracking bubble.
 
     Args:
         gui (HasTrackingBubble): A gui that can create a tracking bubble.
@@ -208,6 +229,7 @@ def tracking_bubble(gui: HasTrackingBubble,
                 Defaults to (100, 100, 100, 255).
 
     Returns:
-        _type_: _description_
+        TrackingBubble: The tracking bubble implementation for the \
+            respective gui.
     """
     return gui.tracking_bubble(color=color, radius=radius, target=target)

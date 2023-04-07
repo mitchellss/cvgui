@@ -23,4 +23,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - BlazePose computer vision model
 - PyGame user interface
 - `displaying` core package
-- `recieving` core package
+- `receiving` core package
