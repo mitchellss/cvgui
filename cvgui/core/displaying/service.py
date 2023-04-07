@@ -1,8 +1,6 @@
-"""
-This module defines the interface for a class to be considered \
+"""This module defines the interface for a class to be considered \
 a user interface by `cvgui`. This ensures that all user-created \
-activities work reguardless of what user interface is used.
-"""
+activities work reguardless of what user interface is used."""
 from typing import Any, Tuple
 from typing_extensions import Protocol
 
@@ -19,17 +17,16 @@ class UserInterface(Protocol):
     """Whether the user interface should continue rendering."""
 
     def clear(self) -> None:
-        """Resets the user interface display."""
+        """Reset the user interface display."""
 
     def new_gui(self) -> None:
-        """Sets up the user interface."""
+        """Set up the user interface."""
 
     def button(self, pos: Tuple[float, float],
                activation_distance: float,
                color: Tuple[int, int, int, int],
                radius: int) -> Button:  # type: ignore
-        """
-        Creates a circular button on the user \
+        """Create a circular button on the user \
         interface.
 
         Args:
@@ -48,8 +45,7 @@ class UserInterface(Protocol):
 
     def skeleton(self, pos: Tuple[float, float],
                  scale: int) -> Skeleton:  # type: ignore
-        """
-        Creates a new skeleton on the user
+        """Create a new skeleton on the user \
         interface at the location specfied.
 
         Args:
@@ -68,8 +64,7 @@ class UserInterface(Protocol):
         color: Tuple[int, int, int, int],
         radius: int
     ) -> TrackingBubble:  # type: ignore
-        """
-        Creates a new tracking bubble on the user \
+        """Create a new tracking bubble on the user \
         interface that tracks the given point.
 
         Args:
@@ -85,4 +80,4 @@ class UserInterface(Protocol):
         """
 
     def update(self) -> None:
-        """Refreshes the user interface display."""
+        """Refresh the user interface display."""
