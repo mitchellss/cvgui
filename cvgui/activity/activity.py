@@ -5,6 +5,7 @@ The activity module orchestrates the interfaces of `core` packages \
 to run concurrently and create a coherent flow of information.
 """
 import sys
+import time
 from typing import List
 import multiprocessing as mp
 import multiprocessing.queues as mpq
@@ -117,15 +118,27 @@ class Activity:
             self.update_ui(ui_pose_queue)
         except KeyboardInterrupt:
             print("Ctrl-C pressed. Exiting...")
+            for logger in self.pose_loggers:
+                logger.save()
+            # Give some time for files to be saved
+            time.sleep(5)
             for process in processes:
                 process.kill()
             sys.exit(0)
         except Exception as excpt:
+            for logger in self.pose_loggers:
+                logger.save()
+            # Give some time for files to be saved
+            time.sleep(5)
             for process in processes:
                 process.kill()
             raise excpt
 
         print("Pygame closed. Exiting...")
+        for logger in self.pose_loggers:
+            logger.save()
+        # Give some time for files to be saved
+        time.sleep(5)
         for process in processes:
             process.kill()
 
