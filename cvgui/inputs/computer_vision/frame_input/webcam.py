@@ -25,7 +25,7 @@ class Webcam:
         This cannot be done in the init function because of how \
         Windows handles multiprocessing.
         """
-        self.cap = cv2.VideoCapture(self.device_num)
+        self.cap = cv2.VideoCapture(self.device_num, cv2.CAP_DSHOW)
         self.cap.set(cv2.CAP_PROP_FPS, self.fps)
         self.cap.set(cv2.CAP_PROP_FOURCC,
                      cv2.VideoWriter_fourcc("M", "J", "P", "G"))
